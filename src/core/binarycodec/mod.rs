@@ -9,6 +9,7 @@ use types::{AccountId, STObject};
 use alloc::{borrow::Cow, string::String, vec::Vec};
 use core::convert::TryFrom;
 use hex::ToHex;
+use serde::de::DeserializeOwned;
 use serde::Serialize;
 
 pub mod binary_wrappers;
@@ -16,9 +17,9 @@ pub mod exceptions;
 pub(crate) mod test_cases;
 pub mod utils;
 
-pub use binary_wrappers::*;
-
+use crate::core::binarycodec::types::{SerializedType, XRPLType};
 use crate::XRPLSerdeJsonError;
+pub use binary_wrappers::*;
 
 use super::exceptions::XRPLCoreResult;
 
@@ -30,6 +31,24 @@ where
     T: Serialize,
 {
     serialize_json(signed_transaction, None, None, false)
+}
+
+pub fn decode<T>(hex_string: &str) -> XRPLCoreResult<T>
+where
+    T: DeserializeOwned,
+{
+    let bytes = hex::decode(hex_string)?;
+
+    let obj = STObject::new(Some(bytes.as_ref()))?;
+
+    let value = obj.try_to_value()?;
+
+    let data = serde_json::to_string(&value).unwrap();
+    println!("Decoded JSON: {}", data);
+
+    let result: T = serde_json::from_str(&*data).unwrap();
+
+    Ok(result)
 }
 
 pub fn encode_for_signing<T>(prepared_transaction: &T) -> XRPLCoreResult<String>
@@ -51,7 +70,7 @@ pub fn encode_for_multisigning<T>(
 where
     T: Serialize,
 {
-    let signing_account_id = match AccountId::try_from(signing_account.as_ref()){
+    let signing_account_id = match AccountId::try_from(signing_account.as_ref()) {
         Ok(account_id) => account_id,
         Err(e) => {
             return Err(e);
@@ -92,4 +111,47 @@ where
     let hex_string = buffer.encode_hex_upper::<String>();
 
     Ok(hex_string)
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::core::binarycodec::decode;
+    use crate::models::{transactions, FlagCollection, XRPAmount};
+    use alloc::borrow::Cow;
+    use alloc::{format, vec};
+
+    #[test]
+    fn test_encode() {
+        let common_fields = transactions::CommonFields {
+            account: Cow::from("rp9Dq8zhMWb55WrDdcoAJZ5ytrcGsboJxe"),
+            transaction_type: transactions::TransactionType::NFTokenMint,
+            sequence: Some(0),
+            flags: FlagCollection::new(vec![]), // Default flags
+            ticket_sequence: Some(184),
+            account_txn_id: None,
+            fee: Some(XRPAmount(Cow::from("10"))),
+            last_ledger_sequence: Some(20000),
+            memos: None,
+            network_id: None,
+            signers: None,
+            signing_pub_key: Some(Cow::from("EDC259073A91691115F183983D4305718367AA13329D46FB7B5F588305149E7D0E")),
+            source_tag: None,
+            txn_signature: Some(Cow::from("3D563759600D8EFDDACCF9F21E7EC160B51873C6C4F6F6A7DBEA30970F64CD4129196D271010A3A350BF15278B6A5640FAA771FDB9EA8223831633939BEC4902")),
+        };
+
+        let nft_mint_tx = transactions::nftoken_mint::NFTokenMint {
+            common_fields,
+            nftoken_taxon: 0,
+            issuer: None,
+            transfer_fee: None,
+            uri: Some(Cow::from("12345678")),
+        };
+
+        let encoded = super::encode(&nft_mint_tx).unwrap();
+        let expected = "12001922000000002400000000201B00004E202029000000B8202A0000000068400000000000000A7321EDC259073A91691115F183983D4305718367AA13329D46FB7B5F588305149E7D0E74403D563759600D8EFDDACCF9F21E7EC160B51873C6C4F6F6A7DBEA30970F64CD4129196D271010A3A350BF15278B6A5640FAA771FDB9EA8223831633939BEC490275041234567881140C862C3DD406C9F3F757F8C479292BDCD11A2A11";
+        println!("Encoded transaction: {}", encoded);
+
+        let decoded: transactions::nftoken_mint::NFTokenMint = decode(&encoded).unwrap();
+        println!("Decoded transaction: {:?}", decoded);
+    }
 }

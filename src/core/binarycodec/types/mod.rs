@@ -36,17 +36,20 @@ pub use self::xchain_bridge::XChainBridge;
 
 use crate::core::binarycodec::binary_wrappers::Serialization;
 use crate::core::binarycodec::definitions::get_field_instance;
+use crate::core::binarycodec::definitions::get_ledger_entry_type_name;
 use crate::core::binarycodec::definitions::get_transaction_result_code;
+use crate::core::binarycodec::definitions::get_transaction_result_name;
 use crate::core::binarycodec::definitions::get_transaction_type_code;
+use crate::core::binarycodec::definitions::get_transaction_type_name;
 use crate::core::binarycodec::definitions::FieldInstance;
 use crate::core::exceptions::XRPLCoreResult;
-use crate::core::BinaryParser;
+use crate::core::{BinaryParser, Parser};
 use alloc::borrow::Cow;
 use alloc::borrow::ToOwned;
 use alloc::string::String;
 use alloc::string::ToString;
-use alloc::{format, vec};
 use alloc::vec::Vec;
+use alloc::{format, vec};
 use amount::IssuedCurrency;
 use exceptions::XRPLTypeException;
 use serde::Deserialize;
@@ -56,6 +59,7 @@ use serde_json::Value;
 use super::BinarySerializer;
 use crate::core::addresscodec::is_valid_xaddress;
 use crate::core::addresscodec::xaddress_to_classic_address;
+use crate::utils::ToBytes;
 
 const ACCOUNT: &str = "Account";
 const SOURCE_TAG: &str = "SourceTag";
@@ -172,9 +176,7 @@ impl XRPLTypes {
     {
         value
             .try_into()
-            .map_err(|e| {
-                XRPLTypeException::TryFromStrError(format!("{}", e)).into()
-            })
+            .map_err(|e| XRPLTypeException::TryFromStrError(format!("{}", e)).into())
     }
 
     fn amount_from_map<T>(value: Map<String, Value>) -> XRPLCoreResult<T>
@@ -294,6 +296,32 @@ impl XRPLType for STArray {
 impl AsRef<[u8]> for STArray {
     fn as_ref(&self) -> &[u8] {
         self.0.as_ref()
+    }
+}
+
+impl TryFromParser for STArray {
+    type Error = XRPLTypeException;
+
+    fn from_parser(
+        parser: &mut BinaryParser,
+        _length: Option<usize>,
+    ) -> XRPLCoreResult<Self, Self::Error> {
+        let mut data = Vec::new();
+
+        while !parser.is_end(None) {
+            // Check for array end marker
+            if let Some([0xF1]) = parser.peek() {
+                parser.skip_bytes(1).unwrap(); // TODO
+                break;
+            }
+
+            // Read the length prefix for the STObject
+            let length = parser.read_length_prefix().unwrap(); // TODO
+            let object_data = parser.read(length).unwrap(); // TODO
+            data.extend_from_slice(&object_data);
+        }
+
+        Ok(STArray(SerializedType(data)))
     }
 }
 
@@ -479,6 +507,317 @@ impl STObject {
 
         Ok(STObject(serializer.into()))
     }
+
+    /// Decode a SerializedMap back to a serde_json::Value.
+    ///
+    /// ```
+    /// use xrpl::core::binarycodec::types::STObject;
+    /// use serde_json::Value;
+    ///
+    /// let expected_json = r#"{
+    ///     "Account": "raD5qJMAShLeHZXf9wjUmo6vRK4arj9cF3",
+    ///     "Fee": "10",
+    ///     "Flags": 0,
+    ///     "Sequence": 103929,
+    ///     "TransactionType": "OfferCreate"
+    /// }"#;
+    /// let value = serde_json::from_str(expected_json).unwrap();
+    /// let serialized_map = STObject::try_from_value(value.clone(), false).unwrap();
+    /// let decoded_value = serialized_map.try_to_value().unwrap();
+    /// assert_eq!(value, decoded_value);
+    /// ```
+    pub fn try_to_value(&self) -> XRPLCoreResult<Value> {
+        let mut parser = BinaryParser::from(self.as_ref());
+        let mut result = Map::new();
+
+        while !parser.is_end(None) {
+            // Check for object end marker
+            if let Some([0xE1]) = parser.peek() {
+                parser.skip_bytes(1)?;
+                break;
+            }
+
+            let field_instance = parser.read_field()?;
+            let field_value = self.read_field_value(&mut parser, &field_instance)?;
+
+            // Convert field value to JSON
+            let json_value = self.convert_field_to_json(&field_instance, field_value)?;
+            result.insert(field_instance.name, json_value);
+        }
+
+        Ok(Value::Object(result))
+    }
+
+    fn read_field_value(
+        &self,
+        parser: &mut BinaryParser,
+        field: &FieldInstance,
+    ) -> XRPLCoreResult<XRPLTypes> {
+        match field.associated_type.as_str() {
+            "AccountID" => {
+                let account_id = AccountId::from_parser(parser, None)?;
+                Ok(XRPLTypes::AccountID(account_id))
+            }
+            "Amount" => {
+                let amount = Amount::from_parser(parser, None)?;
+                Ok(XRPLTypes::Amount(amount))
+            }
+            "Blob" => {
+                let blob = Blob::from_parser(parser, None)?;
+                Ok(XRPLTypes::Blob(blob))
+            }
+            "Currency" => {
+                let currency = Currency::from_parser(parser, None)?;
+                Ok(XRPLTypes::Currency(currency))
+            }
+            "Hash128" => {
+                let hash = Hash128::from_parser(parser, None)?;
+                Ok(XRPLTypes::Hash128(hash))
+            }
+            "Hash160" => {
+                let hash = Hash160::from_parser(parser, None)?;
+                Ok(XRPLTypes::Hash160(hash))
+            }
+            "Hash256" => {
+                let hash = Hash256::from_parser(parser, None)?;
+                Ok(XRPLTypes::Hash256(hash))
+            }
+            "Issue" => {
+                let issue = Issue::from_parser(parser, None)?;
+                Ok(XRPLTypes::Issue(issue))
+            }
+            "Path" => {
+                let path = Path::from_parser(parser, None)?;
+                Ok(XRPLTypes::Path(path))
+            }
+            "PathSet" => {
+                let path_set = PathSet::from_parser(parser, None)?;
+                Ok(XRPLTypes::PathSet(path_set))
+            }
+            "PathStep" => {
+                let path_step = PathStep::from_parser(parser, None)?;
+                Ok(XRPLTypes::PathStep(path_step))
+            }
+            "Vector256" => {
+                let vector = Vector256::from_parser(parser, None)?;
+                Ok(XRPLTypes::Vector256(vector))
+            }
+            "STObject" => {
+                let st_object = STObject::from_parser(parser, None)?;
+                Ok(XRPLTypes::STObject(st_object))
+            }
+            "STArray" => {
+                let st_array = STArray::from_parser(parser, None)?;
+                Ok(XRPLTypes::STArray(st_array))
+            }
+            "UInt8" => {
+                let value = parser.read_uint8()?;
+                Ok(XRPLTypes::UInt8(value))
+            }
+            "UInt16" => {
+                let value = parser.read_uint16()?;
+                Ok(XRPLTypes::UInt16(value))
+            }
+            "UInt32" => {
+                let value = parser.read_uint32()?;
+                Ok(XRPLTypes::UInt32(value))
+            }
+            "UInt64" => {
+                let value = parser.read_uint64()?;
+                Ok(XRPLTypes::UInt64(value))
+            }
+            "XChainBridge" => {
+                let bridge = XChainBridge::from_parser(parser, None)?;
+                Ok(XRPLTypes::XChainBridge(bridge))
+            }
+            _ => Err(exceptions::XRPLTypeException::UnknownXRPLType.into()),
+        }
+    }
+
+    fn convert_field_to_json(
+        &self,
+        field: &FieldInstance,
+        value: XRPLTypes,
+    ) -> XRPLCoreResult<Value> {
+        match value {
+            XRPLTypes::AccountID(account_id) => Ok(Value::String(account_id.to_string())),
+            XRPLTypes::Amount(amount) => {
+                // Handle XRP vs IssuedCurrency amounts
+                if amount.is_native() {
+                    Ok(Value::String(amount.to_string()))
+                } else {
+                    // For issued currency, we need to create an object
+                    let mut parser = BinaryParser::from(amount.as_ref());
+                    let issued_currency = IssuedCurrency::from_parser(&mut parser, None)?;
+                    let mut obj = Map::new();
+                    obj.insert(
+                        "currency".to_string(),
+                        Value::String(issued_currency.currency.to_string()),
+                    );
+                    obj.insert(
+                        "issuer".to_string(),
+                        Value::String(issued_currency.issuer.to_string()),
+                    );
+                    obj.insert(
+                        "value".to_string(),
+                        Value::String(issued_currency.value.to_string()),
+                    );
+                    Ok(Value::Object(obj))
+                }
+            }
+            XRPLTypes::Blob(blob) => Ok(Value::String(blob.to_string())),
+            XRPLTypes::Currency(currency) => Ok(Value::String(currency.to_string())),
+            XRPLTypes::Hash128(hash) => Ok(Value::String(hash.to_string())),
+            XRPLTypes::Hash160(hash) => Ok(Value::String(hash.to_string())),
+            XRPLTypes::Hash256(hash) => Ok(Value::String(hash.to_string())),
+            XRPLTypes::Issue(issue) => {
+                // Parse the issue data to extract currency and issuer
+                let mut parser = BinaryParser::from(issue.as_ref());
+                let currency = Currency::from_parser(&mut parser, None)?;
+
+                let mut obj = Map::new();
+                obj.insert("currency".to_string(), Value::String(currency.to_string()));
+
+                if currency.to_string() != "XRP" {
+                    let issuer = AccountId::from_parser(&mut parser, None)?;
+                    obj.insert("issuer".to_string(), Value::String(issuer.to_string()));
+                }
+
+                Ok(Value::Object(obj))
+            }
+            XRPLTypes::Path(path) => {
+                // Convert path to JSON array
+                let path_json = serde_json::to_value(&path)
+                    .map_err(|_| exceptions::XRPLTypeException::SerializationError)?;
+                Ok(path_json)
+            }
+            XRPLTypes::PathSet(path_set) => {
+                // Convert pathset to JSON array
+                let pathset_json = serde_json::to_value(&path_set)
+                    .map_err(|_| exceptions::XRPLTypeException::SerializationError)?;
+                Ok(pathset_json)
+            }
+            XRPLTypes::PathStep(path_step) => {
+                // Convert pathstep to JSON object
+                let pathstep_json = serde_json::to_value(&path_step)
+                    .map_err(|_| exceptions::XRPLTypeException::SerializationError)?;
+                Ok(pathstep_json)
+            }
+            XRPLTypes::Vector256(vector) => Ok(Value::String(vector.to_string())),
+            XRPLTypes::STObject(st_object) => st_object.try_to_value(),
+            XRPLTypes::STArray(st_array) => {
+                // Convert STArray to JSON array
+                let mut parser = BinaryParser::from(st_array.as_ref());
+                let mut result = Vec::new();
+
+                while !parser.is_end(None) {
+                    // Check for array end marker
+                    if let Some([0xF1]) = parser.peek() {
+                        parser.skip_bytes(1)?;
+                        break;
+                    }
+
+                    let st_object = STObject::from_parser(&mut parser, None)?;
+                    let json_value = st_object.try_to_value()?;
+                    result.push(json_value);
+                }
+
+                Ok(Value::Array(result))
+            }
+            XRPLTypes::UInt8(value) => {
+                // Handle special cases for transaction types and results
+                match field.name.as_str() {
+                    "TransactionType" => {
+                        if let Some(type_name) = get_transaction_type_name(&(value as i16)) {
+                            Ok(Value::String(type_name.clone()))
+                        } else {
+                            Ok(Value::Number(value.into()))
+                        }
+                    }
+                    "TransactionResult" => {
+                        if let Some(result_name) = get_transaction_result_name(&(value as i16)) {
+                            Ok(Value::String(result_name.clone()))
+                        } else {
+                            Ok(Value::Number(value.into()))
+                        }
+                    }
+                    "LedgerEntryType" => {
+                        if let Some(entry_name) = get_ledger_entry_type_name(&(value as i16)) {
+                            Ok(Value::String(entry_name.clone()))
+                        } else {
+                            Ok(Value::Number(value.into()))
+                        }
+                    }
+                    _ => Ok(Value::Number(value.into())),
+                }
+            }
+            XRPLTypes::UInt16(value) => Ok(Value::Number(value.into())),
+            XRPLTypes::UInt32(value) => Ok(Value::Number(value.into())),
+            XRPLTypes::UInt64(value) => {
+                // Convert to string for large numbers to avoid precision loss
+                Ok(Value::String(value.to_string()))
+            }
+            XRPLTypes::XChainBridge(bridge) => {
+                // Parse the bridge data to create JSON manually
+                let mut parser = BinaryParser::from(bridge.as_ref());
+                let mut obj = Map::new();
+
+                // Parse the four components in order
+                let locking_chain_door = AccountId::from_parser(&mut parser, None)?;
+                obj.insert(
+                    "LockingChainDoor".to_string(),
+                    Value::String(locking_chain_door.to_string()),
+                );
+
+                let locking_chain_issue = Issue::from_parser(&mut parser, None)?;
+                let locking_issue_json = self.convert_field_to_json(
+                    &FieldInstance {
+                        nth: 0,
+                        is_vl_encoded: false,
+                        is_serialized: true,
+                        is_signing: true,
+                        associated_type: "Issue".to_string(),
+                        name: "LockingChainIssue".to_string(),
+                        header: crate::core::binarycodec::definitions::FieldHeader {
+                            type_code: 0,
+                            field_code: 0,
+                        },
+                        ordinal: 0,
+                    },
+                    XRPLTypes::Issue(locking_chain_issue),
+                )?;
+                obj.insert("LockingChainIssue".to_string(), locking_issue_json);
+
+                let issuing_chain_door = AccountId::from_parser(&mut parser, None)?;
+                obj.insert(
+                    "IssuingChainDoor".to_string(),
+                    Value::String(issuing_chain_door.to_string()),
+                );
+
+                let issuing_chain_issue = Issue::from_parser(&mut parser, None)?;
+                let issuing_issue_json = self.convert_field_to_json(
+                    &FieldInstance {
+                        nth: 0,
+                        is_vl_encoded: false,
+                        is_serialized: true,
+                        is_signing: true,
+                        associated_type: "Issue".to_string(),
+                        name: "IssuingChainIssue".to_string(),
+                        header: crate::core::binarycodec::definitions::FieldHeader {
+                            type_code: 0,
+                            field_code: 0,
+                        },
+                        ordinal: 0,
+                    },
+                    XRPLTypes::Issue(issuing_chain_issue),
+                )?;
+                obj.insert("IssuingChainIssue".to_string(), issuing_issue_json);
+
+                Ok(Value::Object(obj))
+            }
+            XRPLTypes::Unknown => Err(exceptions::XRPLTypeException::UnknownXRPLType.into()),
+        }
+    }
 }
 
 impl XRPLType for STObject {
@@ -496,6 +835,89 @@ impl XRPLType for STObject {
 impl AsRef<[u8]> for STObject {
     fn as_ref(&self) -> &[u8] {
         self.0.as_ref()
+    }
+}
+
+impl TryFromParser for STObject {
+    type Error = XRPLTypeException;
+
+    fn from_parser(
+        parser: &mut BinaryParser,
+        _length: Option<usize>,
+    ) -> XRPLCoreResult<Self, Self::Error> {
+        let mut data = Vec::new();
+
+        while !parser.is_end(None) {
+            // Check for object end marker
+            if let Some([0xE1]) = parser.peek() {
+                parser.skip_bytes(1).unwrap(); // TODO
+                break;
+            }
+
+            // Read field header
+            let field_instance = parser.read_field().unwrap(); // TODO
+
+            // Read field value based on type
+            let field_value = match field_instance.associated_type.as_str() {
+                "AccountID" => {
+                    let account_id = AccountId::from_parser(parser, None).unwrap(); // TODO
+                    account_id.as_ref().to_vec()
+                }
+                "Amount" => {
+                    let amount = Amount::from_parser(parser, None).unwrap(); // TODO
+                    amount.as_ref().to_vec()
+                }
+                "Blob" => {
+                    let blob = Blob::from_parser(parser, None).unwrap(); // TODO
+                    blob.as_ref().to_vec()
+                }
+                "Currency" => {
+                    let currency = Currency::from_parser(parser, None).unwrap(); // TODO
+                    currency.as_ref().to_vec()
+                }
+                "Hash128" => {
+                    let hash = Hash128::from_parser(parser, None).unwrap(); // TODO
+                    hash.as_ref().to_vec()
+                }
+                "Hash160" => {
+                    let hash = Hash160::from_parser(parser, None).unwrap(); // TODO
+                    hash.as_ref().to_vec()
+                }
+                "Hash256" => {
+                    let hash = Hash256::from_parser(parser, None).unwrap(); // TODO
+                    hash.as_ref().to_vec()
+                }
+                "Issue" => {
+                    let issue = Issue::from_parser(parser, None).unwrap(); // TODO
+                    issue.as_ref().to_vec()
+                }
+                "UInt8" => {
+                    let value = parser.read_uint8().unwrap(); // TODO
+                    value.to_be_bytes().to_vec()
+                }
+                "UInt16" => {
+                    let value = parser.read_uint16().unwrap(); // TODO
+                    value.to_be_bytes().to_vec()
+                }
+                "UInt32" => {
+                    let value = parser.read_uint32().unwrap(); // TODO
+                    value.to_be_bytes().to_vec()
+                }
+                "UInt64" => {
+                    let value = parser.read_uint64().unwrap(); // TODO
+                    value.to_be_bytes().to_vec()
+                }
+                _ => {
+                    return Err(XRPLTypeException::UnknownXRPLType);
+                }
+            };
+
+            // Write field header and value
+            data.extend_from_slice(&field_instance.header.to_bytes());
+            data.extend_from_slice(&field_value);
+        }
+
+        Ok(STObject(SerializedType(data)))
     }
 }
 

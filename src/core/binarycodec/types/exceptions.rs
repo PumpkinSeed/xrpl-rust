@@ -37,6 +37,8 @@ pub enum XRPLTypeException {
     MissingField(String),
     #[error("Parse int error: {0}")]
     ParseIntError(#[from] core::num::ParseIntError),
+    #[error("Serialization error")]
+    SerializationError,
 }
 
 #[derive(Debug, Clone, PartialEq, Error)]
@@ -84,21 +86,3 @@ pub enum XRPLVectorException {
     #[error("Invalid vector 256 bytes")]
     InvalidVector256Bytes,
 }
-
-#[cfg(feature = "std")]
-impl alloc::error::Error for XRPLTypeException {}
-
-#[cfg(feature = "std")]
-impl alloc::error::Error for XRPLSerializeArrayException {}
-
-#[cfg(feature = "std")]
-impl alloc::error::Error for XRPLSerializeMapException {}
-
-#[cfg(feature = "std")]
-impl alloc::error::Error for XRPLXChainBridgeException {}
-
-#[cfg(feature = "std")]
-impl alloc::error::Error for XRPLHashException {}
-
-#[cfg(feature = "std")]
-impl alloc::error::Error for XRPLVectorException {}

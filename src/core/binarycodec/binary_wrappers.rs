@@ -249,6 +249,34 @@ pub trait Parser {
     /// ```
     fn read_uint32(&mut self) -> XRPLCoreResult<u32>;
 
+    /// Read 8 bytes from parser and return as unsigned int.
+    ///
+    /// # Examples
+    ///
+    /// ## Basic usage
+    ///
+    /// ```
+    /// use xrpl::core::binarycodec::BinaryParser;
+    /// use xrpl::core::Parser;
+    /// use xrpl::core::binarycodec::exceptions::XRPLBinaryCodecException;
+    /// use xrpl::core::exceptions::XRPLCoreException;
+    ///
+    /// let test_bytes: &[u8] = &[0, 0, 0, 0, 0, 0, 0, 1];
+    /// let mut binary_parser: BinaryParser = BinaryParser::from(test_bytes);
+    ///
+    /// match binary_parser.read_uint64() {
+    ///     Ok(data) => assert_eq!(1, data),
+    ///     Err(e) => match e {
+    ///         XRPLCoreException::XRPLBinaryCodecError(XRPLBinaryCodecException::UnexpectedParserSkipOverflow {
+    ///             max: _,
+    ///             found: _,
+    ///         }) => assert!(false),
+    ///         _ => assert!(false)
+    ///     }
+    /// }
+    /// ```
+    fn read_uint64(&mut self) -> XRPLCoreResult<u64>;
+
     /// Returns whether the binary parser has finished
     /// parsing (e.g. there is nothing left in the buffer
     /// that needs to be processed).
@@ -511,6 +539,13 @@ impl Parser for BinaryParser {
     fn read_uint32(&mut self) -> XRPLCoreResult<u32> {
         let result = self.read(4)?;
         Ok(u32::from_be_bytes(result.try_into().or(Err(
+            XRPLBinaryCodecException::InvalidReadFromBytesValue,
+        ))?))
+    }
+
+    fn read_uint64(&mut self) -> XRPLCoreResult<u64> {
+        let result = self.read(8)?;
+        Ok(u64::from_be_bytes(result.try_into().or(Err(
             XRPLBinaryCodecException::InvalidReadFromBytesValue,
         ))?))
     }

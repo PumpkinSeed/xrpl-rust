@@ -11,7 +11,10 @@ use core::fmt::Display;
 use serde::Serializer;
 use serde::{Deserialize, Serialize};
 
+use super::TryFromParser;
 use super::XRPLType;
+use crate::core::BinaryParser;
+use crate::core::Parser;
 
 /// Codec for serializing and deserializing blob fields.
 ///
@@ -62,6 +65,27 @@ impl AsRef<[u8]> for Blob {
     /// Get a reference of the byte representation.
     fn as_ref(&self) -> &[u8] {
         &self.0
+    }
+}
+
+impl TryFromParser for Blob {
+    type Error = XRPLCoreException;
+
+    fn from_parser(
+        parser: &mut BinaryParser,
+        length: Option<usize>,
+    ) -> XRPLCoreResult<Self, Self::Error> {
+        let data = if let Some(len) = length {
+            parser.read(len)?
+        } else {
+            // For blobs without length prefix, read until end
+            let mut data = Vec::new();
+            while !parser.is_end(None) {
+                data.push(parser.read_uint8()?);
+            }
+            data
+        };
+        Ok(Blob(data))
     }
 }
 

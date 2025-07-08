@@ -99,12 +99,12 @@ mod tests {
         let account_nfts: AccountNfts = serde_json::from_str(json).unwrap();
 
         // Test main struct fields
-        assert_eq!(account_nfts.account, "rsuHaTvJh1bDmDoxX9QcKP7HEBSBt4XsHx");
+        assert_eq!(account_nfts.account.unwrap(), "rsuHaTvJh1bDmDoxX9QcKP7HEBSBt4XsHx");
         assert_eq!(
             account_nfts.ledger_hash.unwrap(),
             "46497E9FF17A993324F1A0A693DC068B467184023C7FD162812265EAAFEB97CB"
         );
-        assert_eq!(account_nfts.ledger_index, 2380559);
+        assert_eq!(account_nfts.ledger_index.unwrap(), 2380559);
         assert!(account_nfts.validated);
         assert_eq!(account_nfts.nfts.len(), 2);
 
