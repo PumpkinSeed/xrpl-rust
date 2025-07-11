@@ -45,15 +45,15 @@ pub struct LedgerHashes<'a> {
     pub last_ledger_sequence: u32,
 }
 
-impl<'a> Model for LedgerHashes<'a> {}
+impl Model for LedgerHashes {}
 
-impl<'a> LedgerObject<NoFlags> for LedgerHashes<'a> {
+impl LedgerObject<NoFlags> for LedgerHashes {
     fn get_ledger_entry_type(&self) -> LedgerEntryType {
         self.common_fields.get_ledger_entry_type()
     }
 }
 
-impl<'a> LedgerHashes<'a> {
+impl LedgerHashes {
     pub fn new(
         index: Option<Cow<'a, str>>,
         ledger_index: Option<Cow<'a, str>>,

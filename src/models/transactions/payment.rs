@@ -67,7 +67,7 @@ pub struct Payment<'a> {
     /// The amount of currency to deliver. For non-XRP amounts, the nested field names
     /// MUST be lower-case. If the tfPartialPayment flag is set, deliver up to this
     /// amount instead.
-    pub amount: Amount<'a>,
+    pub amount: Amount,
     /// The unique address of the account receiving the payment.
     pub destination: Cow<'a, str>,
     /// Arbitrary tag that identifies the reason for the payment to the destination,
@@ -83,13 +83,13 @@ pub struct Payment<'a> {
     /// as a cost for submitting the transaction. For non-XRP amounts, the nested field
     /// names MUST be lower-case. Must be supplied for cross-currency/cross-issue payments.
     /// Must be omitted for XRP-to-XRP payments.
-    pub send_max: Option<Amount<'a>>,
+    pub send_max: Option<Amount>,
     /// Minimum amount of destination currency this transaction should deliver. Only valid
     /// if this is a partial payment. For non-XRP amounts, the nested field names are lower-case.
-    pub deliver_min: Option<Amount<'a>>,
+    pub deliver_min: Option<Amount>,
 }
 
-impl<'a> Model for Payment<'a> {
+impl Model for Payment {
     fn get_errors(&self) -> XRPLModelResult<()> {
         self._get_xrp_transaction_error()?;
         self._get_partial_payment_error()?;
@@ -98,7 +98,7 @@ impl<'a> Model for Payment<'a> {
     }
 }
 
-impl<'a> Transaction<'a, PaymentFlag> for Payment<'a> {
+impl Transaction<'a, PaymentFlag> for Payment {
     fn has_flag(&self, flag: &PaymentFlag) -> bool {
         self.common_fields.has_flag(flag)
     }
@@ -116,7 +116,7 @@ impl<'a> Transaction<'a, PaymentFlag> for Payment<'a> {
     }
 }
 
-impl<'a> PaymentError for Payment<'a> {
+impl PaymentError for Payment {
     fn _get_xrp_transaction_error(&self) -> XRPLModelResult<()> {
         if self.amount.is_xrp() && self.send_max.is_none() {
             if self.paths.is_some() {
@@ -188,11 +188,11 @@ impl<'a> PaymentError for Payment<'a> {
     }
 }
 
-impl<'a> Payment<'a> {
+impl Payment {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,
-        fee: Option<XRPAmount<'a>>,
+        fee: Option<XRPAmount>,
         flags: Option<FlagCollection<PaymentFlag>>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
@@ -200,13 +200,13 @@ impl<'a> Payment<'a> {
         signers: Option<Vec<Signer>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
-        amount: Amount<'a>,
+        amount: Amount,
         destination: Cow<'a, str>,
-        deliver_min: Option<Amount<'a>>,
+        deliver_min: Option<Amount>,
         destination_tag: Option<u32>,
         invoice_id: Option<u32>,
         paths: Option<Vec<Vec<PathStep>>>,
-        send_max: Option<Amount<'a>>,
+        send_max: Option<Amount>,
     ) -> Self {
         Self {
             common_fields: CommonFields::new(

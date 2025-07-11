@@ -26,18 +26,18 @@ pub struct AMMBid<'a> {
     #[serde(flatten)]
     pub common_fields: CommonFields<'a, NoFlags>,
     /// The definition for one of the assets in the AMM's pool.
-    pub asset: Currency<'a>,
+    pub asset: Currency,
     /// The definition for the other asset in the AMM's pool.
     #[serde(rename = "Asset2")]
-    pub asset2: Currency<'a>,
+    pub asset2: Currency,
     /// Pay at least this LPToken amount for the slot.
     /// Setting this value higher makes it harder for others to outbid you.
     /// If omitted, pay the minimum necessary to win the bid.
-    pub bid_min: Option<IssuedCurrencyAmount<'a>>,
+    pub bid_min: Option<IssuedCurrencyAmount>,
     /// Pay at most this LPToken amount for the slot.
     /// If the cost to win the bid is higher than this amount, the transaction fails.
     /// If omitted, pay as much as necessary to win the bid.
-    pub bid_max: Option<IssuedCurrencyAmount<'a>>,
+    pub bid_max: Option<IssuedCurrencyAmount>,
     /// A list of up to 4 additional accounts that you allow to trade at the discounted fee.
     /// This cannot include the address of the transaction sender.
     pub auth_accounts: Option<Vec<AuthAccount>>,
@@ -49,7 +49,7 @@ impl Model for AMMBid<'_> {
     }
 }
 
-impl<'a> Transaction<'a, NoFlags> for AMMBid<'a> {
+impl Transaction<'a, NoFlags> for AMMBid {
     fn get_common_fields(&self) -> &CommonFields<'_, NoFlags> {
         &self.common_fields
     }
@@ -67,17 +67,17 @@ impl<'a> AMMBid<'_> {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,
-        fee: Option<XRPAmount<'a>>,
+        fee: Option<XRPAmount>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
         sequence: Option<u32>,
         signers: Option<Vec<Signer>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
-        asset: Currency<'a>,
-        asset2: Currency<'a>,
-        bid_min: Option<IssuedCurrencyAmount<'a>>,
-        bid_max: Option<IssuedCurrencyAmount<'a>>,
+        asset: Currency,
+        asset2: Currency,
+        bid_min: Option<IssuedCurrencyAmount>,
+        bid_max: Option<IssuedCurrencyAmount>,
         auth_accounts: Option<Vec<AuthAccount>>,
     ) -> AMMBid<'a> {
         AMMBid {

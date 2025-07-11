@@ -41,24 +41,24 @@ pub struct AMMDeposit<'a> {
     #[serde(flatten)]
     pub common_fields: CommonFields<'a, AMMDepositFlag>,
     /// The definition for one of the assets in the AMM's pool.
-    pub asset: Currency<'a>,
+    pub asset: Currency,
     /// The definition for the other asset in the AMM's pool.
     #[serde(rename = "Asset2")]
-    pub asset2: Currency<'a>,
+    pub asset2: Currency,
     /// The amount of one asset to deposit to the AMM.
     /// If present, this must match the type of one of the assets (tokens or XRP)
     /// in the AMM's pool.
-    pub amount: Option<Amount<'a>>,
+    pub amount: Option<Amount>,
     /// The amount of another asset to add to the AMM.
     /// If present, this must match the type of the other asset in the AMM's pool
     /// and cannot be the same asset as Amount.
     #[serde(rename = "Amount2")]
-    pub amount2: Option<Amount<'a>>,
+    pub amount2: Option<Amount>,
     /// The maximum effective price, in the deposit asset, to pay
     /// for each LP Token received.
-    pub e_price: Option<Amount<'a>>,
+    pub e_price: Option<Amount>,
     /// How many of the AMM's LP Tokens to buy.
-    pub lp_token_out: Option<IssuedCurrencyAmount<'a>>,
+    pub lp_token_out: Option<IssuedCurrencyAmount>,
 }
 
 impl Model for AMMDeposit<'_> {
@@ -84,7 +84,7 @@ impl Model for AMMDeposit<'_> {
     }
 }
 
-impl<'a> Transaction<'a, AMMDepositFlag> for AMMDeposit<'a> {
+impl Transaction<'a, AMMDepositFlag> for AMMDeposit {
     fn get_common_fields(&self) -> &CommonFields<'_, AMMDepositFlag> {
         &self.common_fields
     }
@@ -98,11 +98,11 @@ impl<'a> Transaction<'a, AMMDepositFlag> for AMMDeposit<'a> {
     }
 }
 
-impl<'a> AMMDeposit<'a> {
+impl AMMDeposit {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,
-        fee: Option<XRPAmount<'a>>,
+        fee: Option<XRPAmount>,
         flags: Option<FlagCollection<AMMDepositFlag>>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
@@ -110,12 +110,12 @@ impl<'a> AMMDeposit<'a> {
         signers: Option<Vec<Signer>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
-        asset: Currency<'a>,
-        asset2: Currency<'a>,
-        amount: Option<Amount<'a>>,
-        amount2: Option<Amount<'a>>,
-        e_price: Option<Amount<'a>>,
-        lp_token_out: Option<IssuedCurrencyAmount<'a>>,
+        asset: Currency,
+        asset2: Currency,
+        amount: Option<Amount>,
+        amount2: Option<Amount>,
+        e_price: Option<Amount>,
+        lp_token_out: Option<IssuedCurrencyAmount>,
     ) -> AMMDeposit<'a> {
         AMMDeposit {
             common_fields: CommonFields::new(

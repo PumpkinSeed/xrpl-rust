@@ -33,7 +33,7 @@ pub fn get_fee<C>(
     client: &C,
     max_fee: Option<u32>,
     fee_type: Option<FeeType>,
-) -> XRPLHelperResult<XRPAmount<'_>>
+) -> XRPLHelperResult<XRPAmount>
 where
     C: XRPLClient,
 {

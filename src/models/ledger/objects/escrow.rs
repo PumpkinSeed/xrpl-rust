@@ -43,7 +43,7 @@ pub struct Escrow<'a> {
     /// the XRP, and gets it back if the held payment is canceled.
     pub account: Cow<'a, str>,
     /// The amount of XRP, in drops, to be delivered by the held payment.
-    pub amount: Amount<'a>,
+    pub amount: Amount,
     /// The destination address where the XRP is paid if the held payment is successful.
     pub destination: Cow<'a, str>,
     /// A hint indicating which page of the owner directory links to this object, in case the
@@ -77,20 +77,20 @@ pub struct Escrow<'a> {
     pub source_tag: Option<u32>,
 }
 
-impl<'a> Model for Escrow<'a> {}
+impl Model for Escrow {}
 
-impl<'a> LedgerObject<NoFlags> for Escrow<'a> {
+impl LedgerObject<NoFlags> for Escrow {
     fn get_ledger_entry_type(&self) -> LedgerEntryType {
         self.common_fields.get_ledger_entry_type()
     }
 }
 
-impl<'a> Escrow<'a> {
+impl Escrow {
     pub fn new(
         index: Option<Cow<'a, str>>,
         ledger_index: Option<Cow<'a, str>>,
         account: Cow<'a, str>,
-        amount: Amount<'a>,
+        amount: Amount,
         destination: Cow<'a, str>,
         owner_node: Cow<'a, str>,
         previous_txn_id: Cow<'a, str>,

@@ -16,6 +16,6 @@ pub struct XChainOwnedCreateAccountClaimID<'a> {
     #[serde(rename = "XChainAccountCreateCount")]
     pub xchain_account_create_count: u64,
     #[serde(rename = "XChainBridge")]
-    pub xchain_bridge: XChainBridge<'a>,
+    pub xchain_bridge: XChainBridge,
     pub xchain_create_account_attestations: Vec<XChainClaimProofSig<'a>>,
 }

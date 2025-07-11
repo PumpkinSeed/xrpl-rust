@@ -11,7 +11,7 @@ use crate::models::{Amount, FlagCollection};
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
 pub struct NFTOffer<'a> {
     /// The amount offered to buy the NFToken.
-    pub amount: Amount<'a>,
+    pub amount: Amount,
     /// Bit-map of boolean flags enabled for this offer.
     #[serde(with = "lgr_obj_flags")]
     pub flags: FlagCollection<NFTokenOfferFlag>,

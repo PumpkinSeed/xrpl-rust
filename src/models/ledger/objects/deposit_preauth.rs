@@ -41,15 +41,15 @@ pub struct DepositPreauth<'a> {
     pub previous_txn_lgr_seq: u32,
 }
 
-impl<'a> Model for DepositPreauth<'a> {}
+impl Model for DepositPreauth {}
 
-impl<'a> LedgerObject<NoFlags> for DepositPreauth<'a> {
+impl LedgerObject<NoFlags> for DepositPreauth {
     fn get_ledger_entry_type(&self) -> LedgerEntryType {
         self.common_fields.get_ledger_entry_type()
     }
 }
 
-impl<'a> DepositPreauth<'a> {
+impl DepositPreauth {
     pub fn new(
         index: Option<Cow<'a, str>>,
         ledger_index: Option<Cow<'a, str>>,

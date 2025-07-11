@@ -187,7 +187,7 @@ pub async fn calculate_fee_per_transaction_type<'a, 'b, 'c, T, F, C>(
     transaction: &T,
     client: Option<&'b C>,
     signers_count: Option<u8>,
-) -> XRPLHelperResult<XRPAmount<'c>>
+) -> XRPLHelperResult<XRPAmount>
 where
     T: Transaction<'a, F>,
     F: IntoEnumIterator + Serialize + Debug + PartialEq,
@@ -235,7 +235,7 @@ where
 
 async fn get_owner_reserve_from_response(
     client: &impl XRPLAsyncClient,
-) -> XRPLHelperResult<XRPAmount<'_>> {
+) -> XRPLHelperResult<XRPAmount> {
     let owner_reserve_response = client.request(ServerState::new(None).into()).await?;
     let owner_reserve_response: XRPLResponse<'_, ServerStateResult> =
         serde_json::from_str(&owner_reserve_response)?;
@@ -247,9 +247,9 @@ async fn get_owner_reserve_from_response(
 }
 
 fn calculate_base_fee_for_escrow_finish<'a: 'b, 'b>(
-    net_fee: XRPAmount<'a>,
+    net_fee: XRPAmount,
     fulfillment: Option<Cow<str>>,
-) -> XRPLHelperResult<XRPAmount<'b>> {
+) -> XRPLHelperResult<XRPAmount> {
     if let Some(fulfillment) = fulfillment {
         calculate_based_on_fulfillment(fulfillment, net_fee)
     } else {
@@ -259,8 +259,8 @@ fn calculate_base_fee_for_escrow_finish<'a: 'b, 'b>(
 
 fn calculate_based_on_fulfillment<'a>(
     fulfillment: Cow<str>,
-    net_fee: XRPAmount<'_>,
-) -> XRPLHelperResult<XRPAmount<'a>> {
+    net_fee: XRPAmount,
+) -> XRPLHelperResult<XRPAmount> {
     let fulfillment_bytes: Vec<u8> = fulfillment.chars().map(|c| c as u8).collect();
     let net_fee_f64: f64 = net_fee.try_into()?;
     let base_fee_string =

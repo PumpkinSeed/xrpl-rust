@@ -12,7 +12,7 @@ use super::{CommonFields, Transaction, TransactionType};
 pub struct XChainAddClaimAttestation<'a> {
     #[serde(flatten)]
     pub common_fields: CommonFields<'a, NoFlags>,
-    pub amount: Amount<'a>,
+    pub amount: Amount,
     pub attestation_reward_account: Cow<'a, str>,
     pub attestation_signer_account: Cow<'a, str>,
     pub other_chain_source: Cow<'a, str>,
@@ -20,7 +20,7 @@ pub struct XChainAddClaimAttestation<'a> {
     pub signature: Cow<'a, str>,
     pub was_locking_chain_send: u8,
     #[serde(rename = "XChainBridge")]
-    pub xchain_bridge: XChainBridge<'a>,
+    pub xchain_bridge: XChainBridge,
     #[serde(rename = "XChainClaimID")]
     pub xchain_claim_id: Cow<'a, str>,
     pub destination: Option<Cow<'a, str>>,
@@ -32,7 +32,7 @@ impl Model for XChainAddClaimAttestation<'_> {
     }
 }
 
-impl<'a> Transaction<'a, NoFlags> for XChainAddClaimAttestation<'a> {
+impl Transaction<'a, NoFlags> for XChainAddClaimAttestation {
     fn get_transaction_type(&self) -> &super::TransactionType {
         self.common_fields.get_transaction_type()
     }
@@ -46,25 +46,25 @@ impl<'a> Transaction<'a, NoFlags> for XChainAddClaimAttestation<'a> {
     }
 }
 
-impl<'a> XChainAddClaimAttestation<'a> {
+impl XChainAddClaimAttestation {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,
-        fee: Option<crate::models::XRPAmount<'a>>,
+        fee: Option<crate::models::XRPAmount>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<super::Memo>>,
         sequence: Option<u32>,
         signers: Option<Vec<super::Signer>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
-        amount: Amount<'a>,
+        amount: Amount,
         attestation_reward_account: Cow<'a, str>,
         attestation_signer_account: Cow<'a, str>,
         other_chain_source: Cow<'a, str>,
         public_key: Cow<'a, str>,
         signature: Cow<'a, str>,
         was_locking_chain_send: u8,
-        xchain_bridge: XChainBridge<'a>,
+        xchain_bridge: XChainBridge,
         xchain_claim_id: Cow<'a, str>,
         destination: Option<Cow<'a, str>>,
     ) -> XChainAddClaimAttestation<'a> {

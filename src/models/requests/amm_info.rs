@@ -7,18 +7,18 @@ use super::{CommonFields, Request};
 
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
-pub struct AMMInfo<'a> {
+pub struct AMMInfo {
     /// The common fields shared by all requests.
     #[serde(flatten)]
     pub common_fields: CommonFields,
     pub amm_account: Option<String>,
-    pub asset: Option<Currency<'a>>,
-    pub asset2: Option<Currency<'a>>,
+    pub asset: Option<Currency>,
+    pub asset2: Option<Currency>,
 }
 
-impl Model for AMMInfo<'_> {}
+impl Model for AMMInfo {}
 
-impl<'a> Request for AMMInfo<'a> {
+impl Request for AMMInfo {
     fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
@@ -28,12 +28,12 @@ impl<'a> Request for AMMInfo<'a> {
     }
 }
 
-impl<'a> AMMInfo<'a> {
+impl AMMInfo {
     pub fn new(
         id: Option<String>,
         amm_account: Option<String>,
-        asset: Option<Currency<'a>>,
-        asset2: Option<Currency<'a>>,
+        asset: Option<Currency>,
+        asset2: Option<Currency>,
     ) -> Self {
         Self {
             common_fields: CommonFields {

@@ -125,7 +125,7 @@ pub enum XRPLRequest<'a> {
     AccountObjects(account_objects::AccountObjects),
     AccountOffers(account_offers::AccountOffers),
     AccountTx(account_tx::AccountTx),
-    AMMInfo(amm_info::AMMInfo<'a>),
+    AMMInfo(amm_info::AMMInfo),
     GatewayBalances(gateway_balances::GatewayBalances),
     NoRippleCheck(no_ripple_check::NoRippleCheck),
     Submit(submit::Submit),
@@ -133,23 +133,23 @@ pub enum XRPLRequest<'a> {
     TransactionEntry(transaction_entry::TransactionEntry),
     Tx(tx::Tx),
     ChannelAuthorize(channel_authorize::ChannelAuthorize),
-    ChannelVerify(channel_verify::ChannelVerify<'a>),
-    BookOffers(book_offers::BookOffers<'a>),
+    ChannelVerify(channel_verify::ChannelVerify),
+    BookOffers(book_offers::BookOffers),
     DepositAuthorized(deposit_authorize::DepositAuthorized),
     NFTBuyOffers(nft_buy_offers::NftBuyOffers),
     NFTHistory(nft_history::NFTHistory),
     NFTInfo(nft_info::NFTInfo),
     NFTSellOffers(nft_sell_offers::NftSellOffers),
     NFTsByIssuer(nfts_by_issuer::NFTsByIssuer),
-    PathFind(path_find::PathFind<'a>),
-    RipplePathFind(ripple_path_find::RipplePathFind<'a>),
+    PathFind(path_find::PathFind),
+    RipplePathFind(ripple_path_find::RipplePathFind),
     Ledger(ledger::Ledger),
     LedgerClosed(ledger_closed::LedgerClosed),
     LedgerCurrent(ledger_current::LedgerCurrent),
     LedgerData(ledger_data::LedgerData),
     LedgerEntry(ledger_entry::LedgerEntry<'a>),
-    Subscribe(subscribe::Subscribe<'a>),
-    Unsubscribe(unsubscribe::Unsubscribe<'a>),
+    Subscribe(subscribe::Subscribe),
+    Unsubscribe(unsubscribe::Unsubscribe),
     Fee(fee::Fee),
     Manifest(manifest::Manifest),
     ServerInfo(server_info::ServerInfo),
@@ -158,223 +158,223 @@ pub enum XRPLRequest<'a> {
     Random(random::Random),
 }
 
-impl<'a> From<account_channels::AccountChannels> for XRPLRequest<'a> {
+impl From<account_channels::AccountChannels> for XRPLRequest {
     fn from(request: account_channels::AccountChannels) -> Self {
         XRPLRequest::AccountChannels(request)
     }
 }
 
-impl<'a> From<account_currencies::AccountCurrencies> for XRPLRequest<'a> {
+impl From<account_currencies::AccountCurrencies> for XRPLRequest {
     fn from(request: account_currencies::AccountCurrencies) -> Self {
         XRPLRequest::AccountCurrencies(request)
     }
 }
 
-impl<'a> From<account_info::AccountInfo> for XRPLRequest<'a> {
+impl From<account_info::AccountInfo> for XRPLRequest {
     fn from(request: account_info::AccountInfo) -> Self {
         XRPLRequest::AccountInfo(request)
     }
 }
 
-impl<'a> From<account_lines::AccountLines> for XRPLRequest<'a> {
+impl From<account_lines::AccountLines> for XRPLRequest {
     fn from(request: account_lines::AccountLines) -> Self {
         XRPLRequest::AccountLines(request)
     }
 }
 
-impl<'a> From<account_nfts::AccountNfts> for XRPLRequest<'a> {
+impl From<account_nfts::AccountNfts> for XRPLRequest {
     fn from(request: account_nfts::AccountNfts) -> Self {
         XRPLRequest::AccountNfts(request)
     }
 }
 
-impl<'a> From<account_objects::AccountObjects> for XRPLRequest<'a> {
+impl From<account_objects::AccountObjects> for XRPLRequest {
     fn from(request: account_objects::AccountObjects) -> Self {
         XRPLRequest::AccountObjects(request)
     }
 }
 
-impl<'a> From<account_offers::AccountOffers> for XRPLRequest<'a> {
+impl From<account_offers::AccountOffers> for XRPLRequest {
     fn from(request: account_offers::AccountOffers) -> Self {
         XRPLRequest::AccountOffers(request)
     }
 }
 
-impl<'a> From<account_tx::AccountTx> for XRPLRequest<'a> {
+impl From<account_tx::AccountTx> for XRPLRequest {
     fn from(request: account_tx::AccountTx) -> Self {
         XRPLRequest::AccountTx(request)
     }
 }
 
-impl<'a> From<amm_info::AMMInfo<'a>> for XRPLRequest<'a> {
-    fn from(request: amm_info::AMMInfo<'a>) -> Self {
+impl From<amm_info::AMMInfo> for XRPLRequest {
+    fn from(request: amm_info::AMMInfo) -> Self {
         XRPLRequest::AMMInfo(request)
     }
 }
 
-impl<'a> From<gateway_balances::GatewayBalances> for XRPLRequest<'a> {
+impl From<gateway_balances::GatewayBalances> for XRPLRequest {
     fn from(request: gateway_balances::GatewayBalances) -> Self {
         XRPLRequest::GatewayBalances(request)
     }
 }
 
-impl<'a> From<no_ripple_check::NoRippleCheck> for XRPLRequest<'a> {
+impl From<no_ripple_check::NoRippleCheck> for XRPLRequest {
     fn from(request: no_ripple_check::NoRippleCheck) -> Self {
         XRPLRequest::NoRippleCheck(request)
     }
 }
 
-impl<'a> From<submit::Submit> for XRPLRequest<'a> {
+impl From<submit::Submit> for XRPLRequest {
     fn from(request: submit::Submit) -> Self {
         XRPLRequest::Submit(request)
     }
 }
 
-impl<'a> From<submit_multisigned::SubmitMultisigned> for XRPLRequest<'a> {
+impl From<submit_multisigned::SubmitMultisigned> for XRPLRequest {
     fn from(request: submit_multisigned::SubmitMultisigned) -> Self {
         XRPLRequest::SubmitMultisigned(request)
     }
 }
 
-impl<'a> From<transaction_entry::TransactionEntry> for XRPLRequest<'a> {
+impl From<transaction_entry::TransactionEntry> for XRPLRequest {
     fn from(request: transaction_entry::TransactionEntry) -> Self {
         XRPLRequest::TransactionEntry(request)
     }
 }
 
-impl<'a> From<tx::Tx> for XRPLRequest<'a> {
+impl From<tx::Tx> for XRPLRequest {
     fn from(request: tx::Tx) -> Self {
         XRPLRequest::Tx(request)
     }
 }
 
-impl<'a> From<channel_authorize::ChannelAuthorize> for XRPLRequest<'a> {
+impl From<channel_authorize::ChannelAuthorize> for XRPLRequest {
     fn from(request: channel_authorize::ChannelAuthorize) -> Self {
         XRPLRequest::ChannelAuthorize(request)
     }
 }
 
-impl<'a> From<channel_verify::ChannelVerify<'a>> for XRPLRequest<'a> {
-    fn from(request: channel_verify::ChannelVerify<'a>) -> Self {
+impl From<channel_verify::ChannelVerify> for XRPLRequest {
+    fn from(request: channel_verify::ChannelVerify) -> Self {
         XRPLRequest::ChannelVerify(request)
     }
 }
 
-impl<'a> From<book_offers::BookOffers<'a>> for XRPLRequest<'a> {
-    fn from(request: book_offers::BookOffers<'a>) -> Self {
+impl From<book_offers::BookOffers> for XRPLRequest {
+    fn from(request: book_offers::BookOffers) -> Self {
         XRPLRequest::BookOffers(request)
     }
 }
 
-impl<'a> From<deposit_authorize::DepositAuthorized> for XRPLRequest<'a> {
+impl From<deposit_authorize::DepositAuthorized> for XRPLRequest {
     fn from(request: deposit_authorize::DepositAuthorized) -> Self {
         XRPLRequest::DepositAuthorized(request)
     }
 }
 
-impl<'a> From<nft_buy_offers::NftBuyOffers> for XRPLRequest<'a> {
+impl From<nft_buy_offers::NftBuyOffers> for XRPLRequest {
     fn from(request: nft_buy_offers::NftBuyOffers) -> Self {
         XRPLRequest::NFTBuyOffers(request)
     }
 }
 
-impl<'a> From<nft_sell_offers::NftSellOffers> for XRPLRequest<'a> {
+impl From<nft_sell_offers::NftSellOffers> for XRPLRequest {
     fn from(request: nft_sell_offers::NftSellOffers) -> Self {
         XRPLRequest::NFTSellOffers(request)
     }
 }
 
-impl<'a> From<path_find::PathFind<'a>> for XRPLRequest<'a> {
-    fn from(request: path_find::PathFind<'a>) -> Self {
+impl From<path_find::PathFind> for XRPLRequest {
+    fn from(request: path_find::PathFind) -> Self {
         XRPLRequest::PathFind(request)
     }
 }
 
-impl<'a> From<ripple_path_find::RipplePathFind<'a>> for XRPLRequest<'a> {
-    fn from(request: ripple_path_find::RipplePathFind<'a>) -> Self {
+impl From<ripple_path_find::RipplePathFind> for XRPLRequest {
+    fn from(request: ripple_path_find::RipplePathFind) -> Self {
         XRPLRequest::RipplePathFind(request)
     }
 }
 
-impl<'a> From<ledger::Ledger> for XRPLRequest<'a> {
+impl From<ledger::Ledger> for XRPLRequest {
     fn from(request: ledger::Ledger) -> Self {
         XRPLRequest::Ledger(request)
     }
 }
 
-impl<'a> From<ledger_closed::LedgerClosed> for XRPLRequest<'a> {
+impl From<ledger_closed::LedgerClosed> for XRPLRequest {
     fn from(request: ledger_closed::LedgerClosed) -> Self {
         XRPLRequest::LedgerClosed(request)
     }
 }
 
-impl<'a> From<ledger_current::LedgerCurrent> for XRPLRequest<'a> {
+impl From<ledger_current::LedgerCurrent> for XRPLRequest {
     fn from(request: ledger_current::LedgerCurrent) -> Self {
         XRPLRequest::LedgerCurrent(request)
     }
 }
 
-impl<'a> From<ledger_data::LedgerData> for XRPLRequest<'a> {
+impl From<ledger_data::LedgerData> for XRPLRequest {
     fn from(request: ledger_data::LedgerData) -> Self {
         XRPLRequest::LedgerData(request)
     }
 }
 
-impl<'a> From<ledger_entry::LedgerEntry<'a>> for XRPLRequest<'a> {
-    fn from(request: ledger_entry::LedgerEntry<'a>) -> Self {
+impl From<ledger_entry::LedgerEntry<'a>> for XRPLRequest {
+    fn from(request: ledger_entry::LedgerEntry) -> Self {
         XRPLRequest::LedgerEntry(request)
     }
 }
 
-impl<'a> From<subscribe::Subscribe<'a>> for XRPLRequest<'a> {
-    fn from(request: subscribe::Subscribe<'a>) -> Self {
+impl From<subscribe::Subscribe> for XRPLRequest {
+    fn from(request: subscribe::Subscribe) -> Self {
         XRPLRequest::Subscribe(request)
     }
 }
 
-impl<'a> From<unsubscribe::Unsubscribe<'a>> for XRPLRequest<'a> {
-    fn from(request: unsubscribe::Unsubscribe<'a>) -> Self {
+impl From<unsubscribe::Unsubscribe> for XRPLRequest {
+    fn from(request: unsubscribe::Unsubscribe) -> Self {
         XRPLRequest::Unsubscribe(request)
     }
 }
 
-impl<'a> From<fee::Fee> for XRPLRequest<'a> {
+impl From<fee::Fee> for XRPLRequest {
     fn from(request: fee::Fee) -> Self {
         XRPLRequest::Fee(request)
     }
 }
 
-impl<'a> From<manifest::Manifest> for XRPLRequest<'a> {
+impl From<manifest::Manifest> for XRPLRequest {
     fn from(request: manifest::Manifest) -> Self {
         XRPLRequest::Manifest(request)
     }
 }
 
-impl<'a> From<server_info::ServerInfo> for XRPLRequest<'a> {
+impl From<server_info::ServerInfo> for XRPLRequest {
     fn from(request: server_info::ServerInfo) -> Self {
         XRPLRequest::ServerInfo(request)
     }
 }
 
-impl<'a> From<server_state::ServerState> for XRPLRequest<'a> {
+impl From<server_state::ServerState> for XRPLRequest {
     fn from(request: server_state::ServerState) -> Self {
         XRPLRequest::ServerState(request)
     }
 }
 
-impl<'a> From<ping::Ping> for XRPLRequest<'a> {
+impl From<ping::Ping> for XRPLRequest {
     fn from(request: ping::Ping) -> Self {
         XRPLRequest::Ping(request)
     }
 }
 
-impl<'a> From<random::Random> for XRPLRequest<'a> {
+impl From<random::Random> for XRPLRequest {
     fn from(request: random::Random) -> Self {
         XRPLRequest::Random(request)
     }
 }
 
-impl<'a> Request for XRPLRequest<'a> {
+impl Request for XRPLRequest {
     fn get_common_fields(&self) -> &CommonFields {
         match self {
             XRPLRequest::AccountChannels(request) => request.get_common_fields(),

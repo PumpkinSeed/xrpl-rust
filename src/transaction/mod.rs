@@ -115,7 +115,7 @@ pub fn calculate_fee_per_transaction_type<'a, 'b, 'c, T, F, C>(
     transaction: &T,
     client: Option<&'b C>,
     signers_count: Option<u8>,
-) -> XRPLHelperResult<XRPAmount<'c>>
+) -> XRPLHelperResult<XRPAmount>
 where
     T: Transaction<'a, F>,
     F: IntoEnumIterator + Serialize + Debug + PartialEq,

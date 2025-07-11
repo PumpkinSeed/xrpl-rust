@@ -20,7 +20,7 @@ pub struct PathFind<'a> {
     /// Unique address of the account that would receive a transaction.
     pub destination_account: Cow<'a, str>,
     /// Currency Amount that the destination would receive in a transaction.
-    pub destination_amount: Amount<'a>,
+    pub destination_amount: Amount,
     /// Unique address that would send a transaction.
     pub source_account: Cow<'a, str>,
     /// If false, this is the result of an incomplete search. A later reply may have
@@ -37,7 +37,7 @@ pub struct PathAlternative<'a> {
     pub paths_computed: Cow<'a, [Cow<'a, [PathStep<'a>]>]>,
     /// Currency Amount that the source would have to send along this path for the
     /// destination to receive the desired amount.
-    pub source_amount: Amount<'a>,
+    pub source_amount: Amount,
 }
 
 /// A PathStep represents an individual step along a Path.

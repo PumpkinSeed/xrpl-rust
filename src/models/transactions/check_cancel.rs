@@ -41,13 +41,13 @@ pub struct CheckCancel<'a> {
     pub check_id: Cow<'a, str>,
 }
 
-impl<'a> Model for CheckCancel<'a> {
+impl Model for CheckCancel {
     fn get_errors(&self) -> crate::models::XRPLModelResult<()> {
         self.validate_currencies()
     }
 }
 
-impl<'a> Transaction<'a, NoFlags> for CheckCancel<'a> {
+impl Transaction<'a, NoFlags> for CheckCancel {
     fn get_transaction_type(&self) -> &TransactionType {
         self.common_fields.get_transaction_type()
     }
@@ -61,11 +61,11 @@ impl<'a> Transaction<'a, NoFlags> for CheckCancel<'a> {
     }
 }
 
-impl<'a> CheckCancel<'a> {
+impl CheckCancel {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,
-        fee: Option<XRPAmount<'a>>,
+        fee: Option<XRPAmount>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
         sequence: Option<u32>,

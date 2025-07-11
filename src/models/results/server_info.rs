@@ -133,13 +133,13 @@ pub struct LedgerInfo<'a> {
     /// Time since ledger close in seconds
     pub age: Option<u32>,
     /// Base fee in XRP (Not drops for some reason?)
-    pub base_fee_xrp: Option<Amount<'a>>,
+    pub base_fee_xrp: Option<Amount>,
     /// Unique ledger hash
     pub hash: Cow<'a, str>,
     /// Minimum XRP reserve for accounts (Not drops for some reason?)
-    pub reserve_base_xrp: Option<Amount<'a>>,
+    pub reserve_base_xrp: Option<Amount>,
     /// Additional XRP reserve per owned object (Not drops for some reason?)
-    pub reserve_inc_xrp: Option<Amount<'a>>,
+    pub reserve_inc_xrp: Option<Amount>,
     /// Ledger sequence number
     pub seq: u32,
 }

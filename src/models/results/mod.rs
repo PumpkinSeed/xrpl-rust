@@ -49,7 +49,7 @@ use serde_json::{value::Index, Map, Value};
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct NftOffer<'a> {
-    pub amount: Amount<'a>,
+    pub amount: Amount,
     pub flags: u32,
     pub nft_offer_index: Cow<'a, str>,
     pub owner: Cow<'a, str>,
@@ -152,7 +152,7 @@ pub enum XRPLResult<'a> {
 
 macro_rules! impl_from_result {
     ($module_name:ident, $variant:ident) => {
-        impl<'a> From<$module_name::$variant<'a>> for XRPLResult<'a> {
+        impl From<$module_name::$variant<'a>> for XRPLResult {
             fn from(value: $module_name::$variant<'a>) -> Self {
                 XRPLResult::$variant(value)
             }
@@ -196,13 +196,13 @@ impl_from_result!(ping, Ping);
 impl_from_result!(subscribe, Subscribe);
 impl_from_result!(unsubscribe, Unsubscribe);
 
-impl<'a> From<Value> for XRPLResult<'a> {
+impl From<Value> for XRPLResult {
     fn from(value: Value) -> Self {
         XRPLResult::Other(XRPLOtherResult(value))
     }
 }
 
-impl<'a> From<XRPLOtherResult> for XRPLResult<'a> {
+impl From<XRPLOtherResult> for XRPLResult {
     fn from(other: XRPLOtherResult) -> Self {
         XRPLResult::Other(other)
     }
@@ -210,7 +210,7 @@ impl<'a> From<XRPLOtherResult> for XRPLResult<'a> {
 
 macro_rules! impl_try_from_result {
     ($module_name:ident, $type:ident, $variant:ident) => {
-        impl<'a> TryFrom<XRPLResult<'a>> for $module_name::$type<'a> {
+        impl TryFrom<XRPLResult<'a>> for $module_name::$type {
             type Error = XRPLModelException;
 
             fn try_from(result: XRPLResult<'a>) -> XRPLModelResult<Self> {
@@ -262,7 +262,7 @@ impl_try_from_result!(ping, Ping, Ping);
 impl_try_from_result!(subscribe, Subscribe, Subscribe);
 impl_try_from_result!(unsubscribe, Unsubscribe, Unsubscribe);
 
-impl<'a> TryInto<Value> for XRPLResult<'a> {
+impl TryInto<Value> for XRPLResult {
     type Error = XRPLModelException;
 
     fn try_into(self) -> XRPLModelResult<Value> {

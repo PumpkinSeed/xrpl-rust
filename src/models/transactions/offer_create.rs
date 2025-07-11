@@ -72,22 +72,22 @@ pub struct OfferCreate<'a> {
     // See OfferCreate fields:
     // `<https://xrpl.org/offercreate.html#offercreate-fields>`
     /// The amount and type of currency being sold.
-    pub taker_gets: Amount<'a>,
+    pub taker_gets: Amount,
     /// The amount and type of currency being bought.
-    pub taker_pays: Amount<'a>,
+    pub taker_pays: Amount,
     /// Time after which the Offer is no longer active, in seconds since the Ripple Epoch.
     pub expiration: Option<u32>,
     /// An Offer to delete first, specified in the same way as OfferCancel.
     pub offer_sequence: Option<u32>,
 }
 
-impl<'a> Model for OfferCreate<'a> {
+impl Model for OfferCreate {
     fn get_errors(&self) -> crate::models::XRPLModelResult<()> {
         self.validate_currencies()
     }
 }
 
-impl<'a> Transaction<'a, OfferCreateFlag> for OfferCreate<'a> {
+impl Transaction<'a, OfferCreateFlag> for OfferCreate {
     fn has_flag(&self, flag: &OfferCreateFlag) -> bool {
         self.common_fields.has_flag(flag)
     }
@@ -105,11 +105,11 @@ impl<'a> Transaction<'a, OfferCreateFlag> for OfferCreate<'a> {
     }
 }
 
-impl<'a> OfferCreate<'a> {
+impl OfferCreate {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,
-        fee: Option<XRPAmount<'a>>,
+        fee: Option<XRPAmount>,
         flags: Option<FlagCollection<OfferCreateFlag>>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
@@ -117,8 +117,8 @@ impl<'a> OfferCreate<'a> {
         signers: Option<Vec<Signer>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
-        taker_gets: Amount<'a>,
-        taker_pays: Amount<'a>,
+        taker_gets: Amount,
+        taker_pays: Amount,
         expiration: Option<u32>,
         offer_sequence: Option<u32>,
     ) -> Self {

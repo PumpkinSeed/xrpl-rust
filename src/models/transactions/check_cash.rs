@@ -43,21 +43,21 @@ pub struct CheckCash<'a> {
     pub check_id: Cow<'a, str>,
     /// Redeem the Check for exactly this amount, if possible. The currency must match that of the
     /// SendMax of the corresponding CheckCreate transaction. You must provide either this field or DeliverMin.
-    pub amount: Option<Amount<'a>>,
+    pub amount: Option<Amount>,
     /// Redeem the Check for at least this amount and for as much as possible. The currency must
     /// match that of the SendMax of the corresponding CheckCreate transaction. You must provide
     /// either this field or Amount.
-    pub deliver_min: Option<Amount<'a>>,
+    pub deliver_min: Option<Amount>,
 }
 
-impl<'a> Model for CheckCash<'a> {
+impl Model for CheckCash {
     fn get_errors(&self) -> XRPLModelResult<()> {
         //self._get_amount_and_deliver_min_error()?;
         self.validate_currencies()
     }
 }
 
-impl<'a> Transaction<'a, NoFlags> for CheckCash<'a> {
+impl Transaction<'a, NoFlags> for CheckCash {
     fn get_transaction_type(&self) -> &TransactionType {
         self.common_fields.get_transaction_type()
     }
@@ -71,7 +71,7 @@ impl<'a> Transaction<'a, NoFlags> for CheckCash<'a> {
     }
 }
 
-impl<'a> CheckCashError for CheckCash<'a> {
+impl CheckCashError for CheckCash {
     fn _get_amount_and_deliver_min_error(&self) -> XRPLModelResult<()> {
         if (self.amount.is_none() && self.deliver_min.is_none())
             || (self.amount.is_some() && self.deliver_min.is_some())
@@ -86,11 +86,11 @@ impl<'a> CheckCashError for CheckCash<'a> {
     }
 }
 
-impl<'a> CheckCash<'a> {
+impl CheckCash {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,
-        fee: Option<XRPAmount<'a>>,
+        fee: Option<XRPAmount>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
         sequence: Option<u32>,
@@ -98,8 +98,8 @@ impl<'a> CheckCash<'a> {
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
         check_id: Cow<'a, str>,
-        amount: Option<Amount<'a>>,
-        deliver_min: Option<Amount<'a>>,
+        amount: Option<Amount>,
+        deliver_min: Option<Amount>,
     ) -> Self {
         Self {
             common_fields: CommonFields::new(

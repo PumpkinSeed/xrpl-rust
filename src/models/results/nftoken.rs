@@ -49,7 +49,7 @@ pub struct NFTokenAcceptOfferResult<'a> {
 /// Macro to implement TryFrom<TxVersionMap> for NFToken result types
 macro_rules! impl_try_from_tx_version_map {
     ($result_type:ident, $field_name:ident, $field_type:ty) => {
-        impl<'a> TryFrom<TxVersionMap<'a>> for $result_type<'a> {
+        impl TryFrom<TxVersionMap<'a>> for $result_type {
             type Error = XRPLModelException;
 
             fn try_from(tx: TxVersionMap<'a>) -> XRPLModelResult<Self> {

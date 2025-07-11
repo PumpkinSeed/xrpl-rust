@@ -26,10 +26,10 @@ pub struct AMMDelete<'a> {
     #[serde(flatten)]
     pub common_fields: CommonFields<'a, NoFlags>,
     /// The definition for one of the assets in the AMM's pool.
-    pub asset: Currency<'a>,
+    pub asset: Currency,
     /// The definition for the other asset in the AMM's pool.
     #[serde(rename = "Asset2")]
-    pub asset2: Currency<'a>,
+    pub asset2: Currency,
 }
 
 impl Model for AMMDelete<'_> {
@@ -38,7 +38,7 @@ impl Model for AMMDelete<'_> {
     }
 }
 
-impl<'a> Transaction<'a, NoFlags> for AMMDelete<'a> {
+impl Transaction<'a, NoFlags> for AMMDelete {
     fn get_common_fields(&self) -> &CommonFields<'_, NoFlags> {
         &self.common_fields
     }
@@ -52,19 +52,19 @@ impl<'a> Transaction<'a, NoFlags> for AMMDelete<'a> {
     }
 }
 
-impl<'a> AMMDelete<'a> {
+impl AMMDelete {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,
-        fee: Option<XRPAmount<'a>>,
+        fee: Option<XRPAmount>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
         sequence: Option<u32>,
         signers: Option<Vec<Signer>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
-        asset: Currency<'a>,
-        asset2: Currency<'a>,
+        asset: Currency,
+        asset2: Currency,
     ) -> AMMDelete<'a> {
         AMMDelete {
             common_fields: CommonFields::new(

@@ -39,9 +39,9 @@ pub struct Channel<'a> {
     /// The owner of the channel, as an Address.
     pub account: Cow<'a, str>,
     /// The total amount of XRP, in drops allocated to this channel.
-    pub amount: XRPAmount<'a>,
+    pub amount: XRPAmount,
     /// The total amount of XRP, in drops, paid out from this channel.
-    pub balance: XRPAmount<'a>,
+    pub balance: XRPAmount,
     /// A unique ID for this channel, as a 64-character hexadecimal string.
     pub channel_id: Cow<'a, str>,
     /// The destination account of the channel, as an Address.

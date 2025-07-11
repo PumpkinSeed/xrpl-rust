@@ -91,13 +91,13 @@ pub struct LedgerEntry<'a> {
     pub ticket: Option<Ticket<'a>>,
 }
 
-impl<'a> Model for LedgerEntry<'a> {
+impl Model for LedgerEntry {
     fn get_errors(&self) -> XRPLModelResult<()> {
         self._get_field_error()
     }
 }
 
-impl<'a> LedgerEntryError for LedgerEntry<'a> {
+impl LedgerEntryError for LedgerEntry {
     fn _get_field_error(&self) -> XRPLModelResult<()> {
         let mut signing_methods: u32 = 0;
         for method in [
@@ -149,7 +149,7 @@ impl<'a> LedgerEntryError for LedgerEntry<'a> {
     }
 }
 
-impl<'a> Request for LedgerEntry<'a> {
+impl Request for LedgerEntry {
     fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
@@ -159,7 +159,7 @@ impl<'a> Request for LedgerEntry<'a> {
     }
 }
 
-impl<'a> LedgerEntry<'a> {
+impl LedgerEntry {
     pub fn new(
         id: Option<String>,
         account_root: Option<String>,

@@ -66,7 +66,7 @@ pub struct NFTokenCreateOffer<'a> {
     /// asset is XRP; then, it is legal to specify an amount of zero, which means
     /// that the current owner of the token is giving it away, gratis, either to
     /// anyone at all, or to the account identified by the Destination field.
-    pub amount: Amount<'a>,
+    pub amount: Amount,
     /// Who owns the corresponding NFToken. If the offer is to buy a token, this field
     /// must be present and it must be different than the Account field (since an offer
     /// to buy a token one already holds is meaningless). If the offer is to sell a token,
@@ -80,7 +80,7 @@ pub struct NFTokenCreateOffer<'a> {
     pub destination: Option<Cow<'a, str>>,
 }
 
-impl<'a> Model for NFTokenCreateOffer<'a> {
+impl Model for NFTokenCreateOffer {
     fn get_errors(&self) -> XRPLModelResult<()> {
         self._get_amount_error()?;
         self._get_destination_error()?;
@@ -89,7 +89,7 @@ impl<'a> Model for NFTokenCreateOffer<'a> {
     }
 }
 
-impl<'a> Transaction<'a, NFTokenCreateOfferFlag> for NFTokenCreateOffer<'a> {
+impl Transaction<'a, NFTokenCreateOfferFlag> for NFTokenCreateOffer {
     fn has_flag(&self, flag: &NFTokenCreateOfferFlag) -> bool {
         self.common_fields.has_flag(flag)
     }
@@ -107,7 +107,7 @@ impl<'a> Transaction<'a, NFTokenCreateOfferFlag> for NFTokenCreateOffer<'a> {
     }
 }
 
-impl<'a> NFTokenCreateOfferError for NFTokenCreateOffer<'a> {
+impl NFTokenCreateOfferError for NFTokenCreateOffer {
     fn _get_amount_error(&self) -> XRPLModelResult<()> {
         let amount_into_decimal: BigDecimal = self.amount.clone().try_into()?;
         if !self.has_flag(&NFTokenCreateOfferFlag::TfSellOffer) && amount_into_decimal.is_zero() {
@@ -160,11 +160,11 @@ impl<'a> NFTokenCreateOfferError for NFTokenCreateOffer<'a> {
     }
 }
 
-impl<'a> NFTokenCreateOffer<'a> {
+impl NFTokenCreateOffer {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,
-        fee: Option<XRPAmount<'a>>,
+        fee: Option<XRPAmount>,
         flags: Option<FlagCollection<NFTokenCreateOfferFlag>>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
@@ -172,7 +172,7 @@ impl<'a> NFTokenCreateOffer<'a> {
         signers: Option<Vec<Signer>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
-        amount: Amount<'a>,
+        amount: Amount,
         nftoken_id: Cow<'a, str>,
         destination: Option<Cow<'a, str>>,
         expiration: Option<u32>,

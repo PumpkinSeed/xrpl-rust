@@ -34,7 +34,7 @@ pub struct EscrowCreate<'a> {
     /// Amount of XRP, in drops, to deduct from the sender's balance and escrow.
     /// Once escrowed, the XRP can either go to the Destination address
     /// (after the FinishAfter time) or returned to the sender (after the CancelAfter time).
-    pub amount: XRPAmount<'a>,
+    pub amount: XRPAmount,
     /// Address to receive escrowed XRP.
     pub destination: Cow<'a, str>,
     /// Arbitrary tag to further specify the destination for this escrowed
@@ -56,14 +56,14 @@ pub struct EscrowCreate<'a> {
     pub condition: Option<Cow<'a, str>>,
 }
 
-impl<'a> Model for EscrowCreate<'a> {
+impl Model for EscrowCreate {
     fn get_errors(&self) -> XRPLModelResult<()> {
         self._get_finish_after_error()?;
         self.validate_currencies()
     }
 }
 
-impl<'a> Transaction<'a, NoFlags> for EscrowCreate<'a> {
+impl Transaction<'a, NoFlags> for EscrowCreate {
     fn get_transaction_type(&self) -> &TransactionType {
         self.common_fields.get_transaction_type()
     }
@@ -77,7 +77,7 @@ impl<'a> Transaction<'a, NoFlags> for EscrowCreate<'a> {
     }
 }
 
-impl<'a> EscrowCreateError for EscrowCreate<'a> {
+impl EscrowCreateError for EscrowCreate {
     fn _get_finish_after_error(&self) -> XRPLModelResult<()> {
         if let (Some(finish_after), Some(cancel_after)) = (self.finish_after, self.cancel_after) {
             if finish_after >= cancel_after {
@@ -96,18 +96,18 @@ impl<'a> EscrowCreateError for EscrowCreate<'a> {
     }
 }
 
-impl<'a> EscrowCreate<'a> {
+impl EscrowCreate {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,
-        fee: Option<XRPAmount<'a>>,
+        fee: Option<XRPAmount>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
         sequence: Option<u32>,
         signers: Option<Vec<Signer>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
-        amount: XRPAmount<'a>,
+        amount: XRPAmount,
         destination: Cow<'a, str>,
         cancel_after: Option<u32>,
         condition: Option<Cow<'a, str>>,

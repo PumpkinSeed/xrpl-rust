@@ -53,10 +53,10 @@ pub struct NFTokenAcceptOffer<'a> {
     /// be such that, before applying the transfer fee, the amount that
     /// the seller would receive is at least as much as the amount
     /// indicated in the sell offer.
-    pub nftoken_broker_fee: Option<Amount<'a>>,
+    pub nftoken_broker_fee: Option<Amount>,
 }
 
-impl<'a> Model for NFTokenAcceptOffer<'a> {
+impl Model for NFTokenAcceptOffer {
     fn get_errors(&self) -> XRPLModelResult<()> {
         self._get_brokered_mode_error()?;
         self._get_nftoken_broker_fee_error()?;
@@ -64,7 +64,7 @@ impl<'a> Model for NFTokenAcceptOffer<'a> {
     }
 }
 
-impl<'a> Transaction<'a, NoFlags> for NFTokenAcceptOffer<'a> {
+impl Transaction<'a, NoFlags> for NFTokenAcceptOffer {
     fn get_transaction_type(&self) -> &TransactionType {
         self.common_fields.get_transaction_type()
     }
@@ -78,7 +78,7 @@ impl<'a> Transaction<'a, NoFlags> for NFTokenAcceptOffer<'a> {
     }
 }
 
-impl<'a> NFTokenAcceptOfferError for NFTokenAcceptOffer<'a> {
+impl NFTokenAcceptOfferError for NFTokenAcceptOffer {
     fn _get_brokered_mode_error(&self) -> XRPLModelResult<()> {
         if self.nftoken_broker_fee.is_some()
             && self.nftoken_sell_offer.is_none()
@@ -106,11 +106,11 @@ impl<'a> NFTokenAcceptOfferError for NFTokenAcceptOffer<'a> {
     }
 }
 
-impl<'a> NFTokenAcceptOffer<'a> {
+impl NFTokenAcceptOffer {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,
-        fee: Option<XRPAmount<'a>>,
+        fee: Option<XRPAmount>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
         sequence: Option<u32>,
@@ -119,7 +119,7 @@ impl<'a> NFTokenAcceptOffer<'a> {
         ticket_sequence: Option<u32>,
         nftoken_sell_offer: Option<Cow<'a, str>>,
         nftoken_buy_offer: Option<Cow<'a, str>>,
-        nftoken_broker_fee: Option<Amount<'a>>,
+        nftoken_broker_fee: Option<Amount>,
     ) -> Self {
         Self {
             common_fields: CommonFields::new(

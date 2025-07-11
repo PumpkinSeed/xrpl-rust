@@ -49,7 +49,7 @@ pub fn get_xrp_balance<'a: 'b, 'b, C>(
     address: Cow<'a, str>,
     client: &'a C,
     ledger_index: Option<Cow<'a, str>>,
-) -> XRPLHelperResult<XRPAmount<'b>>
+) -> XRPLHelperResult<XRPAmount>
 where
     C: XRPLClient,
 {

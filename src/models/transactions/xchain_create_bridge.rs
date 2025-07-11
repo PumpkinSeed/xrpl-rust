@@ -15,10 +15,10 @@ use super::{CommonFields, Memo, Signer, Transaction, TransactionType};
 pub struct XChainCreateBridge<'a> {
     #[serde(flatten)]
     pub common_fields: CommonFields<'a, NoFlags>,
-    pub signature_reward: Amount<'a>,
+    pub signature_reward: Amount,
     #[serde(rename = "XChainBridge")]
-    pub xchain_bridge: XChainBridge<'a>,
-    pub min_account_create_amount: Option<XRPAmount<'a>>,
+    pub xchain_bridge: XChainBridge,
+    pub min_account_create_amount: Option<XRPAmount>,
 }
 
 impl Model for XChainCreateBridge<'_> {
@@ -31,7 +31,7 @@ impl Model for XChainCreateBridge<'_> {
     }
 }
 
-impl<'a> Transaction<'a, NoFlags> for XChainCreateBridge<'a> {
+impl Transaction<'a, NoFlags> for XChainCreateBridge {
     fn get_transaction_type(&self) -> &super::TransactionType {
         self.common_fields.get_transaction_type()
     }
@@ -45,20 +45,20 @@ impl<'a> Transaction<'a, NoFlags> for XChainCreateBridge<'a> {
     }
 }
 
-impl<'a> XChainCreateBridge<'a> {
+impl XChainCreateBridge {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,
-        fee: Option<XRPAmount<'a>>,
+        fee: Option<XRPAmount>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
         sequence: Option<u32>,
         signers: Option<Vec<Signer>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
-        signature_reward: Amount<'a>,
-        xchain_bridge: XChainBridge<'a>,
-        min_account_create_amount: Option<XRPAmount<'a>>,
+        signature_reward: Amount,
+        xchain_bridge: XChainBridge,
+        min_account_create_amount: Option<XRPAmount>,
     ) -> XChainCreateBridge<'a> {
         XChainCreateBridge {
             common_fields: CommonFields::new(
@@ -139,7 +139,7 @@ mod test_xchain_create_bridge {
     const ISSUER: &str = "rGWrZyQqhTp9Xu7G5Pkayo7bXjH4k4QYpf";
     const GENESIS: &str = "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh";
 
-    fn xrp_bridge<'a>() -> XChainBridge<'a> {
+    fn xrp_bridge<'a>() -> XChainBridge {
         XChainBridge {
             locking_chain_door: Cow::Borrowed(ACCOUNT),
             locking_chain_issue: XRP::new().into(),
@@ -148,7 +148,7 @@ mod test_xchain_create_bridge {
         }
     }
 
-    fn iou_bridge<'a>() -> XChainBridge<'a> {
+    fn iou_bridge<'a>() -> XChainBridge {
         XChainBridge {
             locking_chain_door: Cow::Borrowed(ACCOUNT),
             locking_chain_issue: IssuedCurrency {

@@ -32,16 +32,16 @@ pub struct SetFee<'a> {
     ///
     /// See SetFee fields:
     /// `<https://xrpl.org/setfee.html#setfee-fields>`
-    pub base_fee: XRPAmount<'a>,
+    pub base_fee: XRPAmount,
     pub reference_fee_units: u32,
     pub reserve_base: u32,
     pub reserve_increment: u32,
     pub ledger_sequence: u32,
 }
 
-impl<'a> Model for SetFee<'a> {}
+impl Model for SetFee {}
 
-impl<'a> Transaction<'a, NoFlags> for SetFee<'a> {
+impl Transaction<'a, NoFlags> for SetFee {
     fn get_transaction_type(&self) -> &TransactionType {
         self.common_fields.get_transaction_type()
     }
@@ -55,18 +55,18 @@ impl<'a> Transaction<'a, NoFlags> for SetFee<'a> {
     }
 }
 
-impl<'a> SetFee<'a> {
+impl SetFee {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,
-        fee: Option<XRPAmount<'a>>,
+        fee: Option<XRPAmount>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
         sequence: Option<u32>,
         signers: Option<Vec<Signer>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
-        base_fee: XRPAmount<'a>,
+        base_fee: XRPAmount,
         reference_fee_units: u32,
         reserve_base: u32,
         reserve_increment: u32,

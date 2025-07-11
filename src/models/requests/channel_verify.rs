@@ -10,12 +10,12 @@ use super::{CommonFields, Request};
 /// payment channel.
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
-pub struct ChannelVerify<'a> {
+pub struct ChannelVerify {
     /// The common fields shared by all requests.
     #[serde(flatten)]
     pub common_fields: CommonFields,
     /// The amount of XRP, in drops, the provided signature authorizes.
-    pub amount: XRPAmount<'a>,
+    pub amount: XRPAmount,
     /// The Channel ID of the channel that provides the XRP.
     /// This is a 64-character hexadecimal string.
     pub channel_id: String,
@@ -27,9 +27,9 @@ pub struct ChannelVerify<'a> {
     pub signature: String,
 }
 
-impl<'a> Model for ChannelVerify<'a> {}
+impl Model for ChannelVerify {}
 
-impl<'a> Request for ChannelVerify<'a> {
+impl Request for ChannelVerify {
     fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
@@ -39,10 +39,10 @@ impl<'a> Request for ChannelVerify<'a> {
     }
 }
 
-impl<'a> ChannelVerify<'a> {
+impl ChannelVerify {
     pub fn new(
         id: Option<String>,
-        amount: XRPAmount<'a>,
+        amount: XRPAmount,
         channel_id: String,
         public_key: String,
         signature: String,

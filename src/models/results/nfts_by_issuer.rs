@@ -14,7 +14,7 @@ pub struct NFTsByIssuer<'a> {
     pub nft_taxon: Option<u32>,
 }
 
-impl<'a> TryFrom<XRPLResult<'a>> for NFTsByIssuer<'a> {
+impl TryFrom<XRPLResult<'a>> for NFTsByIssuer {
     type Error = XRPLModelException;
 
     fn try_from(result: XRPLResult<'a>) -> XRPLModelResult<Self> {
@@ -29,7 +29,7 @@ impl<'a> TryFrom<XRPLResult<'a>> for NFTsByIssuer<'a> {
     }
 }
 
-impl<'a> TryFrom<XRPLResponse<'a>> for NFTsByIssuer<'a> {
+impl TryFrom<XRPLResponse<'a>> for NFTsByIssuer {
     type Error = XRPLModelException;
 
     fn try_from(response: XRPLResponse<'a>) -> XRPLModelResult<Self> {

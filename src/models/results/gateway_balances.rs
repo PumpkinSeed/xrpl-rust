@@ -43,7 +43,7 @@ pub struct AssetBalance<'a> {
     pub value: Cow<'a, str>,
 }
 
-impl<'a> Default for AssetBalance<'a> {
+impl Default for AssetBalance {
     fn default() -> Self {
         Self {
             currency: Cow::Borrowed("XRP"),

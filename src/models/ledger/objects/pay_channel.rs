@@ -32,11 +32,11 @@ pub struct PayChannel<'a> {
     pub account: Cow<'a, str>,
     /// Total XRP, in drops, that has been allocated to this channel. This includes XRP
     /// that has been paid to the destination address.
-    pub amount: Amount<'a>,
+    pub amount: Amount,
     /// Total XRP, in drops, already paid out by the channel. The difference between
     /// this value and the `Amount` field is how much XRP can still be paid to the destination
     /// address with `PaymentChannelClaim` transactions.
-    pub balance: Amount<'a>,
+    pub balance: Amount,
     /// The destination address for this payment channel. While the payment channel is open,
     /// this address is the only one that can receive XRP from the channel.
     pub destination: Cow<'a, str>,
@@ -70,21 +70,21 @@ pub struct PayChannel<'a> {
     pub source_tag: Option<u32>,
 }
 
-impl<'a> Model for PayChannel<'a> {}
+impl Model for PayChannel {}
 
-impl<'a> LedgerObject<NoFlags> for PayChannel<'a> {
+impl LedgerObject<NoFlags> for PayChannel {
     fn get_ledger_entry_type(&self) -> LedgerEntryType {
         self.common_fields.get_ledger_entry_type()
     }
 }
 
-impl<'a> PayChannel<'a> {
+impl PayChannel {
     pub fn new(
         index: Option<Cow<'a, str>>,
         ledger_index: Option<Cow<'a, str>>,
         account: Cow<'a, str>,
-        amount: Amount<'a>,
-        balance: Amount<'a>,
+        amount: Amount,
+        balance: Amount,
         destination: Cow<'a, str>,
         owner_node: Cow<'a, str>,
         previous_txn_id: Cow<'a, str>,

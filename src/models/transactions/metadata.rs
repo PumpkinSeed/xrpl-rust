@@ -49,21 +49,21 @@ impl Model for NFTokenMetadataFields<'_> {
 #[serde(rename_all = "PascalCase")]
 pub struct Fields<'a> {
     pub account: Option<Cow<'a, str>>,
-    pub balance: Option<Amount<'a>>,
+    pub balance: Option<Amount>,
     pub book_directory: Option<Cow<'a, str>>,
     pub expiration: Option<u32>,
     #[serde(default)]
     pub flags: u32,
-    pub low_limit: Option<IssuedCurrencyAmount<'a>>,
-    pub high_limit: Option<IssuedCurrencyAmount<'a>>,
+    pub low_limit: Option<IssuedCurrencyAmount>,
+    pub high_limit: Option<IssuedCurrencyAmount>,
     pub next_page_min: Option<Cow<'a, str>>,
     #[serde(rename = "NFTokens")]
     pub nftokens: Option<Vec<NFTokenMetadata<'a>>>,
     pub previous_page_min: Option<Cow<'a, str>>,
     #[serde(default)]
     pub sequence: u32,
-    pub taker_gets: Option<Amount<'a>>,
-    pub taker_pays: Option<Amount<'a>>,
+    pub taker_gets: Option<Amount>,
+    pub taker_pays: Option<Amount>,
     pub xchain_claim_id: Option<Cow<'a, str>>,
 }
 
@@ -117,9 +117,9 @@ pub enum NodeType {
 pub struct TransactionMetadata<'a> {
     pub affected_nodes: Vec<AffectedNode<'a>>,
     pub transaction_index: u32,
-    pub transaction_result: Amount<'a>,
+    pub transaction_result: Amount,
     #[serde(rename = "delivered_amount")]
-    pub delivered_amount: Option<Amount<'a>>,
+    pub delivered_amount: Option<Amount>,
 }
 
 impl Model for TransactionMetadata<'_> {

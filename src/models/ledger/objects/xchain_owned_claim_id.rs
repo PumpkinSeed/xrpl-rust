@@ -14,9 +14,9 @@ pub struct XChainOwnedClaimID<'a> {
     pub common_fields: CommonFields<'a, NoFlags>,
     pub account: Cow<'a, str>,
     pub other_chain_source: Cow<'a, str>,
-    pub signature_reward: Amount<'a>,
+    pub signature_reward: Amount,
     #[serde(rename = "XChainBridge")]
-    pub xchain_bridge: XChainBridge<'a>,
+    pub xchain_bridge: XChainBridge,
     #[serde(rename = "XChainClaimAttestations")]
     pub xchain_claim_attestations: Vec<XChainClaimProofSig<'a>>,
     pub xchain_claim_id: Cow<'a, str>,
@@ -30,14 +30,14 @@ impl LedgerObject<NoFlags> for XChainOwnedClaimID<'_> {
     }
 }
 
-impl<'a> XChainOwnedClaimID<'a> {
+impl XChainOwnedClaimID {
     pub fn new(
         index: Option<Cow<'a, str>>,
         ledger_index: Option<Cow<'a, str>>,
         account: Cow<'a, str>,
         other_chain_source: Cow<'a, str>,
-        signature_reward: Amount<'a>,
-        xchain_bridge: XChainBridge<'a>,
+        signature_reward: Amount,
+        xchain_bridge: XChainBridge,
         xchain_claim_attestations: Vec<XChainClaimProofSig<'a>>,
         xchain_claim_id: Cow<'a, str>,
     ) -> XChainOwnedClaimID<'a> {

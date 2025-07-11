@@ -40,14 +40,14 @@ pub struct DepositPreauth<'a> {
     pub unauthorize: Option<Cow<'a, str>>,
 }
 
-impl<'a> Model for DepositPreauth<'a> {
+impl Model for DepositPreauth {
     fn get_errors(&self) -> XRPLModelResult<()> {
         self._get_authorize_and_unauthorize_error()?;
         self.validate_currencies()
     }
 }
 
-impl<'a> Transaction<'a, NoFlags> for DepositPreauth<'a> {
+impl Transaction<'a, NoFlags> for DepositPreauth {
     fn get_transaction_type(&self) -> &TransactionType {
         self.common_fields.get_transaction_type()
     }
@@ -61,7 +61,7 @@ impl<'a> Transaction<'a, NoFlags> for DepositPreauth<'a> {
     }
 }
 
-impl<'a> DepositPreauthError for DepositPreauth<'a> {
+impl DepositPreauthError for DepositPreauth {
     fn _get_authorize_and_unauthorize_error(&self) -> XRPLModelResult<()> {
         if (self.authorize.is_none() && self.unauthorize.is_none())
             || (self.authorize.is_some() && self.unauthorize.is_some())
@@ -76,11 +76,11 @@ impl<'a> DepositPreauthError for DepositPreauth<'a> {
     }
 }
 
-impl<'a> DepositPreauth<'a> {
+impl DepositPreauth {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,
-        fee: Option<XRPAmount<'a>>,
+        fee: Option<XRPAmount>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
         sequence: Option<u32>,

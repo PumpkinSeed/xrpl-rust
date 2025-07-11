@@ -50,7 +50,7 @@ pub struct OfferObject<'a> {
     pub taker_gets: Cow<'a, str>,
     /// The amount the account accepting the offer provides, as a String
     /// representing an amount in XRP, or a currency specification object.
-    pub taker_pays: Amount<'a>,
+    pub taker_pays: Amount,
     /// The exchange rate of the offer, as the ratio of the original
     /// taker_pays divided by the original taker_gets. When executing offers,
     /// the offer with the most favorable (lowest) quality is consumed first;

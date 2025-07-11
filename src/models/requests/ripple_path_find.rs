@@ -24,7 +24,7 @@ use super::{CommonFields, LedgerIndex, LookupByLedgerRequest, Request};
 /// `<https://xrpl.org/ripple_path_find.html#ripple_path_find>`
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
-pub struct RipplePathFind<'a> {
+pub struct RipplePathFind {
     /// The common fields shared by all requests.
     #[serde(flatten)]
     pub common_fields: CommonFields,
@@ -37,7 +37,7 @@ pub struct RipplePathFind<'a> {
     /// of the value field (for non-XRP currencies). This requests a
     /// path to deliver as much as possible, while spending no more
     /// than the amount specified in send_max (if provided).
-    pub destination_amount: Currency<'a>,
+    pub destination_amount: Currency,
     /// Unique address of the account that would send funds
     /// in a transaction.
     pub source_account: String,
@@ -46,7 +46,7 @@ pub struct RipplePathFind<'a> {
     pub ledger_lookup: Option<LookupByLedgerRequest>,
     /// Currency Amount that would be spent in the transaction.
     /// Cannot be used with source_currencies.
-    pub send_max: Option<Currency<'a>>,
+    pub send_max: Option<Currency>,
     /// Array of currencies that the source account might want
     /// to spend. Each entry in the array should be a JSON object
     /// with a mandatory currency field and optional issuer field,
@@ -54,12 +54,12 @@ pub struct RipplePathFind<'a> {
     /// more than 18 source currencies. By default, uses all source
     /// currencies available up to a maximum of 88 different
     /// currency/issuer pairs.
-    pub source_currencies: Option<Vec<Currency<'a>>>,
+    pub source_currencies: Option<Vec<Currency>>,
 }
 
-impl<'a> Model for RipplePathFind<'a> {}
+impl Model for RipplePathFind {}
 
-impl<'a> Request for RipplePathFind<'a> {
+impl Request for RipplePathFind {
     fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
@@ -69,16 +69,16 @@ impl<'a> Request for RipplePathFind<'a> {
     }
 }
 
-impl<'a> RipplePathFind<'a> {
+impl RipplePathFind {
     pub fn new(
         id: Option<String>,
         destination_account: String,
-        destination_amount: Currency<'a>,
+        destination_amount: Currency,
         source_account: String,
         ledger_hash: Option<String>,
         ledger_index: Option<LedgerIndex>,
-        send_max: Option<Currency<'a>>,
-        source_currencies: Option<Vec<Currency<'a>>>,
+        send_max: Option<Currency>,
+        source_currencies: Option<Vec<Currency>>,
     ) -> Self {
         Self {
             common_fields: CommonFields {

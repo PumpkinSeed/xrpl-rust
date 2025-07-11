@@ -42,7 +42,7 @@ pub struct CheckCreate<'a> {
     /// including transfer fees on non-XRP currencies. The Check can only credit
     /// the destination with the same currency (from the same issuer, for non-XRP
     /// currencies). For non-XRP amounts, the nested field names MUST be lower-case.
-    pub send_max: Amount<'a>,
+    pub send_max: Amount,
     /// Arbitrary tag that identifies the reason for the Check, or a hosted recipient to pay.
     pub destination_tag: Option<u32>,
     /// Time after which the Check is no longer valid, in seconds since the Ripple Epoch.
@@ -52,13 +52,13 @@ pub struct CheckCreate<'a> {
     pub invoice_id: Option<Cow<'a, str>>,
 }
 
-impl<'a> Model for CheckCreate<'a> {
+impl Model for CheckCreate {
     fn get_errors(&self) -> crate::models::XRPLModelResult<()> {
         self.validate_currencies()
     }
 }
 
-impl<'a> Transaction<'a, NoFlags> for CheckCreate<'a> {
+impl Transaction<'a, NoFlags> for CheckCreate {
     fn get_transaction_type(&self) -> &TransactionType {
         self.common_fields.get_transaction_type()
     }
@@ -72,11 +72,11 @@ impl<'a> Transaction<'a, NoFlags> for CheckCreate<'a> {
     }
 }
 
-impl<'a> CheckCreate<'a> {
+impl CheckCreate {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,
-        fee: Option<XRPAmount<'a>>,
+        fee: Option<XRPAmount>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
         sequence: Option<u32>,
@@ -84,7 +84,7 @@ impl<'a> CheckCreate<'a> {
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
         destination: Cow<'a, str>,
-        send_max: Amount<'a>,
+        send_max: Amount,
         destination_tag: Option<u32>,
         expiration: Option<u32>,
         invoice_id: Option<Cow<'a, str>>,

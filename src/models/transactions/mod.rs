@@ -162,7 +162,7 @@ where
     /// for distributing this transaction to the network. Some
     /// transaction types have different minimum requirements.
     /// See Transaction Cost for details.
-    pub fee: Option<XRPAmount<'a>>,
+    pub fee: Option<XRPAmount>,
     /// Set of bit-flags for this transaction.
     #[serde(with = "txn_flags")]
     #[serde(default = "flag_collection_default")]
@@ -214,7 +214,7 @@ where
         account: Cow<'a, str>,
         transaction_type: TransactionType,
         account_txn_id: Option<Cow<'a, str>>,
-        fee: Option<XRPAmount<'a>>,
+        fee: Option<XRPAmount>,
         flags: Option<FlagCollection<T>>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,

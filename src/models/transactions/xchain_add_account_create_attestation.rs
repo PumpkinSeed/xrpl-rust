@@ -14,19 +14,19 @@ use super::{CommonFields, Memo, Signer, Transaction, TransactionType};
 pub struct XChainAddAccountCreateAttestation<'a> {
     #[serde(flatten)]
     pub common_fields: CommonFields<'a, NoFlags>,
-    pub amount: Amount<'a>,
+    pub amount: Amount,
     pub attestation_reward_account: Cow<'a, str>,
     pub attestation_signer_account: Cow<'a, str>,
     pub destination: Cow<'a, str>,
     pub other_chain_source: Cow<'a, str>,
     pub public_key: Cow<'a, str>,
     pub signature: Cow<'a, str>,
-    pub signature_reward: Amount<'a>,
+    pub signature_reward: Amount,
     pub was_locking_chain_send: u8,
     #[serde(rename = "XChainAccountCreateCount")]
     pub xchain_account_create_count: Cow<'a, str>,
     #[serde(rename = "XChainBridge")]
-    pub xchain_bridge: XChainBridge<'a>,
+    pub xchain_bridge: XChainBridge,
 }
 
 impl Model for XChainAddAccountCreateAttestation<'_> {
@@ -35,7 +35,7 @@ impl Model for XChainAddAccountCreateAttestation<'_> {
     }
 }
 
-impl<'a> Transaction<'a, NoFlags> for XChainAddAccountCreateAttestation<'a> {
+impl Transaction<'a, NoFlags> for XChainAddAccountCreateAttestation {
     fn get_transaction_type(&self) -> &super::TransactionType {
         self.common_fields.get_transaction_type()
     }
@@ -49,28 +49,28 @@ impl<'a> Transaction<'a, NoFlags> for XChainAddAccountCreateAttestation<'a> {
     }
 }
 
-impl<'a> XChainAddAccountCreateAttestation<'a> {
+impl XChainAddAccountCreateAttestation {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,
-        fee: Option<XRPAmount<'a>>,
+        fee: Option<XRPAmount>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
         sequence: Option<u32>,
         signers: Option<Vec<Signer>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
-        amount: Amount<'a>,
+        amount: Amount,
         attestation_reward_account: Cow<'a, str>,
         attestation_signer_account: Cow<'a, str>,
         destination: Cow<'a, str>,
         other_chain_source: Cow<'a, str>,
         public_key: Cow<'a, str>,
         signature: Cow<'a, str>,
-        signature_reward: Amount<'a>,
+        signature_reward: Amount,
         was_locking_chain_send: u8,
         xchain_account_create_count: Cow<'a, str>,
-        xchain_bridge: XChainBridge<'a>,
+        xchain_bridge: XChainBridge,
     ) -> XChainAddAccountCreateAttestation<'a> {
         XChainAddAccountCreateAttestation {
             common_fields: CommonFields::new(
@@ -172,7 +172,7 @@ mod test_xchain_claim {
     const CLAIM_ID: u64 = 3;
     const XRP_AMOUNT: &str = "123456789";
 
-    fn xrp_bridge<'a>() -> XChainBridge<'a> {
+    fn xrp_bridge<'a>() -> XChainBridge {
         XChainBridge {
             locking_chain_door: Cow::Borrowed(ACCOUNT),
             locking_chain_issue: XRP::new().into(),
@@ -181,7 +181,7 @@ mod test_xchain_claim {
         }
     }
 
-    fn iou_bridge<'a>() -> XChainBridge<'a> {
+    fn iou_bridge<'a>() -> XChainBridge {
         XChainBridge {
             locking_chain_door: Cow::Borrowed(ACCOUNT),
             locking_chain_issue: IssuedCurrency {
@@ -198,7 +198,7 @@ mod test_xchain_claim {
         }
     }
 
-    fn iou_amount<'a>() -> Amount<'a> {
+    fn iou_amount<'a>() -> Amount {
         IssuedCurrencyAmount {
             currency: Cow::Borrowed("USD"),
             issuer: Cow::Borrowed(ISSUER),

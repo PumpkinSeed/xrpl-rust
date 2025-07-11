@@ -12,7 +12,7 @@ use super::{CommonFields, LedgerIndex, LookupByLedgerRequest, Request};
 /// `<https://xrpl.org/book_offers.html#book_offers>`
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
-pub struct BookOffers<'a> {
+pub struct BookOffers {
     /// The common fields shared by all requests.
     #[serde(flatten)]
     pub common_fields: CommonFields,
@@ -20,12 +20,12 @@ pub struct BookOffers<'a> {
     /// the offer would receive, as an object with currency
     /// and issuer fields (omit issuer for XRP),
     /// like currency amounts.
-    pub taker_gets: Currency<'a>,
+    pub taker_gets: Currency,
     /// Specification of which currency the account taking
     /// the offer would pay, as an object with currency and
     /// issuer fields (omit issuer for XRP),
     /// like currency amounts.
-    pub taker_pays: Currency<'a>,
+    pub taker_pays: Currency,
     /// The unique identifier of a ledger.
     #[serde(flatten)]
     pub ledger_lookup: Option<LookupByLedgerRequest>,
@@ -41,9 +41,9 @@ pub struct BookOffers<'a> {
     pub taker: Option<String>,
 }
 
-impl<'a> Model for BookOffers<'a> {}
+impl Model for BookOffers {}
 
-impl<'a> Request for BookOffers<'a> {
+impl Request for BookOffers {
     fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
@@ -53,11 +53,11 @@ impl<'a> Request for BookOffers<'a> {
     }
 }
 
-impl<'a> BookOffers<'a> {
+impl BookOffers {
     pub fn new(
         id: Option<String>,
-        taker_gets: Currency<'a>,
-        taker_pays: Currency<'a>,
+        taker_gets: Currency,
+        taker_pays: Currency,
         ledger_hash: Option<String>,
         ledger_index: Option<LedgerIndex>,
         limit: Option<u16>,

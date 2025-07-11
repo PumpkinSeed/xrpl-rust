@@ -14,9 +14,9 @@ use serde_json::Value;
 
 /// Represents an amount of XRP in Drops.
 #[derive(Debug, PartialEq, Eq, Clone, Serialize)]
-pub struct XRPAmount<'a>(pub Cow<'a, str>);
+pub struct XRPAmount(pub String);
 
-impl<'a> Model for XRPAmount<'a> {
+impl Model for XRPAmount {
     fn get_errors(&self) -> XRPLModelResult<()> {
         self.0.parse::<u32>()?;
 
@@ -24,21 +24,21 @@ impl<'a> Model for XRPAmount<'a> {
     }
 }
 
-impl Default for XRPAmount<'_> {
+impl Default for XRPAmount {
     fn default() -> Self {
         Self("0".into())
     }
 }
 
-impl Display for XRPAmount<'_> {
+impl Display for XRPAmount {
     fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
         write!(f, "{}", self.0)
     }
 }
 
 // implement Deserializing from Cow<str>, &str, String, Decimal, f64, u32, and Value
-impl<'de, 'a> Deserialize<'de> for XRPAmount<'a> {
-    fn deserialize<D>(deserializer: D) -> XRPLModelResult<XRPAmount<'a>, D::Error>
+impl<'de, 'a> Deserialize<'de> for XRPAmount {
+    fn deserialize<D>(deserializer: D) -> XRPLModelResult<XRPAmount, D::Error>
     where
         D: serde::Deserializer<'de>,
     {
@@ -47,43 +47,43 @@ impl<'de, 'a> Deserialize<'de> for XRPAmount<'a> {
     }
 }
 
-impl<'a> From<Cow<'a, str>> for XRPAmount<'a> {
+impl<'a> From<Cow<'a, str>> for XRPAmount {
     fn from(value: Cow<'a, str>) -> Self {
-        Self(value)
+        Self(value.to_string())
     }
 }
 
-impl<'a> From<&'a str> for XRPAmount<'a> {
+impl<'a> From<&'a str> for XRPAmount {
     fn from(value: &'a str) -> Self {
         Self(value.into())
     }
 }
 
-impl<'a> From<String> for XRPAmount<'a> {
+impl From<String> for XRPAmount {
     fn from(value: String) -> Self {
         Self(value.into())
     }
 }
 
-impl<'a> From<BigDecimal> for XRPAmount<'a> {
+impl From<BigDecimal> for XRPAmount {
     fn from(value: BigDecimal) -> Self {
         Self(value.to_string().into())
     }
 }
 
-impl<'a> From<f64> for XRPAmount<'a> {
+impl From<f64> for XRPAmount {
     fn from(value: f64) -> Self {
         Self(value.to_string().into())
     }
 }
 
-impl<'a> From<u32> for XRPAmount<'a> {
+impl From<u32> for XRPAmount {
     fn from(value: u32) -> Self {
         Self(value.to_string().into())
     }
 }
 
-impl<'a> TryFrom<Value> for XRPAmount<'a> {
+impl TryFrom<Value> for XRPAmount {
     type Error = XRPLModelException;
 
     fn try_from(value: Value) -> XRPLModelResult<Self, Self::Error> {
@@ -97,7 +97,7 @@ impl<'a> TryFrom<Value> for XRPAmount<'a> {
     }
 }
 
-impl<'a> TryInto<f64> for XRPAmount<'a> {
+impl TryInto<f64> for XRPAmount {
     type Error = XRPLModelException;
 
     fn try_into(self) -> XRPLModelResult<f64, Self::Error> {
@@ -105,7 +105,7 @@ impl<'a> TryInto<f64> for XRPAmount<'a> {
     }
 }
 
-impl<'a> TryInto<u32> for XRPAmount<'a> {
+impl TryInto<u32> for XRPAmount {
     type Error = XRPLModelException;
 
     fn try_into(self) -> XRPLModelResult<u32, Self::Error> {
@@ -113,7 +113,7 @@ impl<'a> TryInto<u32> for XRPAmount<'a> {
     }
 }
 
-impl<'a> TryInto<BigDecimal> for XRPAmount<'a> {
+impl TryInto<BigDecimal> for XRPAmount {
     type Error = XRPLModelException;
 
     fn try_into(self) -> XRPLModelResult<BigDecimal, Self::Error> {
@@ -121,21 +121,21 @@ impl<'a> TryInto<BigDecimal> for XRPAmount<'a> {
     }
 }
 
-impl<'a> TryInto<Cow<'a, str>> for XRPAmount<'a> {
+impl<'a> TryInto<Cow<'a, str>> for XRPAmount {
     type Error = XRPLModelException;
 
     fn try_into(self) -> XRPLModelResult<Cow<'a, str>, Self::Error> {
-        Ok(self.0)
+        Ok(self.0.to_string().into())
     }
 }
 
-impl<'a> PartialOrd for XRPAmount<'a> {
+impl PartialOrd for XRPAmount {
     fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
         Some(self.cmp(other))
     }
 }
 
-impl<'a> Ord for XRPAmount<'a> {
+impl Ord for XRPAmount {
     fn cmp(&self, other: &Self) -> core::cmp::Ordering {
         let self_decimal: BigDecimal = self.clone().try_into().unwrap();
         let other_decimal: BigDecimal = other.clone().try_into().unwrap();

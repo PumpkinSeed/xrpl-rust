@@ -47,14 +47,14 @@ pub struct NFTokenCancelOffer<'a> {
     pub nftoken_offers: Vec<Cow<'a, str>>,
 }
 
-impl<'a> Model for NFTokenCancelOffer<'a> {
+impl Model for NFTokenCancelOffer {
     fn get_errors(&self) -> XRPLModelResult<()> {
         self._get_nftoken_offers_error()?;
         self.validate_currencies()
     }
 }
 
-impl<'a> Transaction<'a, NoFlags> for NFTokenCancelOffer<'a> {
+impl Transaction<'a, NoFlags> for NFTokenCancelOffer {
     fn get_transaction_type(&self) -> &TransactionType {
         self.common_fields.get_transaction_type()
     }
@@ -68,7 +68,7 @@ impl<'a> Transaction<'a, NoFlags> for NFTokenCancelOffer<'a> {
     }
 }
 
-impl<'a> NFTokenCancelOfferError for NFTokenCancelOffer<'a> {
+impl NFTokenCancelOfferError for NFTokenCancelOffer {
     fn _get_nftoken_offers_error(&self) -> XRPLModelResult<()> {
         if self.nftoken_offers.is_empty() {
             Err(XRPLNFTokenCancelOfferException::CollectionEmpty {
@@ -82,11 +82,11 @@ impl<'a> NFTokenCancelOfferError for NFTokenCancelOffer<'a> {
     }
 }
 
-impl<'a> NFTokenCancelOffer<'a> {
+impl NFTokenCancelOffer {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,
-        fee: Option<XRPAmount<'a>>,
+        fee: Option<XRPAmount>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
         sequence: Option<u32>,

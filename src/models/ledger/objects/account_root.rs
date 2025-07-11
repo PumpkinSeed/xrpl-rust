@@ -80,7 +80,7 @@ pub struct AccountRoot<'a> {
     #[serde(rename = "AccountTxnID")]
     pub account_txn_id: Option<Cow<'a, str>>,
     /// The account's current XRP balance in drops, represented as a string.
-    pub balance: Option<XRPAmount<'a>>,
+    pub balance: Option<XRPAmount>,
     /// How many total of this account's issued non-fungible tokens have been burned. This number
     /// is always equal or less than `MintedNFTokens`.
     #[serde(rename = "BurnedNFTokens")]
@@ -119,15 +119,15 @@ pub struct AccountRoot<'a> {
     pub wallet_size: Option<u32>,
 }
 
-impl<'a> Model for AccountRoot<'a> {}
+impl Model for AccountRoot {}
 
-impl<'a> LedgerObject<AccountRootFlag> for AccountRoot<'a> {
+impl LedgerObject<AccountRootFlag> for AccountRoot {
     fn get_ledger_entry_type(&self) -> LedgerEntryType {
         self.common_fields.get_ledger_entry_type()
     }
 }
 
-impl<'a> AccountRoot<'a> {
+impl AccountRoot {
     pub fn new(
         flags: FlagCollection<AccountRootFlag>,
         index: Option<Cow<'a, str>>,
@@ -138,7 +138,7 @@ impl<'a> AccountRoot<'a> {
         previous_txn_lgr_seq: u32,
         sequence: u32,
         account_txn_id: Option<Cow<'a, str>>,
-        balance: Option<XRPAmount<'a>>,
+        balance: Option<XRPAmount>,
         burned_nftokens: Option<u32>,
         domain: Option<Cow<'a, str>>,
         email_hash: Option<Cow<'a, str>>,

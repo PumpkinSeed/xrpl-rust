@@ -57,7 +57,7 @@ pub enum PathFindSubcommand {
 /// `<https://xrpl.org/path_find.html>`
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
-pub struct PathFind<'a> {
+pub struct PathFind {
     /// The common fields shared by all requests.
     #[serde(flatten)]
     pub common_fields: CommonFields,
@@ -70,7 +70,7 @@ pub struct PathFind<'a> {
     /// the value field (for non-XRP currencies). This requests a path
     /// to deliver as much as possible, while spending no more than
     /// the amount specified in send_max (if provided).
-    pub destination_amount: Currency<'a>,
+    pub destination_amount: Currency,
     /// Unique address of the account to find a path
     /// from. (In other words, the account that would
     /// be sending a payment.)
@@ -84,12 +84,12 @@ pub struct PathFind<'a> {
     pub paths: Option<Vec<Path>>,
     /// Currency Amount that would be spent in the transaction.
     /// Not compatible with source_currencies.
-    pub send_max: Option<Currency<'a>>,
+    pub send_max: Option<Currency>,
 }
 
-impl<'a> Model for PathFind<'a> {}
+impl Model for PathFind {}
 
-impl<'a> Request for PathFind<'a> {
+impl Request for PathFind {
     fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
@@ -99,15 +99,15 @@ impl<'a> Request for PathFind<'a> {
     }
 }
 
-impl<'a> PathFind<'a> {
+impl PathFind {
     pub fn new(
         id: Option<String>,
         destination_account: String,
-        destination_amount: Currency<'a>,
+        destination_amount: Currency,
         source_account: String,
         subcommand: PathFindSubcommand,
         paths: Option<Vec<Vec<PathStep>>>,
-        send_max: Option<Currency<'a>>,
+        send_max: Option<Currency>,
     ) -> Self {
         Self {
             common_fields: CommonFields {

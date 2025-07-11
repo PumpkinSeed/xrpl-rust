@@ -18,9 +18,9 @@ use super::{CommonFields, Request};
 /// `<https://xrpl.org/unsubscribe.html>`
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone, new)]
 #[serde(rename_all(serialize = "PascalCase", deserialize = "snake_case"))]
-pub struct UnsubscribeBook<'a> {
-    pub taker_gets: Currency<'a>,
-    pub taker_pays: Currency<'a>,
+pub struct UnsubscribeBook {
+    pub taker_gets: Currency,
+    pub taker_pays: Currency,
     #[serde(default = "default_false")]
     pub both: Option<bool>,
 }
@@ -35,7 +35,7 @@ pub struct UnsubscribeBook<'a> {
 /// `<https://xrpl.org/unsubscribe.html>`
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
-pub struct Unsubscribe<'a> {
+pub struct Unsubscribe {
     /// The common fields shared by all requests.
     #[serde(flatten)]
     pub common_fields: CommonFields,
@@ -50,7 +50,7 @@ pub struct Unsubscribe<'a> {
     pub accounts_proposed: Option<Vec<String>>,
     /// Array of objects defining order books to unsubscribe
     /// from, as explained below.
-    pub books: Option<Vec<UnsubscribeBook<'a>>>,
+    pub books: Option<Vec<UnsubscribeBook>>,
     #[serde(skip_serializing)]
     pub broken: Option<String>,
     /// Array of string names of generic streams to unsubscribe
@@ -59,9 +59,9 @@ pub struct Unsubscribe<'a> {
     pub streams: Option<Vec<StreamParameter>>,
 }
 
-impl<'a> Model for Unsubscribe<'a> {}
+impl Model for Unsubscribe {}
 
-impl<'a> Request for Unsubscribe<'a> {
+impl Request for Unsubscribe {
     fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
@@ -71,12 +71,12 @@ impl<'a> Request for Unsubscribe<'a> {
     }
 }
 
-impl<'a> Unsubscribe<'a> {
+impl Unsubscribe {
     pub fn new(
         id: Option<String>,
         accounts: Option<Vec<String>>,
         accounts_proposed: Option<Vec<String>>,
-        books: Option<Vec<UnsubscribeBook<'a>>>,
+        books: Option<Vec<UnsubscribeBook>>,
         broken: Option<String>,
         streams: Option<Vec<StreamParameter>>,
     ) -> Self {

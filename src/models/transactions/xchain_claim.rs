@@ -15,10 +15,10 @@ use super::{CommonFields, Memo, Signer, Transaction, TransactionType};
 pub struct XChainClaim<'a> {
     #[serde(flatten)]
     pub common_fields: CommonFields<'a, NoFlags>,
-    pub amount: Amount<'a>,
+    pub amount: Amount,
     pub destination: Cow<'a, str>,
     #[serde(rename = "XChainBridge")]
-    pub xchain_bridge: XChainBridge<'a>,
+    pub xchain_bridge: XChainBridge,
     #[serde(rename = "XChainClaimID")]
     pub xchain_claim_id: Cow<'a, str>,
     // #[serde(skip_serializing_if = "Option::is_none")]
@@ -32,7 +32,7 @@ impl Model for XChainClaim<'_> {
     }
 }
 
-impl<'a> Transaction<'a, NoFlags> for XChainClaim<'a> {
+impl Transaction<'a, NoFlags> for XChainClaim {
     fn get_transaction_type(&self) -> &super::TransactionType {
         self.common_fields.get_transaction_type()
     }
@@ -46,20 +46,20 @@ impl<'a> Transaction<'a, NoFlags> for XChainClaim<'a> {
     }
 }
 
-impl<'a> XChainClaim<'a> {
+impl XChainClaim {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,
-        fee: Option<crate::models::XRPAmount<'a>>,
+        fee: Option<crate::models::XRPAmount>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
         sequence: Option<u32>,
         signers: Option<Vec<Signer>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
-        amount: Amount<'a>,
+        amount: Amount,
         destination: Cow<'a, str>,
-        xchain_bridge: XChainBridge<'a>,
+        xchain_bridge: XChainBridge,
         xchain_claim_id: Cow<'a, str>,
         destination_tag: Option<u32>,
     ) -> XChainClaim<'a> {

@@ -89,7 +89,7 @@ pub struct NFTokenMint<'a> {
     pub uri: Option<Cow<'a, str>>,
 }
 
-impl<'a> Model for NFTokenMint<'a> {
+impl Model for NFTokenMint {
     fn get_errors(&self) -> XRPLModelResult<()> {
         self._get_issuer_error()?;
         self._get_transfer_fee_error()?;
@@ -98,7 +98,7 @@ impl<'a> Model for NFTokenMint<'a> {
     }
 }
 
-impl<'a> Transaction<'a, NFTokenMintFlag> for NFTokenMint<'a> {
+impl Transaction<'a, NFTokenMintFlag> for NFTokenMint {
     fn has_flag(&self, flag: &NFTokenMintFlag) -> bool {
         self.common_fields.has_flag(flag)
     }
@@ -116,7 +116,7 @@ impl<'a> Transaction<'a, NFTokenMintFlag> for NFTokenMint<'a> {
     }
 }
 
-impl<'a> NFTokenMintError for NFTokenMint<'a> {
+impl NFTokenMintError for NFTokenMint {
     fn _get_issuer_error(&self) -> XRPLModelResult<()> {
         if let Some(issuer) = &self.issuer {
             if issuer == &self.common_fields.account {
@@ -165,11 +165,11 @@ impl<'a> NFTokenMintError for NFTokenMint<'a> {
     }
 }
 
-impl<'a> NFTokenMint<'a> {
+impl NFTokenMint {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,
-        fee: Option<XRPAmount<'a>>,
+        fee: Option<XRPAmount>,
         flags: Option<FlagCollection<NFTokenMintFlag>>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,

@@ -97,15 +97,15 @@ pub struct PortDescriptor<'a> {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
 pub struct ValidatedLedger<'a> {
     /// Base fee in drops of XRP for transaction propagation
-    pub base_fee: XRPAmount<'a>,
+    pub base_fee: XRPAmount,
     /// Time this ledger was closed (seconds since Ripple Epoch)
     pub close_time: u32,
     /// Unique hash of this ledger version
     pub hash: Cow<'a, str>,
     /// Minimum account reserve
-    pub reserve_base: XRPAmount<'a>,
+    pub reserve_base: XRPAmount,
     /// Owner reserve for each owned item
-    pub reserve_inc: XRPAmount<'a>,
+    pub reserve_inc: XRPAmount,
     /// Ledger index of this version
     pub seq: u32,
 }

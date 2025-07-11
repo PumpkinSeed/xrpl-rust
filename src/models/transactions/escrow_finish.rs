@@ -46,14 +46,14 @@ pub struct EscrowFinish<'a> {
     pub fulfillment: Option<Cow<'a, str>>,
 }
 
-impl<'a> Model for EscrowFinish<'a> {
+impl Model for EscrowFinish {
     fn get_errors(&self) -> XRPLModelResult<()> {
         self._get_condition_and_fulfillment_error()?;
         self.validate_currencies()
     }
 }
 
-impl<'a> Transaction<'a, NoFlags> for EscrowFinish<'a> {
+impl Transaction<'a, NoFlags> for EscrowFinish {
     fn get_transaction_type(&self) -> &TransactionType {
         self.common_fields.get_transaction_type()
     }
@@ -67,7 +67,7 @@ impl<'a> Transaction<'a, NoFlags> for EscrowFinish<'a> {
     }
 }
 
-impl<'a> EscrowFinishError for EscrowFinish<'a> {
+impl EscrowFinishError for EscrowFinish {
     fn _get_condition_and_fulfillment_error(&self) -> XRPLModelResult<()> {
         if (self.condition.is_some() && self.fulfillment.is_none())
             || (self.condition.is_none() && self.condition.is_some())
@@ -82,11 +82,11 @@ impl<'a> EscrowFinishError for EscrowFinish<'a> {
     }
 }
 
-impl<'a> EscrowFinish<'a> {
+impl EscrowFinish {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,
-        fee: Option<XRPAmount<'a>>,
+        fee: Option<XRPAmount>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
         sequence: Option<u32>,

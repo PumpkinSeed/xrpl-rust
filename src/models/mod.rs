@@ -49,11 +49,11 @@ pub struct PathStep {
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, derive_new::new)]
 #[serde(rename_all = "PascalCase")]
-pub struct XChainBridge<'a> {
+pub struct XChainBridge {
     pub issuing_chain_door: String,
-    pub issuing_chain_issue: Currency<'a>,
+    pub issuing_chain_issue: Currency,
     pub locking_chain_door: String,
-    pub locking_chain_issue: Currency<'a>,
+    pub locking_chain_issue: Currency,
 }
 
 /// For use with serde defaults.

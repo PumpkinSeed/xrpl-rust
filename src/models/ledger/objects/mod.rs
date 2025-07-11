@@ -102,7 +102,7 @@ pub enum LedgerEntry<'a> {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "PascalCase")]
 pub struct XChainClaimProofSig<'a> {
-    pub amount: Amount<'a>,
+    pub amount: Amount,
     pub attestation_reward_account: Cow<'a, str>,
     pub attestation_signer_account: Cow<'a, str>,
     pub destination: Cow<'a, str>,

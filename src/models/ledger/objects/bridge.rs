@@ -13,15 +13,15 @@ pub struct Bridge<'a> {
     #[serde(flatten)]
     pub common_fields: CommonFields<'a, NoFlags>,
     pub account: Cow<'a, str>,
-    pub signature_reward: XRPAmount<'a>,
+    pub signature_reward: XRPAmount,
     #[serde(rename = "XChainAccountClaimCount")]
     pub xchain_account_claim_count: u64,
     #[serde(rename = "XChainAccountCreateCount")]
     pub xchain_account_create_count: u64,
-    pub xchain_bridge: XChainBridge<'a>,
+    pub xchain_bridge: XChainBridge,
     #[serde(rename = "XChainClaimID")]
     pub xchain_claim_id: Cow<'a, str>,
-    pub min_account_create_amount: Option<XRPAmount<'a>>,
+    pub min_account_create_amount: Option<XRPAmount>,
 }
 
 impl Model for Bridge<'_> {}
@@ -32,17 +32,17 @@ impl LedgerObject<NoFlags> for Bridge<'_> {
     }
 }
 
-impl<'a> Bridge<'a> {
+impl Bridge {
     pub fn new(
         index: Option<Cow<'a, str>>,
         ledger_index: Option<Cow<'a, str>>,
         account: Cow<'a, str>,
-        signature_reward: XRPAmount<'a>,
+        signature_reward: XRPAmount,
         xchain_account_claim_count: u64,
         xchain_account_create_count: u64,
-        xchain_bridge: XChainBridge<'a>,
+        xchain_bridge: XChainBridge,
         xchain_claim_id: Cow<'a, str>,
-        min_account_create_amount: Option<XRPAmount<'a>>,
+        min_account_create_amount: Option<XRPAmount>,
     ) -> Bridge<'a> {
         Bridge {
             common_fields: CommonFields {

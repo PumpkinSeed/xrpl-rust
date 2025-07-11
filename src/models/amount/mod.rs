@@ -17,12 +17,12 @@ use super::{XRPLModelException, XRPLModelResult};
 
 #[derive(Debug, PartialEq, Eq, Clone, Serialize, Deserialize, Display)]
 #[serde(untagged)]
-pub enum Amount<'a> {
-    IssuedCurrencyAmount(IssuedCurrencyAmount<'a>),
-    XRPAmount(XRPAmount<'a>),
+pub enum Amount {
+    IssuedCurrencyAmount(IssuedCurrencyAmount),
+    XRPAmount(XRPAmount),
 }
 
-impl<'a> TryInto<BigDecimal> for Amount<'a> {
+impl TryInto<BigDecimal> for Amount {
     type Error = XRPLModelException;
 
     fn try_into(self) -> XRPLModelResult<BigDecimal, Self::Error> {
@@ -33,7 +33,7 @@ impl<'a> TryInto<BigDecimal> for Amount<'a> {
     }
 }
 
-impl<'a> Model for Amount<'a> {
+impl Model for Amount {
     fn get_errors(&self) -> XRPLModelResult<()> {
         match self {
             Amount::IssuedCurrencyAmount(amount) => amount.get_errors(),
@@ -42,13 +42,13 @@ impl<'a> Model for Amount<'a> {
     }
 }
 
-impl<'a> Default for Amount<'a> {
+impl Default for Amount {
     fn default() -> Self {
         Self::XRPAmount("0".into())
     }
 }
 
-impl<'a> Amount<'a> {
+impl Amount {
     pub fn is_xrp(&self) -> bool {
         match self {
             Amount::IssuedCurrencyAmount(_) => false,
@@ -61,37 +61,37 @@ impl<'a> Amount<'a> {
     }
 }
 
-impl<'a> From<IssuedCurrencyAmount<'a>> for Amount<'a> {
-    fn from(value: IssuedCurrencyAmount<'a>) -> Self {
+impl From<IssuedCurrencyAmount> for Amount {
+    fn from(value: IssuedCurrencyAmount) -> Self {
         Self::IssuedCurrencyAmount(value)
     }
 }
 
-impl<'a> From<XRPAmount<'a>> for Amount<'a> {
-    fn from(value: XRPAmount<'a>) -> Self {
+impl From<XRPAmount> for Amount {
+    fn from(value: XRPAmount) -> Self {
         Self::XRPAmount(value)
     }
 }
 
-impl<'a> From<&'a str> for Amount<'a> {
+impl<'a> From<&'a str> for Amount {
     fn from(value: &'a str) -> Self {
         Self::XRPAmount(value.into())
     }
 }
 
-impl<'a> From<u32> for Amount<'a> {
+impl From<u32> for Amount {
     fn from(value: u32) -> Self {
         Self::XRPAmount(value.to_string().into())
     }
 }
 
-impl<'a> From<u64> for Amount<'a> {
+impl From<u64> for Amount {
     fn from(value: u64) -> Self {
         Self::XRPAmount(value.to_string().into())
     }
 }
 
-impl<'a> From<f64> for Amount<'a> {
+impl From<f64> for Amount {
     fn from(value: f64) -> Self {
         let drops = XRP_DROPS as f64;
         let result = value * drops;
@@ -100,7 +100,7 @@ impl<'a> From<f64> for Amount<'a> {
     }
 }
 
-impl<'a> From<BigDecimal> for Amount<'a> {
+impl From<BigDecimal> for Amount {
     fn from(value: BigDecimal) -> Self {
         Self::XRPAmount((value * XRP_DROPS).to_string().into())
     }

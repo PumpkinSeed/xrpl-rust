@@ -42,7 +42,7 @@ pub struct NFTokenOffer<'a> {
     /// the amount must be specified in XRP. Sell offers that specify assets other than XRP
     /// must specify a non-zero amount. Sell offers that specify XRP can be 'free'
     /// (that is, the Amount field can be equal to "0").
-    pub amount: Amount<'a>,
+    pub amount: Amount,
     /// The `NFTokenID` of the `NFToken` object referenced by this offer.
     #[serde(rename = "NFTokenID")]
     pub nftoken_id: Cow<'a, str>,
@@ -71,20 +71,20 @@ pub struct NFTokenOffer<'a> {
     pub owner_node: Option<Cow<'a, str>>,
 }
 
-impl<'a> Model for NFTokenOffer<'a> {}
+impl Model for NFTokenOffer {}
 
-impl<'a> LedgerObject<NFTokenOfferFlag> for NFTokenOffer<'a> {
+impl LedgerObject<NFTokenOfferFlag> for NFTokenOffer {
     fn get_ledger_entry_type(&self) -> LedgerEntryType {
         self.common_fields.get_ledger_entry_type()
     }
 }
 
-impl<'a> NFTokenOffer<'a> {
+impl NFTokenOffer {
     pub fn new(
         flags: FlagCollection<NFTokenOfferFlag>,
         index: Option<Cow<'a, str>>,
         ledger_index: Option<Cow<'a, str>>,
-        amount: Amount<'a>,
+        amount: Amount,
         nftoken_id: Cow<'a, str>,
         owner: Cow<'a, str>,
         previous_txn_id: Cow<'a, str>,

@@ -25,10 +25,10 @@ pub const AMM_VOTE_MAX_TRADING_FEE: u16 = 1000;
 pub struct AMMVote<'a> {
     pub common_fields: CommonFields<'a, NoFlags>,
     /// The definition for one of the assets in the AMM's pool.
-    pub asset: Currency<'a>,
+    pub asset: Currency,
     /// The definition for the other asset in the AMM's pool.
     #[serde(rename = "Asset2")]
-    pub asset2: Currency<'a>,
+    pub asset2: Currency,
     /// The proposed fee to vote for, in units of 1/100,000; a value of 1 is equivalent
     /// to 0.001%.
     /// The maximum value is 1000, indicating a 1% fee.
@@ -52,7 +52,7 @@ impl Model for AMMVote<'_> {
     }
 }
 
-impl<'a> Transaction<'a, NoFlags> for AMMVote<'a> {
+impl Transaction<'a, NoFlags> for AMMVote {
     fn get_common_fields(&self) -> &CommonFields<'_, NoFlags> {
         &self.common_fields
     }
@@ -66,19 +66,19 @@ impl<'a> Transaction<'a, NoFlags> for AMMVote<'a> {
     }
 }
 
-impl<'a> AMMVote<'a> {
+impl AMMVote {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,
-        fee: Option<XRPAmount<'a>>,
+        fee: Option<XRPAmount>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
         sequence: Option<u32>,
         signers: Option<Vec<Signer>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
-        asset: Currency<'a>,
-        asset2: Currency<'a>,
+        asset: Currency,
+        asset2: Currency,
         trading_fee: Option<u16>,
     ) -> AMMVote<'a> {
         AMMVote {

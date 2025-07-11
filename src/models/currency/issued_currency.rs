@@ -5,27 +5,27 @@ use alloc::borrow::Cow;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, PartialEq, Eq, Clone, Serialize, Deserialize, Default)]
-pub struct IssuedCurrency<'a> {
-    pub currency: Cow<'a, str>,
-    pub issuer: Cow<'a, str>,
+pub struct IssuedCurrency {
+    pub currency: String,
+    pub issuer: String,
 }
 
-impl<'a> Model for IssuedCurrency<'a> {}
+impl Model for IssuedCurrency {}
 
-impl<'a> ToAmount<'a, IssuedCurrencyAmount<'a>> for IssuedCurrency<'a> {
-    fn to_amount(&self, value: Cow<'a, str>) -> IssuedCurrencyAmount<'a> {
+impl ToAmount<IssuedCurrencyAmount> for IssuedCurrency {
+    fn to_amount(&self, value: String) -> IssuedCurrencyAmount {
         IssuedCurrencyAmount::new(self.currency.clone(), self.issuer.clone(), value)
     }
 }
 
-impl<'a> IssuedCurrency<'a> {
-    pub fn new(currency: Cow<'a, str>, issuer: Cow<'a, str>) -> Self {
+impl IssuedCurrency {
+    pub fn new(currency: String, issuer: String) -> Self {
         Self { currency, issuer }
     }
 }
 
-impl<'a> From<IssuedCurrencyAmount<'a>> for IssuedCurrency<'a> {
-    fn from(value: IssuedCurrencyAmount<'a>) -> Self {
+impl From<IssuedCurrencyAmount> for IssuedCurrency {
+    fn from(value: IssuedCurrencyAmount) -> Self {
         Self {
             currency: value.currency,
             issuer: value.issuer,

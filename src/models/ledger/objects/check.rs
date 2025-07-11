@@ -43,7 +43,7 @@ pub struct Check<'a> {
     pub previous_txn_lgr_seq: u32,
     /// The maximum amount of currency this Check can debit the sender. If the Check is successfully
     /// cashed, the destination is credited in the same currency for up to this amount.
-    pub send_max: Amount<'a>,
+    pub send_max: Amount,
     /// The sequence number of the `CheckCreate` transaction that created this check.
     pub sequence: u32,
     /// A hint indicating which page of the destination's owner directory links to this object, in
@@ -62,15 +62,15 @@ pub struct Check<'a> {
     pub source_tag: Option<u32>,
 }
 
-impl<'a> Model for Check<'a> {}
+impl Model for Check {}
 
-impl<'a> LedgerObject<NoFlags> for Check<'a> {
+impl LedgerObject<NoFlags> for Check {
     fn get_ledger_entry_type(&self) -> LedgerEntryType {
         self.common_fields.get_ledger_entry_type()
     }
 }
 
-impl<'a> Check<'a> {
+impl Check {
     pub fn new(
         index: Option<Cow<'a, str>>,
         ledger_index: Option<Cow<'a, str>>,
@@ -79,7 +79,7 @@ impl<'a> Check<'a> {
         owner_node: Cow<'a, str>,
         previous_txn_id: Cow<'a, str>,
         previous_txn_lgr_seq: u32,
-        send_max: Amount<'a>,
+        send_max: Amount,
         sequence: u32,
         destination_node: Option<Cow<'a, str>>,
         destination_tag: Option<u32>,

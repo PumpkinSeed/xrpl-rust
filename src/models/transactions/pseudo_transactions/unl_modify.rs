@@ -48,9 +48,9 @@ pub struct UNLModify<'a> {
     pub unlmodify_validator: Cow<'a, str>,
 }
 
-impl<'a> Model for UNLModify<'a> {}
+impl Model for UNLModify {}
 
-impl<'a> Transaction<'a, NoFlags> for UNLModify<'a> {
+impl Transaction<'a, NoFlags> for UNLModify {
     fn get_transaction_type(&self) -> &TransactionType {
         self.common_fields.get_transaction_type()
     }
@@ -64,11 +64,11 @@ impl<'a> Transaction<'a, NoFlags> for UNLModify<'a> {
     }
 }
 
-impl<'a> UNLModify<'a> {
+impl UNLModify {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,
-        fee: Option<XRPAmount<'a>>,
+        fee: Option<XRPAmount>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
         sequence: Option<u32>,

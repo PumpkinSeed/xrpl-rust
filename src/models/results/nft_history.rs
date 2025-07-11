@@ -32,7 +32,7 @@ pub enum NFTHistoryTransactionMeta<'a> {
     Blob(Cow<'a, str>),
 }
 
-impl<'a> TryFrom<XRPLResult<'a>> for NFTHistory<'a> {
+impl TryFrom<XRPLResult<'a>> for NFTHistory {
     type Error = crate::models::XRPLModelException;
 
     fn try_from(result: XRPLResult<'a>) -> crate::models::XRPLModelResult<Self> {
@@ -47,7 +47,7 @@ impl<'a> TryFrom<XRPLResult<'a>> for NFTHistory<'a> {
     }
 }
 
-impl<'a> TryFrom<XRPLResponse<'a>> for NFTHistory<'a> {
+impl TryFrom<XRPLResponse<'a>> for NFTHistory {
     type Error = crate::models::XRPLModelException;
 
     fn try_from(response: XRPLResponse<'a>) -> crate::models::XRPLModelResult<Self> {

@@ -39,7 +39,7 @@ pub struct PaymentChannelFund<'a> {
     // See PaymentChannelFund fields:
     // `<https://xrpl.org/paymentchannelfund.html#paymentchannelfund-fields>`
     /// Amount of XRP, in drops to add to the channel. Must be a positive amount of XRP.
-    pub amount: XRPAmount<'a>,
+    pub amount: XRPAmount,
     /// The unique ID of the channel to fund, as a 64-character hexadecimal string.
     pub channel: Cow<'a, str>,
     /// New Expiration time to set for the channel, in seconds since the Ripple Epoch.
@@ -52,13 +52,13 @@ pub struct PaymentChannelFund<'a> {
     pub expiration: Option<u32>,
 }
 
-impl<'a> Model for PaymentChannelFund<'a> {
+impl Model for PaymentChannelFund {
     fn get_errors(&self) -> crate::models::XRPLModelResult<()> {
         self.validate_currencies()
     }
 }
 
-impl<'a> Transaction<'a, NoFlags> for PaymentChannelFund<'a> {
+impl Transaction<'a, NoFlags> for PaymentChannelFund {
     fn get_transaction_type(&self) -> &TransactionType {
         self.common_fields.get_transaction_type()
     }
@@ -72,18 +72,18 @@ impl<'a> Transaction<'a, NoFlags> for PaymentChannelFund<'a> {
     }
 }
 
-impl<'a> PaymentChannelFund<'a> {
+impl PaymentChannelFund {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,
-        fee: Option<XRPAmount<'a>>,
+        fee: Option<XRPAmount>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
         sequence: Option<u32>,
         signers: Option<Vec<Signer>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
-        amount: XRPAmount<'a>,
+        amount: XRPAmount,
         channel: Cow<'a, str>,
         expiration: Option<u32>,
     ) -> Self {

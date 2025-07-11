@@ -90,13 +90,13 @@ pub struct PaymentChannelClaim<'a> {
     pub public_key: Option<Cow<'a, str>>,
 }
 
-impl<'a> Model for PaymentChannelClaim<'a> {
+impl Model for PaymentChannelClaim {
     fn get_errors(&self) -> crate::models::XRPLModelResult<()> {
         self.validate_currencies()
     }
 }
 
-impl<'a> Transaction<'a, PaymentChannelClaimFlag> for PaymentChannelClaim<'a> {
+impl Transaction<'a, PaymentChannelClaimFlag> for PaymentChannelClaim {
     fn has_flag(&self, flag: &PaymentChannelClaimFlag) -> bool {
         self.common_fields.has_flag(flag)
     }
@@ -114,11 +114,11 @@ impl<'a> Transaction<'a, PaymentChannelClaimFlag> for PaymentChannelClaim<'a> {
     }
 }
 
-impl<'a> PaymentChannelClaim<'a> {
+impl PaymentChannelClaim {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,
-        fee: Option<XRPAmount<'a>>,
+        fee: Option<XRPAmount>,
         flags: Option<FlagCollection<PaymentChannelClaimFlag>>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,

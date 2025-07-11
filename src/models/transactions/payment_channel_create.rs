@@ -40,7 +40,7 @@ pub struct PaymentChannelCreate<'a> {
     /// Amount of XRP, in drops, to deduct from the sender's balance and set aside in this channel.
     /// While the channel is open, the XRP can only go to the Destination address. When the channel
     /// closes, any unclaimed XRP is returned to the source address's balance.
-    pub amount: XRPAmount<'a>,
+    pub amount: XRPAmount,
     /// Address to receive XRP claims against this channel. This is also known as the
     /// "destination address" for the channel. Cannot be the same as the sender (Account).
     pub destination: Cow<'a, str>,
@@ -60,13 +60,13 @@ pub struct PaymentChannelCreate<'a> {
     pub destination_tag: Option<u32>,
 }
 
-impl<'a> Model for PaymentChannelCreate<'a> {
+impl Model for PaymentChannelCreate {
     fn get_errors(&self) -> crate::models::XRPLModelResult<()> {
         self.validate_currencies()
     }
 }
 
-impl<'a> Transaction<'a, NoFlags> for PaymentChannelCreate<'a> {
+impl Transaction<'a, NoFlags> for PaymentChannelCreate {
     fn get_transaction_type(&self) -> &TransactionType {
         self.common_fields.get_transaction_type()
     }
@@ -80,18 +80,18 @@ impl<'a> Transaction<'a, NoFlags> for PaymentChannelCreate<'a> {
     }
 }
 
-impl<'a> PaymentChannelCreate<'a> {
+impl PaymentChannelCreate {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,
-        fee: Option<XRPAmount<'a>>,
+        fee: Option<XRPAmount>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
         sequence: Option<u32>,
         signers: Option<Vec<Signer>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
-        amount: XRPAmount<'a>,
+        amount: XRPAmount,
         destination: Cow<'a, str>,
         public_key: Cow<'a, str>,
         settle_delay: u32,

@@ -33,7 +33,7 @@ pub struct AuctionSlot<'a> {
     /// The time when this slot expires, in seconds since the Ripple Epoch.
     pub expiration: u32,
     /// The amount the auction owner paid to win this slot, in LP Tokens.
-    pub price: Amount<'a>,
+    pub price: Amount,
     /// A list of at most 4 additional accounts that are authorized to trade at the discounted fee
     /// for this AMM instance.
     pub auth_accounts: Option<Vec<AuthAccount>>,
@@ -70,16 +70,16 @@ pub struct AMM<'a> {
     pub amm_account: Cow<'a, str>,
     /// The definition for one of the two assets this `AMM` holds. In JSON, this is an object with
     /// `currency` and `issuer` fields.
-    pub asset: Currency<'a>,
+    pub asset: Currency,
     /// The definition for the other asset this `AMM` holds. In JSON, this is an object with
     /// `currency` and `issuer` fields.
-    pub asset2: Currency<'a>,
+    pub asset2: Currency,
     /// The total outstanding balance of liquidity provider tokens from this `AMM` instance.
     /// The holders of these tokens can vote on the `AMM's` trading fee in proportion to their
     /// holdings, or redeem the tokens for a share of the `AMM's` assets which grows with the
     /// trading fees collected.
     #[serde(rename = "LPTokenBalance")]
-    pub lptoken_balance: Amount<'a>,
+    pub lptoken_balance: Amount,
     /// The percentage fee to be charged for trades against this `AMM` instance,
     /// in units of 1/100,000. The maximum value is 1000, for a 1% fee.
     pub trading_fee: u16,
@@ -89,22 +89,22 @@ pub struct AMM<'a> {
     pub vote_slots: Option<Vec<VoteEntry>>,
 }
 
-impl<'a> Model for AMM<'a> {}
+impl Model for AMM {}
 
-impl<'a> LedgerObject<NoFlags> for AMM<'a> {
+impl LedgerObject<NoFlags> for AMM {
     fn get_ledger_entry_type(&self) -> LedgerEntryType {
         self.common_fields.get_ledger_entry_type()
     }
 }
 
-impl<'a> AMM<'a> {
+impl AMM {
     pub fn new(
         index: Option<Cow<'a, str>>,
         ledger_index: Option<Cow<'a, str>>,
         amm_account: Cow<'a, str>,
-        asset: Currency<'a>,
-        asset2: Currency<'a>,
-        lptoken_balance: Amount<'a>,
+        asset: Currency,
+        asset2: Currency,
+        lptoken_balance: Amount,
         trading_fee: u16,
         auction_slot: Option<AuctionSlot<'a>>,
         vote_slots: Option<Vec<VoteEntry>>,

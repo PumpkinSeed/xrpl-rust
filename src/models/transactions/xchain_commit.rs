@@ -14,9 +14,9 @@ use super::{CommonFields, Memo, Signer, Transaction, TransactionType};
 pub struct XChainCommit<'a> {
     #[serde(flatten)]
     pub common_fields: CommonFields<'a, NoFlags>,
-    pub amount: Amount<'a>,
+    pub amount: Amount,
     #[serde(rename = "XChainBridge")]
-    pub xchain_bridge: XChainBridge<'a>,
+    pub xchain_bridge: XChainBridge,
     #[serde(rename = "XChainClaimID")]
     pub xchain_claim_id: Cow<'a, str>,
     pub other_chain_destination: Option<Cow<'a, str>>,
@@ -28,7 +28,7 @@ impl Model for XChainCommit<'_> {
     }
 }
 
-impl<'a> Transaction<'a, NoFlags> for XChainCommit<'a> {
+impl Transaction<'a, NoFlags> for XChainCommit {
     fn get_common_fields(&self) -> &CommonFields<'_, NoFlags> {
         &self.common_fields
     }
@@ -42,19 +42,19 @@ impl<'a> Transaction<'a, NoFlags> for XChainCommit<'a> {
     }
 }
 
-impl<'a> XChainCommit<'a> {
+impl XChainCommit {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,
-        fee: Option<XRPAmount<'a>>,
+        fee: Option<XRPAmount>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
         sequence: Option<u32>,
         signers: Option<Vec<Signer>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
-        amount: Amount<'a>,
-        xchain_bridge: XChainBridge<'a>,
+        amount: Amount,
+        xchain_bridge: XChainBridge,
         xchain_claim_id: Cow<'a, str>,
         other_chain_destination: Option<Cow<'a, str>>,
     ) -> XChainCommit<'a> {

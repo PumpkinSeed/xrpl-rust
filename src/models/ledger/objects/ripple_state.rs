@@ -56,16 +56,16 @@ pub struct RippleState<'a> {
     // `<https://xrpl.org/ripplestate.html#ripplestate-fields>`
     /// The balance of the trust line, from the perspective of the low account. A negative
     /// balance indicates that the high account holds tokens issued by the low account.
-    pub balance: Amount<'a>,
+    pub balance: Amount,
     /// The limit that the high account has set on the trust line. The issuer is the address
     /// of the high account that set this limit.
-    pub high_limit: Amount<'a>,
+    pub high_limit: Amount,
     /// (Omitted in some historical ledgers) A hint indicating which page of the high account's
     /// owner directory links to this object, in case the directory consists of multiple pages.
     pub high_node: Cow<'a, str>,
     /// The limit that the low account has set on the trust line. The issuer is the address of
     /// the low account that set this limit.
-    pub low_limit: Amount<'a>,
+    pub low_limit: Amount,
     /// Omitted in some historical ledgers) A hint indicating which page of the low account's
     /// owner directory links to this object, in case the directory consists of multiple pages.
     pub low_node: Cow<'a, str>,
@@ -89,23 +89,23 @@ pub struct RippleState<'a> {
     pub low_quality_out: Option<u32>,
 }
 
-impl<'a> Model for RippleState<'a> {}
+impl Model for RippleState {}
 
-impl<'a> LedgerObject<RippleStateFlag> for RippleState<'a> {
+impl LedgerObject<RippleStateFlag> for RippleState {
     fn get_ledger_entry_type(&self) -> LedgerEntryType {
         self.common_fields.get_ledger_entry_type()
     }
 }
 
-impl<'a> RippleState<'a> {
+impl RippleState {
     pub fn new(
         flags: FlagCollection<RippleStateFlag>,
         index: Option<Cow<'a, str>>,
         ledger_index: Option<Cow<'a, str>>,
-        balance: Amount<'a>,
-        high_limit: Amount<'a>,
+        balance: Amount,
+        high_limit: Amount,
         high_node: Cow<'a, str>,
-        low_limit: Amount<'a>,
+        low_limit: Amount,
         low_node: Cow<'a, str>,
         previous_txn_id: Cow<'a, str>,
         previous_txn_lgr_seq: u32,

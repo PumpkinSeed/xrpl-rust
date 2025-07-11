@@ -42,15 +42,15 @@ pub struct BookOffer<'a> {
     #[serde(rename = "index")]
     pub index: Cow<'a, str>,
     /// The amount and type of currency being sold.
-    pub taker_gets: Amount<'a>,
+    pub taker_gets: Amount,
     /// The maximum amount of currency that the taker can get, given the
     /// funding status of the offer. Only included in partially-funded offers.
-    pub taker_gets_funded: Option<Amount<'a>>,
+    pub taker_gets_funded: Option<Amount>,
     /// The amount and type of currency being bought.
-    pub taker_pays: Amount<'a>,
+    pub taker_pays: Amount,
     /// The maximum amount of currency that the taker would pay, given the
     /// funding status of the offer. Only included in partially-funded offers.
-    pub taker_pays_funded: Option<Amount<'a>>,
+    pub taker_pays_funded: Option<Amount>,
     /// The account that placed this offer.
     pub account: Cow<'a, str>,
     /// Amount of the TakerGets currency the side placing the offer has

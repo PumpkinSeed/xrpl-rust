@@ -62,22 +62,22 @@ pub struct Offer<'a> {
     /// Used in combination with the `Account` to identify this `Offer`.
     pub sequence: u32,
     /// The remaining amount and type of currency being provided by the `Offer` creator.
-    pub taker_gets: Amount<'a>,
+    pub taker_gets: Amount,
     /// The remaining amount and type of currency requested by the `Offer` creator.
-    pub taker_pays: Amount<'a>,
+    pub taker_pays: Amount,
     /// Indicates the time after which this Offer is considered unfunded.
     pub expiration: Option<u32>,
 }
 
-impl<'a> Model for Offer<'a> {}
+impl Model for Offer {}
 
-impl<'a> LedgerObject<OfferFlag> for Offer<'a> {
+impl LedgerObject<OfferFlag> for Offer {
     fn get_ledger_entry_type(&self) -> LedgerEntryType {
         self.common_fields.get_ledger_entry_type()
     }
 }
 
-impl<'a> Offer<'a> {
+impl Offer {
     pub fn new(
         flags: FlagCollection<OfferFlag>,
         index: Option<Cow<'a, str>>,
@@ -89,8 +89,8 @@ impl<'a> Offer<'a> {
         previous_txn_id: Cow<'a, str>,
         previous_txn_lgr_seq: u32,
         sequence: u32,
-        taker_gets: Amount<'a>,
-        taker_pays: Amount<'a>,
+        taker_gets: Amount,
+        taker_pays: Amount,
         expiration: Option<u32>,
     ) -> Self {
         Self {

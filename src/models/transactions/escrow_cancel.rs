@@ -40,13 +40,13 @@ pub struct EscrowCancel<'a> {
     pub offer_sequence: u32,
 }
 
-impl<'a> Model for EscrowCancel<'a> {
+impl Model for EscrowCancel {
     fn get_errors(&self) -> crate::models::XRPLModelResult<()> {
         self.validate_currencies()
     }
 }
 
-impl<'a> Transaction<'a, NoFlags> for EscrowCancel<'a> {
+impl Transaction<'a, NoFlags> for EscrowCancel {
     fn get_transaction_type(&self) -> &TransactionType {
         self.common_fields.get_transaction_type()
     }
@@ -60,11 +60,11 @@ impl<'a> Transaction<'a, NoFlags> for EscrowCancel<'a> {
     }
 }
 
-impl<'a> EscrowCancel<'a> {
+impl EscrowCancel {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,
-        fee: Option<XRPAmount<'a>>,
+        fee: Option<XRPAmount>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
         sequence: Option<u32>,

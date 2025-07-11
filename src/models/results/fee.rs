@@ -18,7 +18,7 @@ pub struct Fee<'a> {
     pub current_queue_size: Cow<'a, str>,
     /// Various information about the transaction cost (the Fee field of a
     /// transaction), in drops of XRP.
-    pub drops: Drops<'a>,
+    pub drops: Drops,
     /// The approximate number of transactions expected to be included in the
     /// current ledger.
     pub expected_ledger_size: Cow<'a, str>,
@@ -33,19 +33,19 @@ pub struct Fee<'a> {
 
 /// Information about transaction costs in drops of XRP
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct Drops<'a> {
+pub struct Drops {
     /// The transaction cost required for a reference transaction to be
     /// included in a ledger under minimum load, represented in drops of XRP.
-    pub base_fee: XRPAmount<'a>,
+    pub base_fee: XRPAmount,
     /// An approximation of the median transaction cost among transactions
     /// included in the previous validated ledger, represented in drops of XRP.
-    pub median_fee: XRPAmount<'a>,
+    pub median_fee: XRPAmount,
     /// The minimum transaction cost for a reference transaction to be queued
     /// for a later ledger, represented in drops of XRP.
-    pub minimum_fee: XRPAmount<'a>,
+    pub minimum_fee: XRPAmount,
     /// The minimum transaction cost that a reference transaction must pay to
     /// be included in the current open ledger, represented in drops of XRP.
-    pub open_ledger_fee: XRPAmount<'a>,
+    pub open_ledger_fee: XRPAmount,
 }
 
 /// Information about transaction costs in fee levels

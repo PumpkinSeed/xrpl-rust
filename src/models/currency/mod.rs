@@ -10,18 +10,18 @@ pub use xrp::*;
 
 use super::{IssuedCurrencyAmount, XRPAmount};
 
-pub trait ToAmount<'a, A> {
-    fn to_amount(&self, value: Cow<'a, str>) -> A;
+pub trait ToAmount<A> {
+    fn to_amount(&self, value: String) -> A;
 }
 
 #[derive(Debug, PartialEq, Eq, Clone, Serialize, Deserialize, Display)]
 #[serde(untagged)]
-pub enum Currency<'a> {
-    IssuedCurrency(IssuedCurrency<'a>),
-    XRP(XRP<'a>),
+pub enum Currency{
+    IssuedCurrency(IssuedCurrency),
+    XRP(XRP),
 }
 
-impl<'a> Model for Currency<'a> {
+impl Model for Currency {
     fn get_errors(&self) -> crate::models::XRPLModelResult<()> {
         match self {
             Currency::IssuedCurrency(issued_currency) => issued_currency.get_errors(),
@@ -30,44 +30,44 @@ impl<'a> Model for Currency<'a> {
     }
 }
 
-impl<'a> Default for Currency<'a> {
+impl Default for Currency {
     fn default() -> Self {
         Self::XRP(XRP::new())
     }
 }
 
-impl<'a> From<IssuedCurrency<'a>> for Currency<'a> {
-    fn from(value: IssuedCurrency<'a>) -> Self {
+impl From<IssuedCurrency> for Currency {
+    fn from(value: IssuedCurrency) -> Self {
         Self::IssuedCurrency(value)
     }
 }
 
-impl<'a> From<XRP<'a>> for Currency<'a> {
-    fn from(value: XRP<'a>) -> Self {
+impl From<XRP> for Currency {
+    fn from(value: XRP) -> Self {
         Self::XRP(value)
     }
 }
 
-impl<'a> From<IssuedCurrencyAmount<'a>> for Currency<'a> {
-    fn from(value: IssuedCurrencyAmount<'a>) -> Self {
+impl From<IssuedCurrencyAmount> for Currency {
+    fn from(value: IssuedCurrencyAmount) -> Self {
         IssuedCurrency::new(value.currency, value.issuer).into()
     }
 }
 
-impl<'a> From<XRPAmount<'a>> for Currency<'a> {
-    fn from(_value: XRPAmount<'a>) -> Self {
+impl From<XRPAmount> for Currency {
+    fn from(_value: XRPAmount) -> Self {
         XRP::new().into()
     }
 }
 
-impl<'a> From<&IssuedCurrencyAmount<'a>> for Currency<'a> {
-    fn from(value: &IssuedCurrencyAmount<'a>) -> Self {
+impl From<&IssuedCurrencyAmount> for Currency {
+    fn from(value: &IssuedCurrencyAmount) -> Self {
         IssuedCurrency::new(value.currency.clone(), value.issuer.clone()).into()
     }
 }
 
-impl<'a> From<&XRPAmount<'a>> for Currency<'a> {
-    fn from(_value: &XRPAmount<'a>) -> Self {
+impl From<&XRPAmount> for Currency {
+    fn from(_value: &XRPAmount) -> Self {
         XRP::new().into()
     }
 }

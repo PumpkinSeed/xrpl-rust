@@ -35,9 +35,9 @@ pub struct AMMDescription<'a> {
     /// The Address of the AMM Account.
     pub account: Cow<'a, str>,
     /// The total amount of one asset in the AMM's pool.
-    pub amount: Amount<'a>,
+    pub amount: Amount,
     /// The total amount of the other asset in the AMM's pool.
-    pub amount2: Amount<'a>,
+    pub amount2: Amount,
     /// If true, the amount currency is currently frozen. Omitted for XRP.
     pub asset_frozen: Option<bool>,
     /// If true, the amount2 currency is currently frozen. Omitted for XRP.
@@ -46,7 +46,7 @@ pub struct AMMDescription<'a> {
     pub auction_slot: Option<AuctionSlot<'a>>,
     /// The total amount of this AMM's LP Tokens outstanding.
     /// If a liquidity provider was specified, this is their LP Token balance.
-    pub lp_token: Amount<'a>,
+    pub lp_token: Amount,
     /// The AMM's current trading fee, in units of 1/100,000.
     pub trading_fee: u32,
     /// The current votes for the AMM's trading fee.
@@ -66,7 +66,7 @@ pub struct AuctionSlot<'a> {
     /// The ISO 8601 UTC timestamp when this auction slot expires.
     pub expiration: Cow<'a, str>,
     /// The amount in LP Tokens paid to win the auction slot.
-    pub price: Amount<'a>,
+    pub price: Amount,
     /// Current 72-minute time interval (0-19).
     pub time_interval: u32,
 }

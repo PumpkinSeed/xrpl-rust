@@ -19,9 +19,9 @@ pub struct XChainCreateClaimID<'a> {
     #[serde(flatten)]
     pub common_fields: CommonFields<'a, NoFlags>,
     pub other_chain_source: Cow<'a, str>,
-    pub signature_reward: XRPAmount<'a>,
+    pub signature_reward: XRPAmount,
     #[serde(rename = "XChainBridge")]
-    pub xchain_bridge: XChainBridge<'a>,
+    pub xchain_bridge: XChainBridge,
 }
 
 impl Model for XChainCreateClaimID<'_> {
@@ -31,7 +31,7 @@ impl Model for XChainCreateClaimID<'_> {
     }
 }
 
-impl<'a> Transaction<'a, NoFlags> for XChainCreateClaimID<'a> {
+impl Transaction<'a, NoFlags> for XChainCreateClaimID {
     fn get_transaction_type(&self) -> &super::TransactionType {
         self.common_fields.get_transaction_type()
     }
@@ -45,11 +45,11 @@ impl<'a> Transaction<'a, NoFlags> for XChainCreateClaimID<'a> {
     }
 }
 
-impl<'a> XChainCreateClaimID<'a> {
+impl XChainCreateClaimID {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,
-        fee: Option<XRPAmount<'a>>,
+        fee: Option<XRPAmount>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
         sequence: Option<u32>,
@@ -57,8 +57,8 @@ impl<'a> XChainCreateClaimID<'a> {
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
         other_chain_source: Cow<'a, str>,
-        signature_reward: XRPAmount<'a>,
-        xchain_bridge: XChainBridge<'a>,
+        signature_reward: XRPAmount,
+        xchain_bridge: XChainBridge,
     ) -> XChainCreateClaimID<'a> {
         XChainCreateClaimID {
             common_fields: CommonFields::new(
@@ -105,7 +105,7 @@ mod test_xchain_create_claim_id {
     const SOURCE: &str = "rJrRMgiRgrU6hDF4pgu5DXQdWyPbY35ErN";
     const SIGNATURE_REWARD: &str = "200";
 
-    fn xrp_bridge<'a>() -> XChainBridge<'a> {
+    fn xrp_bridge<'a>() -> XChainBridge {
         XChainBridge {
             locking_chain_door: Cow::Borrowed(ACCOUNT),
             locking_chain_issue: XRP::new().into(),

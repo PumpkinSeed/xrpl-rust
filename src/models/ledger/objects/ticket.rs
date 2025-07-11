@@ -40,15 +40,15 @@ pub struct Ticket<'a> {
     pub ticket_sequence: u32,
 }
 
-impl<'a> Model for Ticket<'a> {}
+impl Model for Ticket {}
 
-impl<'a> LedgerObject<NoFlags> for Ticket<'a> {
+impl LedgerObject<NoFlags> for Ticket {
     fn get_ledger_entry_type(&self) -> LedgerEntryType {
         self.common_fields.get_ledger_entry_type()
     }
 }
 
-impl<'a> Ticket<'a> {
+impl Ticket {
     pub fn new(
         index: Option<Cow<'a, str>>,
         ledger_index: Option<Cow<'a, str>>,

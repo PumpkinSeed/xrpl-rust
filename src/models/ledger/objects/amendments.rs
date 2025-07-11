@@ -50,15 +50,15 @@ pub struct Amendments<'a> {
     pub majorities: Option<Vec<Majority>>,
 }
 
-impl<'a> Model for Amendments<'a> {}
+impl Model for Amendments {}
 
-impl<'a> LedgerObject<NoFlags> for Amendments<'a> {
+impl LedgerObject<NoFlags> for Amendments {
     fn get_ledger_entry_type(&self) -> LedgerEntryType {
         self.common_fields.get_ledger_entry_type()
     }
 }
 
-impl<'a> Amendments<'a> {
+impl Amendments {
     pub fn new(
         index: Option<Cow<'a, str>>,
         ledger_index: Option<Cow<'a, str>>,
