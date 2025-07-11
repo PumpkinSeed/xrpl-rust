@@ -13,7 +13,7 @@ pub struct NFTHistory<'a> {
     pub ledger_index_max: u32,
     pub transactions: Vec<NFTHistoryTransaction<'a>>,
     pub limit: Option<u32>,
-    pub marker: Option<Marker<'a>>,
+    pub marker: Option<Marker>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]

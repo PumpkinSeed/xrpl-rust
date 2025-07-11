@@ -1,4 +1,3 @@
-use alloc::borrow::Cow;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 
@@ -19,18 +18,18 @@ pub struct ChannelVerify<'a> {
     pub amount: XRPAmount<'a>,
     /// The Channel ID of the channel that provides the XRP.
     /// This is a 64-character hexadecimal string.
-    pub channel_id: Cow<'a, str>,
+    pub channel_id: String,
     /// The public key of the channel and the key pair that was used to
     /// create the signature, in hexadecimal or the XRP Ledger's
     /// base58 format.
-    pub public_key: Cow<'a, str>,
+    pub public_key: String,
     /// The signature to verify, in hexadecimal.
-    pub signature: Cow<'a, str>,
+    pub signature: String,
 }
 
 impl<'a> Model for ChannelVerify<'a> {}
 
-impl<'a> Request<'a> for ChannelVerify<'a> {
+impl<'a> Request for ChannelVerify<'a> {
     fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
@@ -44,9 +43,9 @@ impl<'a> ChannelVerify<'a> {
     pub fn new(
         id: Option<String>,
         amount: XRPAmount<'a>,
-        channel_id: Cow<'a, str>,
-        public_key: Cow<'a, str>,
-        signature: Cow<'a, str>,
+        channel_id: String,
+        public_key: String,
+        signature: String,
     ) -> Self {
         Self {
             common_fields: CommonFields {

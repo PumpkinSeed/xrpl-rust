@@ -1,4 +1,3 @@
-use alloc::borrow::Cow;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 
@@ -31,7 +30,7 @@ pub struct SubmitMultisigned {
 
 impl Model for SubmitMultisigned {}
 
-impl<'a> Request<'a> for SubmitMultisigned {
+impl Request for SubmitMultisigned {
     fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }

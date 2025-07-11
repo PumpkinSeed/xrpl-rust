@@ -34,7 +34,7 @@ pub struct AccountObjects<'a> {
     /// Server-defined value indicating the response is paginated. Pass this
     /// to the next call to resume where this call left off. Omitted when
     /// there are no additional pages after this one.
-    pub marker: Option<Marker<'a>>,
+    pub marker: Option<Marker>,
     /// If true, the information in this response comes from a validated
     /// ledger version. Otherwise, the information is subject to change.
     pub validated: bool,

@@ -1,4 +1,3 @@
-use alloc::borrow::Cow;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 
@@ -23,7 +22,7 @@ pub struct Fee {
 
 impl Model for Fee{}
 
-impl<'a> Request<'a> for Fee {
+impl Request for Fee {
     fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }

@@ -29,7 +29,7 @@ pub struct AccountChannels<'a> {
     pub limit: Option<u32>,
     /// Server-defined value for pagination. Pass this to the next call to
     /// resume getting results where this call left off.
-    pub marker: Option<Marker<'a>>,
+    pub marker: Option<Marker>,
 }
 
 /// Represents a single payment channel object in the XRP Ledger.

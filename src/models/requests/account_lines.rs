@@ -1,4 +1,3 @@
-use alloc::borrow::Cow;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 
@@ -15,28 +14,28 @@ use super::{CommonFields, LedgerIndex, LookupByLedgerRequest, Request};
 /// `<https://xrpl.org/account_lines.html>`
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
-pub struct AccountLines<'a> {
+pub struct AccountLines {
     /// The common fields shared by all requests.
     #[serde(flatten)]
     pub common_fields: CommonFields,
     /// A unique identifier for the account, most commonly the
     /// account's Address.
-    pub account: Cow<'a, str>,
+    pub account: String,
     /// The unique identifier of a ledger.
     #[serde(flatten)]
-    pub ledger_lookup: Option<LookupByLedgerRequest<'a>>,
+    pub ledger_lookup: Option<LookupByLedgerRequest>,
     /// Limit the number of trust lines to retrieve. The server
     /// is not required to honor this value. Must be within the
     /// inclusive range 10 to 400.
     pub limit: Option<u16>,
     /// The Address of a second account. If provided, show only
     /// lines of trust connecting the two accounts.
-    pub peer: Option<Cow<'a, str>>,
+    pub peer: Option<String>,
 }
 
-impl<'a> Model for AccountLines<'a> {}
+impl Model for AccountLines {}
 
-impl<'a> Request<'a> for AccountLines<'a> {
+impl Request for AccountLines {
     fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
@@ -46,14 +45,14 @@ impl<'a> Request<'a> for AccountLines<'a> {
     }
 }
 
-impl<'a> AccountLines<'a> {
+impl AccountLines {
     pub fn new(
         id: Option<String>,
-        account: Cow<'a, str>,
-        ledger_hash: Option<Cow<'a, str>>,
-        ledger_index: Option<LedgerIndex<'a>>,
+        account: String,
+        ledger_hash: Option<String>,
+        ledger_index: Option<LedgerIndex>,
         limit: Option<u16>,
-        peer: Option<Cow<'a, str>>,
+        peer: Option<String>,
     ) -> Self {
         Self {
             common_fields: CommonFields {

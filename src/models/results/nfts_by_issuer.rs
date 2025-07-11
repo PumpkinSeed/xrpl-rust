@@ -9,7 +9,7 @@ use super::{exceptions::XRPLResultException, nft_info::NFToken, XRPLResponse, XR
 pub struct NFTsByIssuer<'a> {
     pub issuer: Cow<'a, str>,
     pub nfts: Vec<NFToken<'a>>,
-    pub marker: Option<Marker<'a>>,
+    pub marker: Option<Marker>,
     pub limit: Option<u32>,
     pub nft_taxon: Option<u32>,
 }

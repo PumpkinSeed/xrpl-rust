@@ -35,7 +35,7 @@ pub struct AccountNfts<'a> {
     /// (May be omitted) Server-defined value indicating the response is
     /// paginated. Pass this to the next call to resume where this call
     /// left off. Omitted when there are no additional pages after this one.
-    pub marker: Option<Marker<'a>>,
+    pub marker: Option<Marker>,
 }
 
 /// Each object in the account_nfts array represents one NFToken.

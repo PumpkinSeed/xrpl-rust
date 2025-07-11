@@ -1,4 +1,3 @@
-use alloc::borrow::Cow;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 
@@ -12,14 +11,14 @@ pub struct AMMInfo<'a> {
     /// The common fields shared by all requests.
     #[serde(flatten)]
     pub common_fields: CommonFields,
-    pub amm_account: Option<Cow<'a, str>>,
+    pub amm_account: Option<String>,
     pub asset: Option<Currency<'a>>,
     pub asset2: Option<Currency<'a>>,
 }
 
 impl Model for AMMInfo<'_> {}
 
-impl<'a> Request<'a> for AMMInfo<'a> {
+impl<'a> Request for AMMInfo<'a> {
     fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
@@ -32,7 +31,7 @@ impl<'a> Request<'a> for AMMInfo<'a> {
 impl<'a> AMMInfo<'a> {
     pub fn new(
         id: Option<String>,
-        amm_account: Option<Cow<'a, str>>,
+        amm_account: Option<String>,
         asset: Option<Currency<'a>>,
         asset2: Option<Currency<'a>>,
     ) -> Self {

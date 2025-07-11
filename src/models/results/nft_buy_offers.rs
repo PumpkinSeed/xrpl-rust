@@ -23,7 +23,7 @@ pub struct NFTBuyOffers<'a> {
     /// Server-defined value indicating the response is paginated. Pass this
     /// to the next call to resume where this call left off. Omitted when
     /// there are no pages of information after this one.
-    pub marker: Option<Marker<'a>>,
+    pub marker: Option<Marker>,
 }
 
 #[cfg(test)]

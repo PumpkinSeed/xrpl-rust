@@ -72,21 +72,21 @@ pub struct LedgerEntry<'a> {
     /// The common fields shared by all requests.
     #[serde(flatten)]
     pub common_fields: CommonFields,
-    pub account_root: Option<Cow<'a, str>>,
+    pub account_root: Option<String>,
     /// If true, return the requested ledger object's contents as a
     /// hex string in the XRP Ledger's binary format. Otherwise, return
     /// data in JSON format. The default is false.
     pub binary: Option<bool>,
-    pub check: Option<Cow<'a, str>>,
+    pub check: Option<String>,
     pub deposit_preauth: Option<DepositPreauth<'a>>,
     pub directory: Option<Directory<'a>>,
     pub escrow: Option<Escrow<'a>>,
-    pub index: Option<Cow<'a, str>>,
+    pub index: Option<String>,
     /// The unique identifier of a ledger.
     #[serde(flatten)]
-    pub ledger_lookup: Option<LookupByLedgerRequest<'a>>,
+    pub ledger_lookup: Option<LookupByLedgerRequest>,
     pub offer: Option<Offer<'a>>,
-    pub payment_channel: Option<Cow<'a, str>>,
+    pub payment_channel: Option<String>,
     pub ripple_state: Option<RippleState<'a>>,
     pub ticket: Option<Ticket<'a>>,
 }
@@ -149,7 +149,7 @@ impl<'a> LedgerEntryError for LedgerEntry<'a> {
     }
 }
 
-impl<'a> Request<'a> for LedgerEntry<'a> {
+impl<'a> Request for LedgerEntry<'a> {
     fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
@@ -162,17 +162,17 @@ impl<'a> Request<'a> for LedgerEntry<'a> {
 impl<'a> LedgerEntry<'a> {
     pub fn new(
         id: Option<String>,
-        account_root: Option<Cow<'a, str>>,
+        account_root: Option<String>,
         binary: Option<bool>,
-        check: Option<Cow<'a, str>>,
+        check: Option<String>,
         deposit_preauth: Option<DepositPreauth<'a>>,
         directory: Option<Directory<'a>>,
         escrow: Option<Escrow<'a>>,
-        index: Option<Cow<'a, str>>,
-        ledger_hash: Option<Cow<'a, str>>,
-        ledger_index: Option<LedgerIndex<'a>>,
+        index: Option<String>,
+        ledger_hash: Option<String>,
+        ledger_index: Option<LedgerIndex>,
         offer: Option<Offer<'a>>,
-        payment_channel: Option<Cow<'a, str>>,
+        payment_channel: Option<String>,
         ripple_state: Option<RippleState<'a>>,
         ticket: Option<Ticket<'a>>,
     ) -> Self {

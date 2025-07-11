@@ -44,7 +44,7 @@ pub struct AccountTxBase<'a, T> {
     pub validated: Option<bool>,
     /// Server-defined value indicating the response is paginated. Pass this
     /// to the next call to resume where this call left off.
-    pub marker: Option<Marker<'a>>,
+    pub marker: Option<Marker>,
 }
 
 /// Response from an account_tx request, containing information about

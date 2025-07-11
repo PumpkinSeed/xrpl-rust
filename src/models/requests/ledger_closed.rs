@@ -1,4 +1,3 @@
-use alloc::borrow::Cow;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 
@@ -22,7 +21,7 @@ pub struct LedgerClosed {
 
 impl Model for LedgerClosed {}
 
-impl<'a> Request<'a> for LedgerClosed {
+impl Request for LedgerClosed {
     fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }

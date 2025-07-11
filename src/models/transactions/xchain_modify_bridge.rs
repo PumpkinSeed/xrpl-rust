@@ -109,7 +109,7 @@ impl<'a> XChainModifyBridge<'a> {
     fn get_account_door_mismatch_error(&self) -> XRPLModelResult<()> {
         let bridge = &self.xchain_bridge;
         if ![&bridge.locking_chain_door, &bridge.issuing_chain_door]
-            .contains(&&self.get_common_fields().account)
+            .contains(&&self.get_common_fields().account.to_string())
         {
             Err(XRPLXChainModifyBridgeException::AccountDoorMismatch.into())
         } else {
@@ -144,22 +144,22 @@ mod test_xchain_modify_bridge {
 
     fn xrp_bridge<'a>() -> XChainBridge<'a> {
         XChainBridge {
-            locking_chain_door: Cow::Borrowed(ACCOUNT),
+            locking_chain_door: ACCOUNT.to_string(),
             locking_chain_issue: XRP::new().into(),
-            issuing_chain_door: Cow::Borrowed(GENESIS),
+            issuing_chain_door: GENESIS.to_string(),
             issuing_chain_issue: XRP::new().into(),
         }
     }
 
     fn iou_bridge<'a>() -> XChainBridge<'a> {
         XChainBridge {
-            locking_chain_door: Cow::Borrowed(ACCOUNT),
+            locking_chain_door: ACCOUNT.to_string(),
             locking_chain_issue: IssuedCurrency {
                 currency: Cow::Borrowed("USD"),
                 issuer: Cow::Borrowed(ISSUER),
             }
             .into(),
-            issuing_chain_door: Cow::Borrowed(ACCOUNT2),
+            issuing_chain_door: ACCOUNT2.to_string(),
             issuing_chain_issue: IssuedCurrency {
                 currency: Cow::Borrowed("USD"),
                 issuer: Cow::Borrowed(ACCOUNT2),

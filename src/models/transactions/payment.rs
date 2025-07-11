@@ -77,7 +77,7 @@ pub struct Payment<'a> {
     pub invoice_id: Option<u32>,
     /// Array of payment paths to be used for this transaction. Must be omitted for
     /// XRP-to-XRP transactions.
-    pub paths: Option<Vec<Vec<PathStep<'a>>>>,
+    pub paths: Option<Vec<Vec<PathStep>>>,
     /// Highest amount of source currency this transaction is allowed to cost, including
     /// transfer fees, exchange rates, and slippage . Does not include the XRP destroyed
     /// as a cost for submitting the transaction. For non-XRP amounts, the nested field
@@ -205,7 +205,7 @@ impl<'a> Payment<'a> {
         deliver_min: Option<Amount<'a>>,
         destination_tag: Option<u32>,
         invoice_id: Option<u32>,
-        paths: Option<Vec<Vec<PathStep<'a>>>>,
+        paths: Option<Vec<Vec<PathStep>>>,
         send_max: Option<Amount<'a>>,
     ) -> Self {
         Self {

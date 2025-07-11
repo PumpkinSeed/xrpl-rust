@@ -95,7 +95,7 @@ impl<'a> XChainCreateBridge<'a> {
     fn get_account_door_mismatch_error(&self) -> XRPLModelResult<()> {
         let bridge = &self.xchain_bridge;
         if ![&bridge.issuing_chain_door, &bridge.locking_chain_door]
-            .contains(&&self.common_fields.account)
+            .contains(&&self.common_fields.account.to_string())
         {
             Err(XRPLXChainCreateBridgeException::AccountDoorMismatch.into())
         } else {

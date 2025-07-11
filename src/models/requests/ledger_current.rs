@@ -1,4 +1,3 @@
-use alloc::borrow::Cow;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 
@@ -22,7 +21,7 @@ pub struct LedgerCurrent {
 
 impl Model for LedgerCurrent {}
 
-impl<'a> Request<'a> for LedgerCurrent {
+impl Request for LedgerCurrent {
     fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }

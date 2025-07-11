@@ -81,13 +81,13 @@ pub enum AffectedNode<'a> {
     #[serde(rename_all = "PascalCase")]
     CreatedNode {
         ledger_entry_type: LedgerEntryType,
-        ledger_index: LedgerIndex<'a>,
+        ledger_index: LedgerIndex,
         new_fields: Fields<'a>,
     },
     #[serde(rename_all = "PascalCase")]
     ModifiedNode {
         ledger_entry_type: LedgerEntryType,
-        ledger_index: LedgerIndex<'a>,
+        ledger_index: LedgerIndex,
         final_fields: Option<Fields<'a>>,
         previous_fields: Option<Fields<'a>>,
         previous_txn_id: Option<Cow<'a, str>>,
@@ -96,7 +96,7 @@ pub enum AffectedNode<'a> {
     #[serde(rename_all = "PascalCase")]
     DeletedNode {
         ledger_entry_type: LedgerEntryType,
-        ledger_index: LedgerIndex<'a>,
+        ledger_index: LedgerIndex,
         final_fields: Fields<'a>,
         previous_fields: Option<Fields<'a>>,
     },

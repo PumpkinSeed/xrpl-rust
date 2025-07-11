@@ -1,4 +1,3 @@
-use alloc::borrow::Cow;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 
@@ -35,21 +34,21 @@ use super::{CommonFields, Request};
 /// `<https://xrpl.org/submit.html>`
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
-pub struct Submit<'a> {
+pub struct Submit {
     /// The common fields shared by all requests.
     #[serde(flatten)]
     pub common_fields: CommonFields,
     /// Hex representation of the signed transaction to submit.
     /// This can also be a multi-signed transaction.
-    pub tx_blob: Cow<'a, str>,
+    pub tx_blob: String,
     /// If true, and the transaction fails locally, do not retry
     /// or relay the transaction to other servers
     pub fail_hard: Option<bool>,
 }
 
-impl<'a> Model for Submit<'a> {}
+impl Model for Submit {}
 
-impl<'a> Request<'a> for Submit<'a> {
+impl Request for Submit {
     fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
@@ -59,8 +58,8 @@ impl<'a> Request<'a> for Submit<'a> {
     }
 }
 
-impl<'a> Submit<'a> {
-    pub fn new(id: Option<String>, tx_blob: Cow<'a, str>, fail_hard: Option<bool>) -> Self {
+impl Submit {
+    pub fn new(id: Option<String>, tx_blob: String, fail_hard: Option<bool>) -> Self {
         Self {
             common_fields: CommonFields {
                 command: RequestMethod::Submit,

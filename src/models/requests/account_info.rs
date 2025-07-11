@@ -1,4 +1,3 @@
-use alloc::borrow::Cow;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 
@@ -14,16 +13,16 @@ use super::{CommonFields, LedgerIndex, LookupByLedgerRequest, Request};
 /// `<https://xrpl.org/account_info.html>`
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
-pub struct AccountInfo<'a> {
+pub struct AccountInfo {
     /// The common fields shared by all requests.
     #[serde(flatten)]
     pub common_fields: CommonFields,
     /// A unique identifier for the account, most commonly the
     /// account's Address.
-    pub account: Cow<'a, str>,
+    pub account: String,
     /// The unique identifier of a ledger.
     #[serde(flatten)]
-    pub ledger_lookup: Option<LookupByLedgerRequest<'a>>,
+    pub ledger_lookup: Option<LookupByLedgerRequest>,
     /// If true, then the account field only accepts a public
     /// key or XRP Ledger address. Otherwise, account can be
     /// a secret or passphrase (not recommended).
@@ -40,9 +39,9 @@ pub struct AccountInfo<'a> {
     pub signer_lists: Option<bool>,
 }
 
-impl<'a> Model for AccountInfo<'a> {}
+impl Model for AccountInfo {}
 
-impl<'a> Request<'a> for AccountInfo<'a> {
+impl Request for AccountInfo {
     fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
@@ -52,12 +51,12 @@ impl<'a> Request<'a> for AccountInfo<'a> {
     }
 }
 
-impl<'a> AccountInfo<'a> {
+impl AccountInfo {
     pub fn new(
         id: Option<String>,
-        account: Cow<'a, str>,
-        ledger_hash: Option<Cow<'a, str>>,
-        ledger_index: Option<LedgerIndex<'a>>,
+        account: String,
+        ledger_hash: Option<String>,
+        ledger_index: Option<LedgerIndex>,
         strict: Option<bool>,
         queue: Option<bool>,
         signer_lists: Option<bool>,
@@ -68,10 +67,14 @@ impl<'a> AccountInfo<'a> {
                 id,
             },
             account,
-            ledger_lookup: Some(LookupByLedgerRequest {
-                ledger_hash,
-                ledger_index,
-            }),
+            ledger_lookup: if ledger_hash.is_some() || ledger_index.is_some() {
+                Some(LookupByLedgerRequest {
+                    ledger_hash,
+                    ledger_index,
+                })
+            } else {
+                None
+            },
             strict,
             queue,
             signer_lists,

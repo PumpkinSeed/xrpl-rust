@@ -21,7 +21,7 @@ pub struct LedgerData<'a> {
     pub state: Cow<'a, [LedgerObject<'a>]>,
     /// Server-defined value indicating the response is paginated.
     /// Pass this to the next call to resume where this call left off.
-    pub marker: Option<Marker<'a>>,
+    pub marker: Option<Marker>,
 }
 
 /// Represents a single object in the ledger's state tree.

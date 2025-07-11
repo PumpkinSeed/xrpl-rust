@@ -1,4 +1,3 @@
-use alloc::borrow::Cow;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 
@@ -22,7 +21,7 @@ pub struct Random {
 
 impl Model for Random {}
 
-impl<'a> Request<'a> for Random {
+impl Request for Random {
     fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }

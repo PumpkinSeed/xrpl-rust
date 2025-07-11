@@ -1,4 +1,3 @@
-use alloc::borrow::Cow;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 
@@ -13,16 +12,16 @@ use super::{CommonFields, LedgerIndex, LookupByLedgerRequest, Marker, Request};
 /// `<https://xrpl.org/account_tx.html>`
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
-pub struct AccountTx<'a> {
+pub struct AccountTx {
     /// The common fields shared by all requests.
     #[serde(flatten)]
     pub common_fields: CommonFields,
     /// A unique identifier for the account, most commonly the
     /// account's address.
-    pub account: Cow<'a, str>,
+    pub account: String,
     /// The unique identifier of a ledger.
     #[serde(flatten)]
-    pub ledger_lookup: Option<LookupByLedgerRequest<'a>>,
+    pub ledger_lookup: Option<LookupByLedgerRequest>,
     /// Defaults to false. If set to true, returns transactions
     /// as hex strings instead of JSON.
     pub binary: Option<bool>,
@@ -47,12 +46,12 @@ pub struct AccountTx<'a> {
     /// data where that response left off. This value is stable even
     /// if there is a change in the server's range of available
     /// ledgers.
-    pub marker: Option<Marker<'a>>,
+    pub marker: Option<Marker>,
 }
 
-impl<'a> Model for AccountTx<'a> {}
+impl Model for AccountTx {}
 
-impl<'a> Request<'a> for AccountTx<'a> {
+impl Request for AccountTx {
     fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
@@ -62,18 +61,18 @@ impl<'a> Request<'a> for AccountTx<'a> {
     }
 }
 
-impl<'a> AccountTx<'a> {
+impl AccountTx {
     pub fn new(
         id: Option<String>,
-        account: Cow<'a, str>,
-        ledger_hash: Option<Cow<'a, str>>,
-        ledger_index: Option<LedgerIndex<'a>>,
+        account: String,
+        ledger_hash: Option<String>,
+        ledger_index: Option<LedgerIndex>,
         binary: Option<bool>,
         forward: Option<bool>,
         ledger_index_min: Option<u32>,
         ledger_index_max: Option<u32>,
         limit: Option<u16>,
-        marker: Option<Marker<'a>>,
+        marker: Option<Marker>,
     ) -> Self {
         Self {
             common_fields: CommonFields {

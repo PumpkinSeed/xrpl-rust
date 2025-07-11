@@ -1,4 +1,3 @@
-use alloc::borrow::Cow;
 use alloc::vec::Vec;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
@@ -30,52 +29,52 @@ use super::{CommonFields, Request};
 /// `<https://xrpl.org/channel_authorize.html>`
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
-pub struct ChannelAuthorize<'a> {
+pub struct ChannelAuthorize {
     /// The common fields shared by all requests.
     #[serde(flatten)]
     pub common_fields: CommonFields,
     /// The unique ID of the payment channel to use.
-    pub channel_id: Cow<'a, str>,
+    pub channel_id: String,
     /// Cumulative amount of XRP, in drops, to authorize.
     /// If the destination has already received a lesser amount
     /// of XRP from this channel, the signature created by this
     /// method can be redeemed for the difference.
-    pub amount: Cow<'a, str>,
+    pub amount: String,
     /// The secret key to use to sign the claim. This must be
     /// the same key pair as the public key specified in the
     /// channel. Cannot be used with seed, seed_hex, or passphrase.
-    pub secret: Option<Cow<'a, str>>,
+    pub secret: Option<String>,
     /// The secret seed to use to sign the claim. This must be
     /// the same key pair as the public key specified in the channel.
     /// Must be in the XRP Ledger's base58 format. If provided,
     /// you must also specify the key_type. Cannot be used with
     /// secret, seed_hex, or passphrase.
-    pub seed: Option<Cow<'a, str>>,
+    pub seed: Option<String>,
     /// The secret seed to use to sign the claim. This must be the
     /// same key pair as the public key specified in the channel.
     /// Must be in hexadecimal format. If provided, you must also
     /// specify the key_type. Cannot be used with secret, seed,
     /// or passphrase.
-    pub seed_hex: Option<Cow<'a, str>>,
+    pub seed_hex: Option<String>,
     /// A string passphrase to use to sign the claim. This must be
     /// the same key pair as the public key specified in the channel.
     /// The key derived from this passphrase must match the public
     /// key specified in the channel. If provided, you must also
     /// specify the key_type. Cannot be used with secret, seed,
     /// or seed_hex.
-    pub passphrase: Option<Cow<'a, str>>,
+    pub passphrase: Option<String>,
     /// The signing algorithm of the cryptographic key pair provided.
     /// Valid types are secp256k1 or ed25519. The default is secp256k1.
     pub key_type: Option<CryptoAlgorithm>,
 }
 
-impl<'a> Model for ChannelAuthorize<'a> {
+impl Model for ChannelAuthorize {
     fn get_errors(&self) -> XRPLModelResult<()> {
         self._get_field_error()
     }
 }
 
-impl<'a> Request<'a> for ChannelAuthorize<'a> {
+impl Request for ChannelAuthorize {
     fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
@@ -85,7 +84,7 @@ impl<'a> Request<'a> for ChannelAuthorize<'a> {
     }
 }
 
-impl<'a> ChannelAuthorizeError for ChannelAuthorize<'a> {
+impl ChannelAuthorizeError for ChannelAuthorize {
     fn _get_field_error(&self) -> XRPLModelResult<()> {
         let mut signing_methods = Vec::new();
         for method in [
@@ -111,15 +110,15 @@ impl<'a> ChannelAuthorizeError for ChannelAuthorize<'a> {
     }
 }
 
-impl<'a> ChannelAuthorize<'a> {
+impl ChannelAuthorize {
     pub fn new(
         id: Option<String>,
-        channel_id: Cow<'a, str>,
-        amount: Cow<'a, str>,
-        secret: Option<Cow<'a, str>>,
-        seed: Option<Cow<'a, str>>,
-        seed_hex: Option<Cow<'a, str>>,
-        passphrase: Option<Cow<'a, str>>,
+        channel_id: String,
+        amount: String,
+        secret: Option<String>,
+        seed: Option<String>,
+        seed_hex: Option<String>,
+        passphrase: Option<String>,
         key_type: Option<CryptoAlgorithm>,
     ) -> Self {
         Self {

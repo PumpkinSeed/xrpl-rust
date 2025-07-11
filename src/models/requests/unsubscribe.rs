@@ -1,4 +1,3 @@
-use alloc::borrow::Cow;
 use alloc::vec::Vec;
 use derive_new::new;
 use serde::{Deserialize, Serialize};
@@ -45,15 +44,15 @@ pub struct Unsubscribe<'a> {
     /// those messages if you previously subscribed to those accounts
     /// specifically. You cannot use this to filter accounts out of
     /// the general transactions stream.)
-    pub accounts: Option<Vec<Cow<'a, str>>>,
+    pub accounts: Option<Vec<String>>,
     /// Like accounts, but for accounts_proposed subscriptions that
     /// included not-yet-validated transactions.
-    pub accounts_proposed: Option<Vec<Cow<'a, str>>>,
+    pub accounts_proposed: Option<Vec<String>>,
     /// Array of objects defining order books to unsubscribe
     /// from, as explained below.
     pub books: Option<Vec<UnsubscribeBook<'a>>>,
     #[serde(skip_serializing)]
-    pub broken: Option<Cow<'a, str>>,
+    pub broken: Option<String>,
     /// Array of string names of generic streams to unsubscribe
     /// from, including ledger, server, transactions,
     /// and transactions_proposed.
@@ -62,7 +61,7 @@ pub struct Unsubscribe<'a> {
 
 impl<'a> Model for Unsubscribe<'a> {}
 
-impl<'a> Request<'a> for Unsubscribe<'a> {
+impl<'a> Request for Unsubscribe<'a> {
     fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
@@ -75,10 +74,10 @@ impl<'a> Request<'a> for Unsubscribe<'a> {
 impl<'a> Unsubscribe<'a> {
     pub fn new(
         id: Option<String>,
-        accounts: Option<Vec<Cow<'a, str>>>,
-        accounts_proposed: Option<Vec<Cow<'a, str>>>,
+        accounts: Option<Vec<String>>,
+        accounts_proposed: Option<Vec<String>>,
         books: Option<Vec<UnsubscribeBook<'a>>>,
-        broken: Option<Cow<'a, str>>,
+        broken: Option<String>,
         streams: Option<Vec<StreamParameter>>,
     ) -> Self {
         Self {

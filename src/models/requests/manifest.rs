@@ -1,4 +1,3 @@
-use alloc::borrow::Cow;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 
@@ -15,19 +14,19 @@ use super::{CommonFields, Request};
 /// `<https://xrpl.org/manifest.html#manifest>`
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
-pub struct Manifest<'a> {
+pub struct Manifest {
     /// The common fields shared by all requests.
     #[serde(flatten)]
     pub common_fields: CommonFields,
     /// The base58-encoded public key of the validator
     /// to look up. This can be the master public key or
     /// ephemeral public key.
-    pub public_key: Cow<'a, str>,
+    pub public_key: String,
 }
 
-impl<'a> Model for Manifest<'a> {}
+impl Model for Manifest {}
 
-impl<'a> Request<'a> for Manifest<'a> {
+impl Request for Manifest {
     fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
@@ -37,8 +36,8 @@ impl<'a> Request<'a> for Manifest<'a> {
     }
 }
 
-impl<'a> Manifest<'a> {
-    pub fn new(id: Option<String>, public_key: Cow<'a, str>) -> Self {
+impl Manifest {
+    pub fn new(id: Option<String>, public_key: String) -> Self {
         Self {
             common_fields: CommonFields {
                 command: RequestMethod::Manifest,

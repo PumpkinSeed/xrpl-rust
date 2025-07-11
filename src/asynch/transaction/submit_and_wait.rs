@@ -97,7 +97,7 @@ where
         // sleep for 1 second
         wait_seconds(1).await;
         let response = client
-            .request(requests::tx::Tx::new(None, None, None, None, Some(tx_hash.clone())).into())
+            .request(requests::tx::Tx::new(None, None, None, None, Some(tx_hash.to_string())).into())
             .await?;
         let response: XRPLResponse<TxVersionMap> = serde_json::from_str(&response)?;
 

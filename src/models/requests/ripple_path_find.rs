@@ -1,4 +1,3 @@
-use alloc::borrow::Cow;
 use alloc::vec::Vec;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
@@ -31,7 +30,7 @@ pub struct RipplePathFind<'a> {
     pub common_fields: CommonFields,
     /// Unique address of the account that would receive funds
     /// in a transaction.
-    pub destination_account: Cow<'a, str>,
+    pub destination_account: String,
     /// Currency Amount that the destination account would
     /// receive in a transaction. Special case: New in: rippled 0.30.0
     /// You can specify "-1" (for XRP) or provide -1 as the contents
@@ -41,10 +40,10 @@ pub struct RipplePathFind<'a> {
     pub destination_amount: Currency<'a>,
     /// Unique address of the account that would send funds
     /// in a transaction.
-    pub source_account: Cow<'a, str>,
+    pub source_account: String,
     /// The unique identifier of a ledger.
     #[serde(flatten)]
-    pub ledger_lookup: Option<LookupByLedgerRequest<'a>>,
+    pub ledger_lookup: Option<LookupByLedgerRequest>,
     /// Currency Amount that would be spent in the transaction.
     /// Cannot be used with source_currencies.
     pub send_max: Option<Currency<'a>>,
@@ -60,7 +59,7 @@ pub struct RipplePathFind<'a> {
 
 impl<'a> Model for RipplePathFind<'a> {}
 
-impl<'a> Request<'a> for RipplePathFind<'a> {
+impl<'a> Request for RipplePathFind<'a> {
     fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
@@ -73,11 +72,11 @@ impl<'a> Request<'a> for RipplePathFind<'a> {
 impl<'a> RipplePathFind<'a> {
     pub fn new(
         id: Option<String>,
-        destination_account: Cow<'a, str>,
+        destination_account: String,
         destination_amount: Currency<'a>,
-        source_account: Cow<'a, str>,
-        ledger_hash: Option<Cow<'a, str>>,
-        ledger_index: Option<LedgerIndex<'a>>,
+        source_account: String,
+        ledger_hash: Option<String>,
+        ledger_index: Option<LedgerIndex>,
         send_max: Option<Currency<'a>>,
         source_currencies: Option<Vec<Currency<'a>>>,
     ) -> Self {

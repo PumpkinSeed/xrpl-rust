@@ -1,4 +1,3 @@
-use alloc::borrow::Cow;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 
@@ -20,9 +19,9 @@ pub struct ServerInfo {
     pub common_fields: CommonFields,
 }
 
-impl<'a> Model for ServerInfo {}
+impl Model for ServerInfo {}
 
-impl<'a> Request<'a> for ServerInfo {
+impl Request for ServerInfo {
     fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
@@ -32,7 +31,7 @@ impl<'a> Request<'a> for ServerInfo {
     }
 }
 
-impl<'a> ServerInfo {
+impl ServerInfo {
     pub fn new(id: Option<String>) -> Self {
         Self {
             common_fields: CommonFields {

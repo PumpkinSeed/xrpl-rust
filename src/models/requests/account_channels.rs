@@ -1,4 +1,3 @@
-use alloc::borrow::Cow;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 
@@ -34,40 +33,40 @@ use super::{CommonFields, LedgerIndex, LookupByLedgerRequest, Marker, Request};
 /// ```
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
-pub struct AccountChannels<'a> {
+pub struct AccountChannels {
     /// Common fields shared by all requests.
     #[serde(flatten)]
     pub common_fields: CommonFields,
     /// The unique identifier of an account, typically the
     /// account's Address. The request returns channels where
     /// this account is the channel's owner/source.
-    pub account: Cow<'a, str>,
+    pub account: String,
     /// The unique identifier of a ledger.
     #[serde(flatten)]
-    pub ledger_lookup: Option<LookupByLedgerRequest<'a>>,
+    pub ledger_lookup: Option<LookupByLedgerRequest>,
     /// Limit the number of transactions to retrieve. Cannot
     /// be less than 10 or more than 400. The default is 200.
     pub limit: Option<u16>,
     /// The unique identifier of an account, typically the
     /// account's Address. If provided, filter results to
     /// payment channels whose destination is this account.
-    pub destination_account: Option<Cow<'a, str>>,
+    pub destination_account: Option<String>,
     /// Value from a previous paginated response.
     /// Resume retrieving data where that response left off.
-    pub marker: Option<Marker<'a>>,
+    pub marker: Option<Marker>,
 }
 
-impl<'a> Model for AccountChannels<'a> {}
+impl Model for AccountChannels {}
 
-impl<'a> AccountChannels<'a> {
+impl AccountChannels {
     pub fn new(
         id: Option<String>,
-        account: Cow<'a, str>,
-        destination_account: Option<Cow<'a, str>>,
-        ledger_hash: Option<Cow<'a, str>>,
-        ledger_index: Option<LedgerIndex<'a>>,
+        account: String,
+        destination_account: Option<String>,
+        ledger_hash: Option<String>,
+        ledger_index: Option<LedgerIndex>,
         limit: Option<u16>,
-        marker: Option<Marker<'a>>,
+        marker: Option<Marker>,
     ) -> Self {
         Self {
             common_fields: CommonFields {
@@ -86,7 +85,7 @@ impl<'a> AccountChannels<'a> {
     }
 }
 
-impl<'a> Request<'a> for AccountChannels<'a> {
+impl Request for AccountChannels {
     fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }

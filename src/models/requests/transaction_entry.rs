@@ -1,4 +1,3 @@
-use alloc::borrow::Cow;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 
@@ -16,20 +15,20 @@ use super::{CommonFields, LedgerIndex, LookupByLedgerRequest, Request};
 /// `<https://xrpl.org/transaction_entry.html>`
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
-pub struct TransactionEntry<'a> {
+pub struct TransactionEntry {
     /// The common fields shared by all requests.
     #[serde(flatten)]
     pub common_fields: CommonFields,
     /// Unique hash of the transaction you are looking up.
-    pub tx_hash: Cow<'a, str>,
+    pub tx_hash: String,
     /// The unique identifier of a ledger.
     #[serde(flatten)]
-    pub ledger_lookup: Option<LookupByLedgerRequest<'a>>,
+    pub ledger_lookup: Option<LookupByLedgerRequest>,
 }
 
-impl<'a> Model for TransactionEntry<'a> {}
+impl Model for TransactionEntry {}
 
-impl<'a> Request<'a> for TransactionEntry<'a> {
+impl Request for TransactionEntry {
     fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
@@ -39,12 +38,12 @@ impl<'a> Request<'a> for TransactionEntry<'a> {
     }
 }
 
-impl<'a> TransactionEntry<'a> {
+impl TransactionEntry {
     pub fn new(
         id: Option<String>,
-        tx_hash: Cow<'a, str>,
-        ledger_hash: Option<Cow<'a, str>>,
-        ledger_index: Option<LedgerIndex<'a>>,
+        tx_hash: String,
+        ledger_hash: Option<String>,
+        ledger_index: Option<LedgerIndex>,
     ) -> Self {
         Self {
             common_fields: CommonFields {

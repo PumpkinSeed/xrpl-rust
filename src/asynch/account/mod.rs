@@ -68,9 +68,9 @@ where
     }
     let request = AccountInfo::new(
         None,
-        classic_address,
+        classic_address.to_string(),
         None,
-        Some(ledger_index.into()),
+        Some(ledger_index.to_string().into()),
         None,
         None,
         None,
@@ -104,7 +104,7 @@ where
     }
     let account_tx = AccountTx::new(
         None,
-        address,
+        address.to_string(),
         None,
         Some("validated".into()),
         None,
