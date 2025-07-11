@@ -15,7 +15,7 @@ use super::{CommonFields, LedgerIndex, LookupByLedgerRequest, Marker, Request};
 pub struct NftBuyOffers<'a> {
     /// The common fields shared by all requests.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a>,
+    pub common_fields: CommonFields,
     /// The unique identifier of a NFToken object.
     pub nft_id: Cow<'a, str>,
     /// The unique identifier of a ledger.
@@ -33,18 +33,18 @@ pub struct NftBuyOffers<'a> {
 impl<'a> Model for NftBuyOffers<'a> {}
 
 impl<'a> Request<'a> for NftBuyOffers<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'a> {
+    fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
 
-    fn get_common_fields_mut(&mut self) -> &mut CommonFields<'a> {
+    fn get_common_fields_mut(&mut self) -> &mut CommonFields {
         &mut self.common_fields
     }
 }
 
 impl<'a> NftBuyOffers<'a> {
     pub fn new(
-        id: Option<Cow<'a, str>>,
+        id: Option<String>,
         nft_id: Cow<'a, str>,
         ledger_hash: Option<Cow<'a, str>>,
         ledger_index: Option<LedgerIndex<'a>>,

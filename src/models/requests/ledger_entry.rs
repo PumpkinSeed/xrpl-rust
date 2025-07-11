@@ -71,7 +71,7 @@ pub struct RippleState<'a> {
 pub struct LedgerEntry<'a> {
     /// The common fields shared by all requests.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a>,
+    pub common_fields: CommonFields,
     pub account_root: Option<Cow<'a, str>>,
     /// If true, return the requested ledger object's contents as a
     /// hex string in the XRP Ledger's binary format. Otherwise, return
@@ -150,18 +150,18 @@ impl<'a> LedgerEntryError for LedgerEntry<'a> {
 }
 
 impl<'a> Request<'a> for LedgerEntry<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'a> {
+    fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
 
-    fn get_common_fields_mut(&mut self) -> &mut CommonFields<'a> {
+    fn get_common_fields_mut(&mut self) -> &mut CommonFields {
         &mut self.common_fields
     }
 }
 
 impl<'a> LedgerEntry<'a> {
     pub fn new(
-        id: Option<Cow<'a, str>>,
+        id: Option<String>,
         account_root: Option<Cow<'a, str>>,
         binary: Option<bool>,
         check: Option<Cow<'a, str>>,

@@ -61,7 +61,7 @@ pub enum PathFindSubcommand {
 pub struct PathFind<'a> {
     /// The common fields shared by all requests.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a>,
+    pub common_fields: CommonFields,
     /// Unique address of the account to find a path to.
     /// (In other words, the account that would receive a payment.)
     pub destination_account: Cow<'a, str>,
@@ -91,18 +91,18 @@ pub struct PathFind<'a> {
 impl<'a> Model for PathFind<'a> {}
 
 impl<'a> Request<'a> for PathFind<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'a> {
+    fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
 
-    fn get_common_fields_mut(&mut self) -> &mut CommonFields<'a> {
+    fn get_common_fields_mut(&mut self) -> &mut CommonFields {
         &mut self.common_fields
     }
 }
 
 impl<'a> PathFind<'a> {
     pub fn new(
-        id: Option<Cow<'a, str>>,
+        id: Option<String>,
         destination_account: Cow<'a, str>,
         destination_amount: Currency<'a>,
         source_account: Cow<'a, str>,

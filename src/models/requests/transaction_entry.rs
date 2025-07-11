@@ -19,7 +19,7 @@ use super::{CommonFields, LedgerIndex, LookupByLedgerRequest, Request};
 pub struct TransactionEntry<'a> {
     /// The common fields shared by all requests.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a>,
+    pub common_fields: CommonFields,
     /// Unique hash of the transaction you are looking up.
     pub tx_hash: Cow<'a, str>,
     /// The unique identifier of a ledger.
@@ -30,18 +30,18 @@ pub struct TransactionEntry<'a> {
 impl<'a> Model for TransactionEntry<'a> {}
 
 impl<'a> Request<'a> for TransactionEntry<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'a> {
+    fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
 
-    fn get_common_fields_mut(&mut self) -> &mut CommonFields<'a> {
+    fn get_common_fields_mut(&mut self) -> &mut CommonFields {
         &mut self.common_fields
     }
 }
 
 impl<'a> TransactionEntry<'a> {
     pub fn new(
-        id: Option<Cow<'a, str>>,
+        id: Option<String>,
         tx_hash: Cow<'a, str>,
         ledger_hash: Option<Cow<'a, str>>,
         ledger_index: Option<LedgerIndex<'a>>,

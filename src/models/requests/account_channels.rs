@@ -37,7 +37,7 @@ use super::{CommonFields, LedgerIndex, LookupByLedgerRequest, Marker, Request};
 pub struct AccountChannels<'a> {
     /// Common fields shared by all requests.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a>,
+    pub common_fields: CommonFields,
     /// The unique identifier of an account, typically the
     /// account's Address. The request returns channels where
     /// this account is the channel's owner/source.
@@ -61,7 +61,7 @@ impl<'a> Model for AccountChannels<'a> {}
 
 impl<'a> AccountChannels<'a> {
     pub fn new(
-        id: Option<Cow<'a, str>>,
+        id: Option<String>,
         account: Cow<'a, str>,
         destination_account: Option<Cow<'a, str>>,
         ledger_hash: Option<Cow<'a, str>>,
@@ -87,11 +87,11 @@ impl<'a> AccountChannels<'a> {
 }
 
 impl<'a> Request<'a> for AccountChannels<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'a> {
+    fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
 
-    fn get_common_fields_mut(&mut self) -> &mut CommonFields<'a> {
+    fn get_common_fields_mut(&mut self) -> &mut CommonFields {
         &mut self.common_fields
     }
 }

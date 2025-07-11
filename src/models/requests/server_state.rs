@@ -22,24 +22,24 @@ use super::{CommonFields, Request};
 pub struct ServerState<'a> {
     /// The common fields shared by all requests.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a>,
+    pub common_fields: CommonFields,
     pub ledger_index: Option<Cow<'a, str>>,
 }
 
 impl<'a> Model for ServerState<'a> {}
 
 impl<'a> Request<'a> for ServerState<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'a> {
+    fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
 
-    fn get_common_fields_mut(&mut self) -> &mut CommonFields<'a> {
+    fn get_common_fields_mut(&mut self) -> &mut CommonFields {
         &mut self.common_fields
     }
 }
 
 impl<'a> ServerState<'a> {
-    pub fn new(id: Option<Cow<'a, str>>) -> Self {
+    pub fn new(id: Option<String>) -> Self {
         Self {
             ledger_index: Some("current".into()),
             common_fields: CommonFields {

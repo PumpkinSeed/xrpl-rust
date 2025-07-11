@@ -15,7 +15,7 @@ use super::{CommonFields, Request};
 pub struct Tx<'a> {
     /// The common fields shared by all requests.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a>,
+    pub common_fields: CommonFields,
     /// If true, return transaction data and metadata as binary
     /// serialized to hexadecimal strings. If false, return
     /// transaction data and metadata as JSON. The default is false.
@@ -37,18 +37,18 @@ pub struct Tx<'a> {
 impl<'a> Model for Tx<'a> {}
 
 impl<'a> Request<'a> for Tx<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'a> {
+    fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
 
-    fn get_common_fields_mut(&mut self) -> &mut CommonFields<'a> {
+    fn get_common_fields_mut(&mut self) -> &mut CommonFields {
         &mut self.common_fields
     }
 }
 
 impl<'a> Tx<'a> {
     pub fn new(
-        id: Option<Cow<'a, str>>,
+        id: Option<String>,
         binary: Option<bool>,
         max_ledger: Option<u32>,
         min_ledger: Option<u32>,

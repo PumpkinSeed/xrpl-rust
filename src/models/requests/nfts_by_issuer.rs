@@ -13,7 +13,7 @@ use super::{CommonFields, LedgerIndex, LookupByLedgerRequest, Marker, Request, R
 pub struct NFTsByIssuer<'a> {
     /// The common fields shared by all requests.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a>,
+    pub common_fields: CommonFields,
     /// The unique identifier of a ledger.
     #[serde(flatten)]
     pub ledger_lookup: Option<LookupByLedgerRequest<'a>>,
@@ -28,18 +28,18 @@ pub struct NFTsByIssuer<'a> {
 impl Model for NFTsByIssuer<'_> {}
 
 impl<'a> Request<'a> for NFTsByIssuer<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'a> {
+    fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
 
-    fn get_common_fields_mut(&mut self) -> &mut CommonFields<'a> {
+    fn get_common_fields_mut(&mut self) -> &mut CommonFields {
         &mut self.common_fields
     }
 }
 
 impl<'a> NFTsByIssuer<'a> {
     pub fn new(
-        id: Option<Cow<'a, str>>,
+        id: Option<String>,
         issuer: Cow<'a, str>,
         ledger_hash: Option<Cow<'a, str>>,
         ledger_index: Option<LedgerIndex<'a>>,

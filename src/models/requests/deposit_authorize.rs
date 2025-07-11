@@ -16,7 +16,7 @@ use super::{CommonFields, LedgerIndex, LookupByLedgerRequest, Request};
 pub struct DepositAuthorized<'a> {
     /// The common fields shared by all requests.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a>,
+    pub common_fields: CommonFields,
     /// The recipient of a possible payment.
     pub destination_account: Cow<'a, str>,
     /// The sender of a possible payment.
@@ -29,18 +29,18 @@ pub struct DepositAuthorized<'a> {
 impl<'a> Model for DepositAuthorized<'a> {}
 
 impl<'a> Request<'a> for DepositAuthorized<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'a> {
+    fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
 
-    fn get_common_fields_mut(&mut self) -> &mut CommonFields<'a> {
+    fn get_common_fields_mut(&mut self) -> &mut CommonFields {
         &mut self.common_fields
     }
 }
 
 impl<'a> DepositAuthorized<'a> {
     pub fn new(
-        id: Option<Cow<'a, str>>,
+        id: Option<String>,
         destination_account: Cow<'a, str>,
         source_account: Cow<'a, str>,
         ledger_hash: Option<Cow<'a, str>>,

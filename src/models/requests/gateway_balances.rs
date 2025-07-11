@@ -18,7 +18,7 @@ use super::{CommonFields, LedgerIndex, LookupByLedgerRequest, Request};
 pub struct GatewayBalances<'a> {
     /// The common fields shared by all requests.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a>,
+    pub common_fields: CommonFields,
     /// The Address to check. This should be the issuing address.
     pub account: Cow<'a, str>,
     /// An operational address to exclude from the balances
@@ -35,18 +35,18 @@ pub struct GatewayBalances<'a> {
 impl<'a> Model for GatewayBalances<'a> {}
 
 impl<'a> Request<'a> for GatewayBalances<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'a> {
+    fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
 
-    fn get_common_fields_mut(&mut self) -> &mut CommonFields<'a> {
+    fn get_common_fields_mut(&mut self) -> &mut CommonFields {
         &mut self.common_fields
     }
 }
 
 impl<'a> GatewayBalances<'a> {
     pub fn new(
-        id: Option<Cow<'a, str>>,
+        id: Option<String>,
         account: Cow<'a, str>,
         hotwallet: Option<Vec<Cow<'a, str>>>,
         ledger_hash: Option<Cow<'a, str>>,

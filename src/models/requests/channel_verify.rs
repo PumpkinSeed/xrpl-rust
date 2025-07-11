@@ -14,7 +14,7 @@ use super::{CommonFields, Request};
 pub struct ChannelVerify<'a> {
     /// The common fields shared by all requests.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a>,
+    pub common_fields: CommonFields,
     /// The amount of XRP, in drops, the provided signature authorizes.
     pub amount: XRPAmount<'a>,
     /// The Channel ID of the channel that provides the XRP.
@@ -31,18 +31,18 @@ pub struct ChannelVerify<'a> {
 impl<'a> Model for ChannelVerify<'a> {}
 
 impl<'a> Request<'a> for ChannelVerify<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'a> {
+    fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
 
-    fn get_common_fields_mut(&mut self) -> &mut CommonFields<'a> {
+    fn get_common_fields_mut(&mut self) -> &mut CommonFields {
         &mut self.common_fields
     }
 }
 
 impl<'a> ChannelVerify<'a> {
     pub fn new(
-        id: Option<Cow<'a, str>>,
+        id: Option<String>,
         amount: XRPAmount<'a>,
         channel_id: Cow<'a, str>,
         public_key: Cow<'a, str>,

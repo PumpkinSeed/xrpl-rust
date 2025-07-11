@@ -32,7 +32,7 @@ pub enum NoRippleCheckRole {
 pub struct NoRippleCheck<'a> {
     /// The common fields shared by all requests.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a>,
+    pub common_fields: CommonFields,
     /// A unique identifier for the account, most commonly the
     /// account's address.
     pub account: Cow<'a, str>,
@@ -57,18 +57,18 @@ pub struct NoRippleCheck<'a> {
 impl<'a> Model for NoRippleCheck<'a> {}
 
 impl<'a> Request<'a> for NoRippleCheck<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'a> {
+    fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
 
-    fn get_common_fields_mut(&mut self) -> &mut CommonFields<'a> {
+    fn get_common_fields_mut(&mut self) -> &mut CommonFields {
         &mut self.common_fields
     }
 }
 
 impl<'a> NoRippleCheck<'a> {
     pub fn new(
-        id: Option<Cow<'a, str>>,
+        id: Option<String>,
         account: Cow<'a, str>,
         role: NoRippleCheckRole,
         ledger_hash: Option<Cow<'a, str>>,

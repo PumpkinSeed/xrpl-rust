@@ -15,7 +15,7 @@ pub trait XRPLClient {
         if common_fields.id.is_none() {
             #[cfg(feature = "std")]
             {
-                common_fields.id = Some(self.get_random_id());
+                common_fields.id = Some(self.get_random_id().to_string());
             }
             #[cfg(not(feature = "std"))]
             unimplemented!(

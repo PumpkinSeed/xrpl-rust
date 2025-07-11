@@ -19,31 +19,31 @@ use super::{CommonFields, Request};
 /// `<https://xrpl.org/submit_multisigned.html>`
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
-pub struct SubmitMultisigned<'a> {
+pub struct SubmitMultisigned {
     /// The common fields shared by all requests.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a>,
+    pub common_fields: CommonFields,
     pub tx_json: serde_json::Value,
     /// If true, and the transaction fails locally, do not
     /// retry or relay the transaction to other servers.
     pub fail_hard: Option<bool>,
 }
 
-impl<'a> Model for SubmitMultisigned<'a> {}
+impl Model for SubmitMultisigned {}
 
-impl<'a> Request<'a> for SubmitMultisigned<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'a> {
+impl<'a> Request<'a> for SubmitMultisigned {
+    fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
 
-    fn get_common_fields_mut(&mut self) -> &mut CommonFields<'a> {
+    fn get_common_fields_mut(&mut self) -> &mut CommonFields {
         &mut self.common_fields
     }
 }
 
-impl<'a> SubmitMultisigned<'a> {
+impl SubmitMultisigned {
     pub fn new(
-        id: Option<Cow<'a, str>>,
+        id: Option<String>,
         tx_json: serde_json::Value,
         fail_hard: Option<bool>,
     ) -> Self {

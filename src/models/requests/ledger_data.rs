@@ -17,7 +17,7 @@ use super::{CommonFields, LedgerIndex, LookupByLedgerRequest, Marker, Request};
 pub struct LedgerData<'a> {
     /// The common fields shared by all requests.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a>,
+    pub common_fields: CommonFields,
     /// If set to true, return ledger objects as hashed hex
     /// strings instead of JSON.
     pub binary: Option<bool>,
@@ -35,18 +35,18 @@ pub struct LedgerData<'a> {
 impl<'a> Model for LedgerData<'a> {}
 
 impl<'a> Request<'a> for LedgerData<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'a> {
+    fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
 
-    fn get_common_fields_mut(&mut self) -> &mut CommonFields<'a> {
+    fn get_common_fields_mut(&mut self) -> &mut CommonFields {
         &mut self.common_fields
     }
 }
 
 impl<'a> LedgerData<'a> {
     pub fn new(
-        id: Option<Cow<'a, str>>,
+        id: Option<String>,
         binary: Option<bool>,
         ledger_hash: Option<Cow<'a, str>>,
         ledger_index: Option<LedgerIndex<'a>>,

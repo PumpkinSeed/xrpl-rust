@@ -14,26 +14,26 @@ use super::{CommonFields, Request};
 /// `<https://xrpl.org/ledger_closed.html#ledger_closed>`
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
-pub struct LedgerClosed<'a> {
+pub struct LedgerClosed {
     /// The common fields shared by all requests.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a>,
+    pub common_fields: CommonFields,
 }
 
-impl<'a> Model for LedgerClosed<'a> {}
+impl Model for LedgerClosed {}
 
-impl<'a> Request<'a> for LedgerClosed<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'a> {
+impl<'a> Request<'a> for LedgerClosed {
+    fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
 
-    fn get_common_fields_mut(&mut self) -> &mut CommonFields<'a> {
+    fn get_common_fields_mut(&mut self) -> &mut CommonFields {
         &mut self.common_fields
     }
 }
 
-impl<'a> LedgerClosed<'a> {
-    pub fn new(id: Option<Cow<'a, str>>) -> Self {
+impl LedgerClosed {
+    pub fn new(id: Option<String>) -> Self {
         Self {
             common_fields: CommonFields {
                 command: RequestMethod::LedgerClosed,

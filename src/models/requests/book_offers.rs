@@ -16,7 +16,7 @@ use super::{CommonFields, LedgerIndex, LookupByLedgerRequest, Request};
 pub struct BookOffers<'a> {
     /// The common fields shared by all requests.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a>,
+    pub common_fields: CommonFields,
     /// Specification of which currency the account taking
     /// the offer would receive, as an object with currency
     /// and issuer fields (omit issuer for XRP),
@@ -45,18 +45,18 @@ pub struct BookOffers<'a> {
 impl<'a> Model for BookOffers<'a> {}
 
 impl<'a> Request<'a> for BookOffers<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'a> {
+    fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
 
-    fn get_common_fields_mut(&mut self) -> &mut CommonFields<'a> {
+    fn get_common_fields_mut(&mut self) -> &mut CommonFields {
         &mut self.common_fields
     }
 }
 
 impl<'a> BookOffers<'a> {
     pub fn new(
-        id: Option<Cow<'a, str>>,
+        id: Option<String>,
         taker_gets: Currency<'a>,
         taker_pays: Currency<'a>,
         ledger_hash: Option<Cow<'a, str>>,

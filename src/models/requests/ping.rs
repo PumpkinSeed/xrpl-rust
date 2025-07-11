@@ -13,26 +13,26 @@ use super::{CommonFields, Request};
 /// `<https://xrpl.org/ping.html#ping>`
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
-pub struct Ping<'a> {
+pub struct Ping {
     /// The common fields shared by all requests.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a>,
+    pub common_fields: CommonFields,
 }
 
-impl<'a> Model for Ping<'a> {}
+impl Model for Ping {}
 
-impl<'a> Request<'a> for Ping<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'a> {
+impl<'a> Request<'a> for Ping {
+    fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
 
-    fn get_common_fields_mut(&mut self) -> &mut CommonFields<'a> {
+    fn get_common_fields_mut(&mut self) -> &mut CommonFields {
         &mut self.common_fields
     }
 }
 
-impl<'a> Ping<'a> {
-    pub fn new(id: Option<Cow<'a, str>>) -> Self {
+impl Ping {
+    pub fn new(id: Option<String>) -> Self {
         Self {
             common_fields: CommonFields {
                 command: RequestMethod::Ping,

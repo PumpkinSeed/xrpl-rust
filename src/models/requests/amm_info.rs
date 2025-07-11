@@ -11,7 +11,7 @@ use super::{CommonFields, Request};
 pub struct AMMInfo<'a> {
     /// The common fields shared by all requests.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a>,
+    pub common_fields: CommonFields,
     pub amm_account: Option<Cow<'a, str>>,
     pub asset: Option<Currency<'a>>,
     pub asset2: Option<Currency<'a>>,
@@ -20,18 +20,18 @@ pub struct AMMInfo<'a> {
 impl Model for AMMInfo<'_> {}
 
 impl<'a> Request<'a> for AMMInfo<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'a> {
+    fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
 
-    fn get_common_fields_mut(&mut self) -> &mut CommonFields<'a> {
+    fn get_common_fields_mut(&mut self) -> &mut CommonFields {
         &mut self.common_fields
     }
 }
 
 impl<'a> AMMInfo<'a> {
     pub fn new(
-        id: Option<Cow<'a, str>>,
+        id: Option<String>,
         amm_account: Option<Cow<'a, str>>,
         asset: Option<Currency<'a>>,
         asset2: Option<Currency<'a>>,

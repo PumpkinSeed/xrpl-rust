@@ -38,7 +38,7 @@ use super::{CommonFields, Request};
 pub struct Submit<'a> {
     /// The common fields shared by all requests.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a>,
+    pub common_fields: CommonFields,
     /// Hex representation of the signed transaction to submit.
     /// This can also be a multi-signed transaction.
     pub tx_blob: Cow<'a, str>,
@@ -50,17 +50,17 @@ pub struct Submit<'a> {
 impl<'a> Model for Submit<'a> {}
 
 impl<'a> Request<'a> for Submit<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'a> {
+    fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
 
-    fn get_common_fields_mut(&mut self) -> &mut CommonFields<'a> {
+    fn get_common_fields_mut(&mut self) -> &mut CommonFields {
         &mut self.common_fields
     }
 }
 
 impl<'a> Submit<'a> {
-    pub fn new(id: Option<Cow<'a, str>>, tx_blob: Cow<'a, str>, fail_hard: Option<bool>) -> Self {
+    pub fn new(id: Option<String>, tx_blob: Cow<'a, str>, fail_hard: Option<bool>) -> Self {
         Self {
             common_fields: CommonFields {
                 command: RequestMethod::Submit,

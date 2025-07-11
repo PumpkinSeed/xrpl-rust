@@ -33,7 +33,7 @@ use super::{CommonFields, Request};
 pub struct ChannelAuthorize<'a> {
     /// The common fields shared by all requests.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a>,
+    pub common_fields: CommonFields,
     /// The unique ID of the payment channel to use.
     pub channel_id: Cow<'a, str>,
     /// Cumulative amount of XRP, in drops, to authorize.
@@ -76,11 +76,11 @@ impl<'a> Model for ChannelAuthorize<'a> {
 }
 
 impl<'a> Request<'a> for ChannelAuthorize<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'a> {
+    fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
 
-    fn get_common_fields_mut(&mut self) -> &mut CommonFields<'a> {
+    fn get_common_fields_mut(&mut self) -> &mut CommonFields {
         &mut self.common_fields
     }
 }
@@ -113,7 +113,7 @@ impl<'a> ChannelAuthorizeError for ChannelAuthorize<'a> {
 
 impl<'a> ChannelAuthorize<'a> {
     pub fn new(
-        id: Option<Cow<'a, str>>,
+        id: Option<String>,
         channel_id: Cow<'a, str>,
         amount: Cow<'a, str>,
         secret: Option<Cow<'a, str>>,

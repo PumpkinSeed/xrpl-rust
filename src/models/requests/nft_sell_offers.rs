@@ -15,7 +15,7 @@ use super::{CommonFields, Request};
 pub struct NftSellOffers<'a> {
     /// The common fields shared by all requests.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a>,
+    pub common_fields: CommonFields,
     /// The unique identifier of a NFToken object.
     pub nft_id: Cow<'a, str>,
 }
@@ -23,17 +23,17 @@ pub struct NftSellOffers<'a> {
 impl<'a> Model for NftSellOffers<'a> {}
 
 impl<'a> Request<'a> for NftSellOffers<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'a> {
+    fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
 
-    fn get_common_fields_mut(&mut self) -> &mut CommonFields<'a> {
+    fn get_common_fields_mut(&mut self) -> &mut CommonFields {
         &mut self.common_fields
     }
 }
 
 impl<'a> NftSellOffers<'a> {
-    pub fn new(id: Option<Cow<'a, str>>, nft_id: Cow<'a, str>) -> Self {
+    pub fn new(id: Option<String>, nft_id: Cow<'a, str>) -> Self {
         Self {
             common_fields: CommonFields {
                 command: RequestMethod::NFTSellOffers,

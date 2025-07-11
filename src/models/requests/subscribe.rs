@@ -52,7 +52,7 @@ pub enum StreamParameter {
 pub struct Subscribe<'a> {
     /// The common fields shared by all requests.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a>,
+    pub common_fields: CommonFields,
     /// Array with the unique addresses of accounts to monitor
     /// for validated transactions. The addresses must be in the
     /// XRP Ledger's base58 format. The server sends a notification
@@ -78,18 +78,18 @@ pub struct Subscribe<'a> {
 impl<'a> Model for Subscribe<'a> {}
 
 impl<'a> Request<'a> for Subscribe<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'a> {
+    fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
 
-    fn get_common_fields_mut(&mut self) -> &mut CommonFields<'a> {
+    fn get_common_fields_mut(&mut self) -> &mut CommonFields {
         &mut self.common_fields
     }
 }
 
 impl<'a> Subscribe<'a> {
     pub fn new(
-        id: Option<Cow<'a, str>>,
+        id: Option<String>,
         accounts: Option<Vec<Cow<'a, str>>>,
         accounts_proposed: Option<Vec<Cow<'a, str>>>,
         books: Option<Vec<SubscribeBook<'a>>>,

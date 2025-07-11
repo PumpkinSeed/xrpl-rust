@@ -18,7 +18,7 @@ use super::{CommonFields, LedgerIndex, LookupByLedgerRequest, Request};
 pub struct AccountCurrencies<'a> {
     /// The common fields shared by all requests.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a>,
+    pub common_fields: CommonFields,
     /// A unique identifier for the account, most commonly
     /// the account's Address.
     pub account: Cow<'a, str>,
@@ -36,18 +36,18 @@ pub struct AccountCurrencies<'a> {
 impl<'a> Model for AccountCurrencies<'a> {}
 
 impl<'a> Request<'a> for AccountCurrencies<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'a> {
+    fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
 
-    fn get_common_fields_mut(&mut self) -> &mut CommonFields<'a> {
+    fn get_common_fields_mut(&mut self) -> &mut CommonFields {
         &mut self.common_fields
     }
 }
 
 impl<'a> AccountCurrencies<'a> {
     pub fn new(
-        id: Option<Cow<'a, str>>,
+        id: Option<String>,
         account: Cow<'a, str>,
         ledger_hash: Option<Cow<'a, str>>,
         ledger_index: Option<LedgerIndex<'a>>,

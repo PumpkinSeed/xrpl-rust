@@ -15,7 +15,7 @@ use super::{CommonFields, Request};
 pub struct Ledger<'a> {
     /// The common fields shared by all requests.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a>,
+    pub common_fields: CommonFields,
     /// Admin required. If true, return information on accounts
     /// in the ledger. Ignored if you did not specify a ledger
     /// version. Defaults to false. Caution: This returns a very
@@ -59,18 +59,18 @@ pub struct Ledger<'a> {
 impl<'a> Model for Ledger<'a> {}
 
 impl<'a> Request<'a> for Ledger<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'a> {
+    fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
 
-    fn get_common_fields_mut(&mut self) -> &mut CommonFields<'a> {
+    fn get_common_fields_mut(&mut self) -> &mut CommonFields {
         &mut self.common_fields
     }
 }
 
 impl<'a> Ledger<'a> {
     pub fn new(
-        id: Option<Cow<'a, str>>,
+        id: Option<String>,
         accounts: Option<bool>,
         binary: Option<bool>,
         expand: Option<bool>,

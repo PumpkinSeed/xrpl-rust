@@ -39,7 +39,7 @@ pub struct UnsubscribeBook<'a> {
 pub struct Unsubscribe<'a> {
     /// The common fields shared by all requests.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a>,
+    pub common_fields: CommonFields,
     /// Array of unique account addresses to stop receiving updates
     /// for, in the XRP Ledger's base58 format. (This only stops
     /// those messages if you previously subscribed to those accounts
@@ -63,18 +63,18 @@ pub struct Unsubscribe<'a> {
 impl<'a> Model for Unsubscribe<'a> {}
 
 impl<'a> Request<'a> for Unsubscribe<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'a> {
+    fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
 
-    fn get_common_fields_mut(&mut self) -> &mut CommonFields<'a> {
+    fn get_common_fields_mut(&mut self) -> &mut CommonFields {
         &mut self.common_fields
     }
 }
 
 impl<'a> Unsubscribe<'a> {
     pub fn new(
-        id: Option<Cow<'a, str>>,
+        id: Option<String>,
         accounts: Option<Vec<Cow<'a, str>>>,
         accounts_proposed: Option<Vec<Cow<'a, str>>>,
         books: Option<Vec<UnsubscribeBook<'a>>>,

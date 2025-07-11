@@ -129,7 +129,7 @@ pub enum XRPLRequest<'a> {
     GatewayBalances(gateway_balances::GatewayBalances<'a>),
     NoRippleCheck(no_ripple_check::NoRippleCheck<'a>),
     Submit(submit::Submit<'a>),
-    SubmitMultisigned(submit_multisigned::SubmitMultisigned<'a>),
+    SubmitMultisigned(submit_multisigned::SubmitMultisigned),
     TransactionEntry(transaction_entry::TransactionEntry<'a>),
     Tx(tx::Tx<'a>),
     ChannelAuthorize(channel_authorize::ChannelAuthorize<'a>),
@@ -144,18 +144,18 @@ pub enum XRPLRequest<'a> {
     PathFind(path_find::PathFind<'a>),
     RipplePathFind(ripple_path_find::RipplePathFind<'a>),
     Ledger(ledger::Ledger<'a>),
-    LedgerClosed(ledger_closed::LedgerClosed<'a>),
-    LedgerCurrent(ledger_current::LedgerCurrent<'a>),
+    LedgerClosed(ledger_closed::LedgerClosed),
+    LedgerCurrent(ledger_current::LedgerCurrent),
     LedgerData(ledger_data::LedgerData<'a>),
     LedgerEntry(ledger_entry::LedgerEntry<'a>),
     Subscribe(subscribe::Subscribe<'a>),
     Unsubscribe(unsubscribe::Unsubscribe<'a>),
-    Fee(fee::Fee<'a>),
+    Fee(fee::Fee),
     Manifest(manifest::Manifest<'a>),
-    ServerInfo(server_info::ServerInfo<'a>),
+    ServerInfo(server_info::ServerInfo),
     ServerState(server_state::ServerState<'a>),
-    Ping(ping::Ping<'a>),
-    Random(random::Random<'a>),
+    Ping(ping::Ping),
+    Random(random::Random),
 }
 
 impl<'a> From<account_channels::AccountChannels<'a>> for XRPLRequest<'a> {
@@ -230,8 +230,8 @@ impl<'a> From<submit::Submit<'a>> for XRPLRequest<'a> {
     }
 }
 
-impl<'a> From<submit_multisigned::SubmitMultisigned<'a>> for XRPLRequest<'a> {
-    fn from(request: submit_multisigned::SubmitMultisigned<'a>) -> Self {
+impl<'a> From<submit_multisigned::SubmitMultisigned> for XRPLRequest<'a> {
+    fn from(request: submit_multisigned::SubmitMultisigned) -> Self {
         XRPLRequest::SubmitMultisigned(request)
     }
 }
@@ -302,14 +302,14 @@ impl<'a> From<ledger::Ledger<'a>> for XRPLRequest<'a> {
     }
 }
 
-impl<'a> From<ledger_closed::LedgerClosed<'a>> for XRPLRequest<'a> {
-    fn from(request: ledger_closed::LedgerClosed<'a>) -> Self {
+impl<'a> From<ledger_closed::LedgerClosed> for XRPLRequest<'a> {
+    fn from(request: ledger_closed::LedgerClosed) -> Self {
         XRPLRequest::LedgerClosed(request)
     }
 }
 
-impl<'a> From<ledger_current::LedgerCurrent<'a>> for XRPLRequest<'a> {
-    fn from(request: ledger_current::LedgerCurrent<'a>) -> Self {
+impl<'a> From<ledger_current::LedgerCurrent> for XRPLRequest<'a> {
+    fn from(request: ledger_current::LedgerCurrent) -> Self {
         XRPLRequest::LedgerCurrent(request)
     }
 }
@@ -338,8 +338,8 @@ impl<'a> From<unsubscribe::Unsubscribe<'a>> for XRPLRequest<'a> {
     }
 }
 
-impl<'a> From<fee::Fee<'a>> for XRPLRequest<'a> {
-    fn from(request: fee::Fee<'a>) -> Self {
+impl<'a> From<fee::Fee> for XRPLRequest<'a> {
+    fn from(request: fee::Fee) -> Self {
         XRPLRequest::Fee(request)
     }
 }
@@ -350,8 +350,8 @@ impl<'a> From<manifest::Manifest<'a>> for XRPLRequest<'a> {
     }
 }
 
-impl<'a> From<server_info::ServerInfo<'a>> for XRPLRequest<'a> {
-    fn from(request: server_info::ServerInfo<'a>) -> Self {
+impl<'a> From<server_info::ServerInfo> for XRPLRequest<'a> {
+    fn from(request: server_info::ServerInfo) -> Self {
         XRPLRequest::ServerInfo(request)
     }
 }
@@ -362,20 +362,20 @@ impl<'a> From<server_state::ServerState<'a>> for XRPLRequest<'a> {
     }
 }
 
-impl<'a> From<ping::Ping<'a>> for XRPLRequest<'a> {
-    fn from(request: ping::Ping<'a>) -> Self {
+impl<'a> From<ping::Ping> for XRPLRequest<'a> {
+    fn from(request: ping::Ping) -> Self {
         XRPLRequest::Ping(request)
     }
 }
 
-impl<'a> From<random::Random<'a>> for XRPLRequest<'a> {
-    fn from(request: random::Random<'a>) -> Self {
+impl<'a> From<random::Random> for XRPLRequest<'a> {
+    fn from(request: random::Random) -> Self {
         XRPLRequest::Random(request)
     }
 }
 
 impl<'a> Request<'a> for XRPLRequest<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'a> {
+    fn get_common_fields(&self) -> &CommonFields {
         match self {
             XRPLRequest::AccountChannels(request) => request.get_common_fields(),
             XRPLRequest::AccountCurrencies(request) => request.get_common_fields(),
@@ -419,7 +419,7 @@ impl<'a> Request<'a> for XRPLRequest<'a> {
         }
     }
 
-    fn get_common_fields_mut(&mut self) -> &mut CommonFields<'a> {
+    fn get_common_fields_mut(&mut self) -> &mut CommonFields {
         match self {
             XRPLRequest::AccountChannels(request) => request.get_common_fields_mut(),
             XRPLRequest::AccountCurrencies(request) => request.get_common_fields_mut(),
@@ -467,11 +467,11 @@ impl<'a> Request<'a> for XRPLRequest<'a> {
 /// The base fields for all request models.
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone, new)]
-pub struct CommonFields<'a> {
+pub struct CommonFields {
     /// The request method.
     pub command: RequestMethod,
     /// The unique request id.
-    pub id: Option<Cow<'a, str>>,
+    pub id: Option<String>,
 }
 
 #[skip_serializing_none]
@@ -556,8 +556,8 @@ impl From<String> for LedgerIndex<'_> {
 /// The base trait for all request models.
 /// Used to identify the model as a request.
 pub trait Request<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'a>;
-    fn get_common_fields_mut(&mut self) -> &mut CommonFields<'a>;
+    fn get_common_fields(&self) -> &CommonFields;
+    fn get_common_fields_mut(&mut self) -> &mut CommonFields;
 }
 
 #[skip_serializing_none]
