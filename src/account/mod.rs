@@ -1,4 +1,3 @@
-use alloc::borrow::Cow;
 use embassy_futures::block_on;
 
 use crate::{

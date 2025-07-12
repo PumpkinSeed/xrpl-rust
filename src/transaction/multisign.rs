@@ -36,7 +36,6 @@ where
 
 #[cfg(test)]
 mod test {
-    use alloc::borrow::Cow;
 
     use super::*;
     use crate::asynch::transaction::sign;

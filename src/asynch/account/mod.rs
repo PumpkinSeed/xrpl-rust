@@ -10,7 +10,7 @@ use crate::{
         XRPAmount,
     },
 };
-use alloc::borrow::{Cow, ToOwned};
+use alloc::borrow::ToOwned;
 use alloc::string::ToString;
 use crate::models::results::XRPLResponse;
 

@@ -1,4 +1,4 @@
-use alloc::{borrow::Cow, vec::Vec};
+use alloc::vec::Vec;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 
@@ -130,7 +130,6 @@ impl XChainCreateBridge {
 mod test_xchain_create_bridge {
     use super::XChainCreateBridge;
     use crate::models::{Amount, IssuedCurrency, Model, XChainBridge, XRPAmount, XRP};
-    use alloc::borrow::Cow;
 
     const ACCOUNT: &str = "r9LqNeG6qHxjeUocjvVki2XR35weJ9mZgQ";
     const ACCOUNT2: &str = "rpZc4mVfWUif9CRoHRKKcmhu1nx2xktxBo";

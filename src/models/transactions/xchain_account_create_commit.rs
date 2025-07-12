@@ -1,6 +1,6 @@
 use core::fmt::Debug;
 
-use alloc::{borrow::Cow, vec::Vec};
+use alloc::vec::Vec;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 
@@ -90,7 +90,6 @@ impl XChainAccountCreateCommit {
 mod test {
     use super::XChainAccountCreateCommit;
     use crate::models::{IssuedCurrency, XChainBridge, XRPAmount, XRP};
-    use alloc::borrow::Cow;
 
     use super::*;
 

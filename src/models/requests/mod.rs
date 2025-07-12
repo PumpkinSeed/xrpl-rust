@@ -38,7 +38,7 @@ pub mod transaction_entry;
 pub mod tx;
 pub mod unsubscribe;
 
-use alloc::{borrow::Cow, string::String};
+use alloc::string::String;
 use derive_new::new;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;

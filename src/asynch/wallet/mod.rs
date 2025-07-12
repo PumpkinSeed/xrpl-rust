@@ -1,6 +1,5 @@
 pub mod exceptions;
 
-use alloc::borrow::Cow;
 use exceptions::XRPLFaucetException;
 use url::Url;
 

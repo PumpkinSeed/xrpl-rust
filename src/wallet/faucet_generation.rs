@@ -4,7 +4,6 @@ use crate::asynch::{
     exceptions::XRPLHelperResult,
     wallet::generate_faucet_wallet as async_generate_faucet_wallet,
 };
-use alloc::borrow::Cow;
 use embassy_futures::block_on;
 use url::Url;
 

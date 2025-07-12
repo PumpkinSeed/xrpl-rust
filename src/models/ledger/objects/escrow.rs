@@ -127,7 +127,6 @@ impl Escrow {
 #[cfg(test)]
 mod test_serde {
     use super::*;
-    use alloc::borrow::Cow;
 
     #[test]
     fn test_serialize() {
