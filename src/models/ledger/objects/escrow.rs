@@ -77,15 +77,15 @@ pub struct Escrow<'a> {
     pub source_tag: Option<u32>,
 }
 
-impl Model for Escrow {}
+impl<'a> Model for Escrow<'a> {}
 
-impl LedgerObject<NoFlags> for Escrow {
+impl<'a> LedgerObject<NoFlags> for Escrow<'a> {
     fn get_ledger_entry_type(&self) -> LedgerEntryType {
         self.common_fields.get_ledger_entry_type()
     }
 }
 
-impl Escrow {
+impl<'a> Escrow<'a> {
     pub fn new(
         index: Option<Cow<'a, str>>,
         ledger_index: Option<Cow<'a, str>>,

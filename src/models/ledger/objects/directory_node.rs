@@ -64,15 +64,15 @@ pub struct DirectoryNode<'a> {
     pub taker_pays_issuer: Option<Cow<'a, str>>,
 }
 
-impl Model for DirectoryNode {}
+impl<'a> Model for DirectoryNode<'a> {}
 
-impl LedgerObject<NoFlags> for DirectoryNode {
+impl<'a> LedgerObject<NoFlags> for DirectoryNode<'a> {
     fn get_ledger_entry_type(&self) -> LedgerEntryType {
         self.common_fields.get_ledger_entry_type()
     }
 }
 
-impl DirectoryNode {
+impl<'a> DirectoryNode<'a> {
     pub fn new(
         index: Option<Cow<'a, str>>,
         ledger_index: Option<Cow<'a, str>>,

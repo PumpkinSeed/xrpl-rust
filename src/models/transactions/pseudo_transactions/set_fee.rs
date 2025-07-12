@@ -39,9 +39,9 @@ pub struct SetFee<'a> {
     pub ledger_sequence: u32,
 }
 
-impl Model for SetFee {}
+impl<'a> Model for SetFee<'a> {}
 
-impl Transaction<'a, NoFlags> for SetFee {
+impl<'a> Transaction<'a, NoFlags> for SetFee<'a> {
     fn get_transaction_type(&self) -> &TransactionType {
         self.common_fields.get_transaction_type()
     }
@@ -55,7 +55,7 @@ impl Transaction<'a, NoFlags> for SetFee {
     }
 }
 
-impl SetFee {
+impl<'a> SetFee<'a> {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,

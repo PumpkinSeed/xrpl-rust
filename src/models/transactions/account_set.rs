@@ -122,7 +122,7 @@ pub struct AccountSet<'a> {
     pub tick_size: Option<u32>,
 }
 
-impl Model for AccountSet {
+impl<'a> Model for AccountSet<'a> {
     fn get_errors(&self) -> XRPLModelResult<()> {
         self.validate_currencies()?;
         self._get_tick_size_error()?;
@@ -135,7 +135,7 @@ impl Model for AccountSet {
     }
 }
 
-impl Transaction<'a, AccountSetFlag> for AccountSet {
+impl<'a> Transaction<'a, AccountSetFlag> for AccountSet<'a> {
     fn has_flag(&self, flag: &AccountSetFlag) -> bool {
         self.common_fields.has_flag(flag)
     }
@@ -153,7 +153,7 @@ impl Transaction<'a, AccountSetFlag> for AccountSet {
     }
 }
 
-impl AccountSetError for AccountSet {
+impl<'a> AccountSetError for AccountSet<'a> {
     fn _get_tick_size_error(&self) -> Result<(), XRPLModelException> {
         if let Some(tick_size) = self.tick_size {
             if tick_size > MAX_TICK_SIZE {
@@ -275,7 +275,7 @@ impl AccountSetError for AccountSet {
     }
 }
 
-impl AccountSet {
+impl<'a> AccountSet<'a> {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,

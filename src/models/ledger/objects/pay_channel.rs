@@ -70,15 +70,15 @@ pub struct PayChannel<'a> {
     pub source_tag: Option<u32>,
 }
 
-impl Model for PayChannel {}
+impl<'a> Model for PayChannel<'a> {}
 
-impl LedgerObject<NoFlags> for PayChannel {
+impl<'a> LedgerObject<NoFlags> for PayChannel<'a> {
     fn get_ledger_entry_type(&self) -> LedgerEntryType {
         self.common_fields.get_ledger_entry_type()
     }
 }
 
-impl PayChannel {
+impl<'a> PayChannel<'a> {
     pub fn new(
         index: Option<Cow<'a, str>>,
         ledger_index: Option<Cow<'a, str>>,

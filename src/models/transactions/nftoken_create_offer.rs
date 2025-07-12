@@ -80,7 +80,7 @@ pub struct NFTokenCreateOffer<'a> {
     pub destination: Option<Cow<'a, str>>,
 }
 
-impl Model for NFTokenCreateOffer {
+impl<'a> Model for NFTokenCreateOffer<'a> {
     fn get_errors(&self) -> XRPLModelResult<()> {
         self._get_amount_error()?;
         self._get_destination_error()?;
@@ -89,7 +89,7 @@ impl Model for NFTokenCreateOffer {
     }
 }
 
-impl Transaction<'a, NFTokenCreateOfferFlag> for NFTokenCreateOffer {
+impl<'a> Transaction<'a, NFTokenCreateOfferFlag> for NFTokenCreateOffer<'a> {
     fn has_flag(&self, flag: &NFTokenCreateOfferFlag) -> bool {
         self.common_fields.has_flag(flag)
     }
@@ -107,7 +107,7 @@ impl Transaction<'a, NFTokenCreateOfferFlag> for NFTokenCreateOffer {
     }
 }
 
-impl NFTokenCreateOfferError for NFTokenCreateOffer {
+impl<'a> NFTokenCreateOfferError for NFTokenCreateOffer<'a> {
     fn _get_amount_error(&self) -> XRPLModelResult<()> {
         let amount_into_decimal: BigDecimal = self.amount.clone().try_into()?;
         if !self.has_flag(&NFTokenCreateOfferFlag::TfSellOffer) && amount_into_decimal.is_zero() {
@@ -160,7 +160,7 @@ impl NFTokenCreateOfferError for NFTokenCreateOffer {
     }
 }
 
-impl NFTokenCreateOffer {
+impl<'a> NFTokenCreateOffer<'a> {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,

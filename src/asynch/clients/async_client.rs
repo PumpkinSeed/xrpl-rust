@@ -7,7 +7,7 @@ use alloc::string::String;
 
 #[allow(async_fn_in_trait)]
 pub trait XRPLAsyncClient: XRPLClient {
-    async fn request<'a: 'b, 'b>(&self, request: XRPLRequest<'a>) -> XRPLClientResult<String> {
+    async fn request(&self, request: XRPLRequest) -> XRPLClientResult<String> {
         self.request_impl(request).await
     }
 

@@ -157,7 +157,7 @@ pub struct AccountInfo<'a> {
     pub signer_lists: Option<Cow<'a, [SignerList<'a>]>>,
 }
 
-impl AccountInfoVersionMap {
+impl<'a> AccountInfoVersionMap<'a> {
     pub fn get_account_root(&self) -> &AccountRoot<'a> {
         match self {
             AccountInfoVersionMap::Default(account_info) => &account_info.base.account_data,
@@ -166,7 +166,7 @@ impl AccountInfoVersionMap {
     }
 }
 
-impl TryFrom<XRPLResult<'a>> for AccountInfoVersionMap {
+impl<'a> TryFrom<XRPLResult<'a>> for AccountInfoVersionMap<'a> {
     type Error = XRPLModelException;
 
     fn try_from(result: XRPLResult<'a>) -> XRPLModelResult<Self> {

@@ -89,7 +89,7 @@ pub struct NFTokenMint<'a> {
     pub uri: Option<Cow<'a, str>>,
 }
 
-impl Model for NFTokenMint {
+impl<'a> Model for NFTokenMint<'a> {
     fn get_errors(&self) -> XRPLModelResult<()> {
         self._get_issuer_error()?;
         self._get_transfer_fee_error()?;
@@ -98,7 +98,7 @@ impl Model for NFTokenMint {
     }
 }
 
-impl Transaction<'a, NFTokenMintFlag> for NFTokenMint {
+impl<'a> Transaction<'a, NFTokenMintFlag> for NFTokenMint<'a> {
     fn has_flag(&self, flag: &NFTokenMintFlag) -> bool {
         self.common_fields.has_flag(flag)
     }
@@ -116,7 +116,7 @@ impl Transaction<'a, NFTokenMintFlag> for NFTokenMint {
     }
 }
 
-impl NFTokenMintError for NFTokenMint {
+impl<'a> NFTokenMintError for NFTokenMint<'a> {
     fn _get_issuer_error(&self) -> XRPLModelResult<()> {
         if let Some(issuer) = &self.issuer {
             if issuer == &self.common_fields.account {
@@ -165,7 +165,7 @@ impl NFTokenMintError for NFTokenMint {
     }
 }
 
-impl NFTokenMint {
+impl<'a> NFTokenMint<'a> {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,

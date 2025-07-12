@@ -30,7 +30,7 @@ impl LedgerObject<NoFlags> for XChainOwnedClaimID<'_> {
     }
 }
 
-impl XChainOwnedClaimID {
+impl<'a> XChainOwnedClaimID<'a> {
     pub fn new(
         index: Option<Cow<'a, str>>,
         ledger_index: Option<Cow<'a, str>>,

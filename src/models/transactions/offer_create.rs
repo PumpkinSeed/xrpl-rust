@@ -81,13 +81,13 @@ pub struct OfferCreate<'a> {
     pub offer_sequence: Option<u32>,
 }
 
-impl Model for OfferCreate {
+impl<'a> Model for OfferCreate<'a> {
     fn get_errors(&self) -> crate::models::XRPLModelResult<()> {
         self.validate_currencies()
     }
 }
 
-impl Transaction<'a, OfferCreateFlag> for OfferCreate {
+impl<'a> Transaction<'a, OfferCreateFlag> for OfferCreate<'a> {
     fn has_flag(&self, flag: &OfferCreateFlag) -> bool {
         self.common_fields.has_flag(flag)
     }
@@ -105,7 +105,7 @@ impl Transaction<'a, OfferCreateFlag> for OfferCreate {
     }
 }
 
-impl OfferCreate {
+impl<'a> OfferCreate<'a> {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,

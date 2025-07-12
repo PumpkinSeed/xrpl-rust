@@ -40,14 +40,14 @@ pub struct DepositPreauth<'a> {
     pub unauthorize: Option<Cow<'a, str>>,
 }
 
-impl Model for DepositPreauth {
+impl<'a> Model for DepositPreauth<'a> {
     fn get_errors(&self) -> XRPLModelResult<()> {
         self._get_authorize_and_unauthorize_error()?;
         self.validate_currencies()
     }
 }
 
-impl Transaction<'a, NoFlags> for DepositPreauth {
+impl<'a> Transaction<'a, NoFlags> for DepositPreauth<'a> {
     fn get_transaction_type(&self) -> &TransactionType {
         self.common_fields.get_transaction_type()
     }
@@ -61,7 +61,7 @@ impl Transaction<'a, NoFlags> for DepositPreauth {
     }
 }
 
-impl DepositPreauthError for DepositPreauth {
+impl<'a> DepositPreauthError for DepositPreauth<'a> {
     fn _get_authorize_and_unauthorize_error(&self) -> XRPLModelResult<()> {
         if (self.authorize.is_none() && self.unauthorize.is_none())
             || (self.authorize.is_some() && self.unauthorize.is_some())
@@ -76,7 +76,7 @@ impl DepositPreauthError for DepositPreauth {
     }
 }
 
-impl DepositPreauth {
+impl<'a> DepositPreauth<'a> {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,

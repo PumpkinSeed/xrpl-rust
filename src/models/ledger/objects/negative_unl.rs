@@ -52,15 +52,15 @@ pub struct NegativeUNL<'a> {
     pub validator_to_re_enable: Option<Cow<'a, str>>,
 }
 
-impl Model for NegativeUNL {}
+impl<'a> Model for NegativeUNL<'a> {}
 
-impl LedgerObject<NoFlags> for NegativeUNL {
+impl<'a> LedgerObject<NoFlags> for NegativeUNL<'a> {
     fn get_ledger_entry_type(&self) -> LedgerEntryType {
         self.common_fields.get_ledger_entry_type()
     }
 }
 
-impl NegativeUNL {
+impl<'a> NegativeUNL<'a> {
     pub fn new(
         index: Option<Cow<'a, str>>,
         ledger_index: Option<Cow<'a, str>>,

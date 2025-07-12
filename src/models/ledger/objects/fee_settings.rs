@@ -37,15 +37,15 @@ pub struct FeeSettings<'a> {
     pub reserve_increment: u32,
 }
 
-impl Model for FeeSettings {}
+impl<'a> Model for FeeSettings<'a> {}
 
-impl LedgerObject<NoFlags> for FeeSettings {
+impl<'a> LedgerObject<NoFlags> for FeeSettings<'a> {
     fn get_ledger_entry_type(&self) -> LedgerEntryType {
         self.common_fields.get_ledger_entry_type()
     }
 }
 
-impl FeeSettings {
+impl<'a> FeeSettings<'a> {
     pub fn new(
         index: Option<Cow<'a, str>>,
         ledger_index: Option<Cow<'a, str>>,

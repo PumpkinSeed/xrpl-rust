@@ -89,7 +89,7 @@ pub struct Payment<'a> {
     pub deliver_min: Option<Amount>,
 }
 
-impl Model for Payment {
+impl<'a> Model for Payment<'a> {
     fn get_errors(&self) -> XRPLModelResult<()> {
         self._get_xrp_transaction_error()?;
         self._get_partial_payment_error()?;
@@ -98,7 +98,7 @@ impl Model for Payment {
     }
 }
 
-impl Transaction<'a, PaymentFlag> for Payment {
+impl<'a> Transaction<'a, PaymentFlag> for Payment<'a> {
     fn has_flag(&self, flag: &PaymentFlag) -> bool {
         self.common_fields.has_flag(flag)
     }
@@ -116,7 +116,7 @@ impl Transaction<'a, PaymentFlag> for Payment {
     }
 }
 
-impl PaymentError for Payment {
+impl<'a> PaymentError for Payment<'a> {
     fn _get_xrp_transaction_error(&self) -> XRPLModelResult<()> {
         if self.amount.is_xrp() && self.send_max.is_none() {
             if self.paths.is_some() {
@@ -188,7 +188,7 @@ impl PaymentError for Payment {
     }
 }
 
-impl Payment {
+impl<'a> Payment<'a> {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,

@@ -52,7 +52,7 @@ impl Model for AMMVote<'_> {
     }
 }
 
-impl Transaction<'a, NoFlags> for AMMVote {
+impl<'a> Transaction<'a, NoFlags> for AMMVote<'a> {
     fn get_common_fields(&self) -> &CommonFields<'_, NoFlags> {
         &self.common_fields
     }
@@ -66,7 +66,7 @@ impl Transaction<'a, NoFlags> for AMMVote {
     }
 }
 
-impl AMMVote {
+impl<'a> AMMVote<'a> {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,

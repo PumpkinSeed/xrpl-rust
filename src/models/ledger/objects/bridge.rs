@@ -32,7 +32,7 @@ impl LedgerObject<NoFlags> for Bridge<'_> {
     }
 }
 
-impl Bridge {
+impl<'a> Bridge<'a> {
     pub fn new(
         index: Option<Cow<'a, str>>,
         ledger_index: Option<Cow<'a, str>>,

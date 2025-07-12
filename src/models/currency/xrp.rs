@@ -1,7 +1,7 @@
 use crate::models::currency::ToAmount;
 use crate::models::{amount::XRPAmount, XRPLModelException};
 use crate::models::{Model, XRPLModelResult};
-use alloc::borrow::Cow;
+
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, PartialEq, Eq, Clone, Serialize, Deserialize, Default)]

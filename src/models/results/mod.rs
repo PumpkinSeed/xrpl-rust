@@ -152,7 +152,7 @@ pub enum XRPLResult<'a> {
 
 macro_rules! impl_from_result {
     ($module_name:ident, $variant:ident) => {
-        impl From<$module_name::$variant<'a>> for XRPLResult {
+        impl<'a> From<$module_name::$variant<'a>> for XRPLResult<'a> {
             fn from(value: $module_name::$variant<'a>) -> Self {
                 XRPLResult::$variant(value)
             }
@@ -196,13 +196,13 @@ impl_from_result!(ping, Ping);
 impl_from_result!(subscribe, Subscribe);
 impl_from_result!(unsubscribe, Unsubscribe);
 
-impl From<Value> for XRPLResult {
+impl From<Value> for XRPLResult<'_> {
     fn from(value: Value) -> Self {
         XRPLResult::Other(XRPLOtherResult(value))
     }
 }
 
-impl From<XRPLOtherResult> for XRPLResult {
+impl From<XRPLOtherResult> for XRPLResult<'_> {
     fn from(other: XRPLOtherResult) -> Self {
         XRPLResult::Other(other)
     }
@@ -210,7 +210,7 @@ impl From<XRPLOtherResult> for XRPLResult {
 
 macro_rules! impl_try_from_result {
     ($module_name:ident, $type:ident, $variant:ident) => {
-        impl TryFrom<XRPLResult<'a>> for $module_name::$type {
+        impl<'a> TryFrom<XRPLResult<'a>> for $module_name::$type<'a> {
             type Error = XRPLModelException;
 
             fn try_from(result: XRPLResult<'a>) -> XRPLModelResult<Self> {
@@ -262,7 +262,7 @@ impl_try_from_result!(ping, Ping, Ping);
 impl_try_from_result!(subscribe, Subscribe, Subscribe);
 impl_try_from_result!(unsubscribe, Unsubscribe, Unsubscribe);
 
-impl TryInto<Value> for XRPLResult {
+impl TryInto<Value> for XRPLResult<'_> {
     type Error = XRPLModelException;
 
     fn try_into(self) -> XRPLModelResult<Value> {
@@ -341,7 +341,7 @@ pub struct XRPLResponse<'a, T: Clone + DeserializeOwned + Serialize> {
     pub error_code: Option<i32>,
     pub error_message: Option<Cow<'a, str>>,
     pub forwarded: Option<bool>,
-    pub request: Option<XRPLRequest<'a>>,
+    pub request: Option<XRPLRequest>,
     pub result: Option<T>,
     pub status: Option<ResponseStatus>,
     pub r#type: Option<ResponseType>,

@@ -28,7 +28,7 @@ impl Model for XChainCommit<'_> {
     }
 }
 
-impl Transaction<'a, NoFlags> for XChainCommit {
+impl<'a> Transaction<'a, NoFlags> for XChainCommit<'a> {
     fn get_common_fields(&self) -> &CommonFields<'_, NoFlags> {
         &self.common_fields
     }
@@ -42,7 +42,7 @@ impl Transaction<'a, NoFlags> for XChainCommit {
     }
 }
 
-impl XChainCommit {
+impl<'a> XChainCommit<'a> {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,
@@ -123,3 +123,4 @@ mod test_serde {
         assert_eq!(actual, expected);
     }
 }
+

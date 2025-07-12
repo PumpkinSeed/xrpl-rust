@@ -38,7 +38,7 @@ impl Model for AMMDelete<'_> {
     }
 }
 
-impl Transaction<'a, NoFlags> for AMMDelete {
+impl<'a> Transaction<'a, NoFlags> for AMMDelete<'a> {
     fn get_common_fields(&self) -> &CommonFields<'_, NoFlags> {
         &self.common_fields
     }
@@ -52,7 +52,7 @@ impl Transaction<'a, NoFlags> for AMMDelete {
     }
 }
 
-impl AMMDelete {
+impl<'a> AMMDelete<'a> {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,

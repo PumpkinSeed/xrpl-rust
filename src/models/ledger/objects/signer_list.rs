@@ -78,15 +78,15 @@ pub struct SignerList<'a> {
     pub signer_quorum: u32,
 }
 
-impl Model for SignerList {}
+impl<'a> Model for SignerList<'a> {}
 
-impl LedgerObject<SignerListFlag> for SignerList {
+impl<'a> LedgerObject<SignerListFlag> for SignerList<'a> {
     fn get_ledger_entry_type(&self) -> LedgerEntryType {
         self.common_fields.get_ledger_entry_type()
     }
 }
 
-impl SignerList {
+impl<'a> SignerList<'a> {
     pub fn new(
         flags: FlagCollection<SignerListFlag>,
         index: Option<Cow<'a, str>>,

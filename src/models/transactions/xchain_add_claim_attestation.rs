@@ -32,7 +32,7 @@ impl Model for XChainAddClaimAttestation<'_> {
     }
 }
 
-impl Transaction<'a, NoFlags> for XChainAddClaimAttestation {
+impl<'a> Transaction<'a, NoFlags> for XChainAddClaimAttestation<'a> {
     fn get_transaction_type(&self) -> &super::TransactionType {
         self.common_fields.get_transaction_type()
     }
@@ -46,7 +46,7 @@ impl Transaction<'a, NoFlags> for XChainAddClaimAttestation {
     }
 }
 
-impl XChainAddClaimAttestation {
+impl<'a> XChainAddClaimAttestation<'a> {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,

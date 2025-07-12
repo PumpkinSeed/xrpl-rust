@@ -119,15 +119,15 @@ pub struct AccountRoot<'a> {
     pub wallet_size: Option<u32>,
 }
 
-impl Model for AccountRoot {}
+impl<'a> Model for AccountRoot<'a> {}
 
-impl LedgerObject<AccountRootFlag> for AccountRoot {
+impl<'a> LedgerObject<AccountRootFlag> for AccountRoot<'a> {
     fn get_ledger_entry_type(&self) -> LedgerEntryType {
         self.common_fields.get_ledger_entry_type()
     }
 }
 
-impl AccountRoot {
+impl<'a> AccountRoot<'a> {
     pub fn new(
         flags: FlagCollection<AccountRootFlag>,
         index: Option<Cow<'a, str>>,

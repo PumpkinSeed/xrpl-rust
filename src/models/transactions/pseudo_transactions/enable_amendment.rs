@@ -50,9 +50,9 @@ pub struct EnableAmendment<'a> {
     pub ledger_sequence: u32,
 }
 
-impl Model for EnableAmendment {}
+impl<'a> Model for EnableAmendment<'a> {}
 
-impl Transaction<'a, EnableAmendmentFlag> for EnableAmendment {
+impl<'a> Transaction<'a, EnableAmendmentFlag> for EnableAmendment<'a> {
     fn has_flag(&self, flag: &EnableAmendmentFlag) -> bool {
         self.common_fields.has_flag(flag)
     }
@@ -70,7 +70,7 @@ impl Transaction<'a, EnableAmendmentFlag> for EnableAmendment {
     }
 }
 
-impl EnableAmendment {
+impl<'a> EnableAmendment<'a> {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,

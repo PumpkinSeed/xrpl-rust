@@ -55,9 +55,9 @@ mod _std {
     }
 
     impl XRPLClient for AsyncJsonRpcClient {
-        async fn request_impl<'a: 'b, 'b>(
+        async fn request_impl(
             &self,
-            request: XRPLRequest<'a>,
+            request: XRPLRequest,
         ) -> XRPLClientResult<String> {
             let client = HttpClient::new();
             let request_json_rpc = request_to_json_rpc(&request)?;

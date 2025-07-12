@@ -1,7 +1,7 @@
 use crate::models::amount::IssuedCurrencyAmount;
 use crate::models::currency::ToAmount;
 use crate::models::Model;
-use alloc::borrow::Cow;
+
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, PartialEq, Eq, Clone, Serialize, Deserialize, Default)]

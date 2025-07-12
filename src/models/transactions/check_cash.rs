@@ -50,14 +50,14 @@ pub struct CheckCash<'a> {
     pub deliver_min: Option<Amount>,
 }
 
-impl Model for CheckCash {
+impl<'a> Model for CheckCash<'a> {
     fn get_errors(&self) -> XRPLModelResult<()> {
         //self._get_amount_and_deliver_min_error()?;
         self.validate_currencies()
     }
 }
 
-impl Transaction<'a, NoFlags> for CheckCash {
+impl<'a> Transaction<'a, NoFlags> for CheckCash<'a> {
     fn get_transaction_type(&self) -> &TransactionType {
         self.common_fields.get_transaction_type()
     }
@@ -71,7 +71,7 @@ impl Transaction<'a, NoFlags> for CheckCash {
     }
 }
 
-impl CheckCashError for CheckCash {
+impl<'a> CheckCashError for CheckCash<'a> {
     fn _get_amount_and_deliver_min_error(&self) -> XRPLModelResult<()> {
         if (self.amount.is_none() && self.deliver_min.is_none())
             || (self.amount.is_some() && self.deliver_min.is_some())
@@ -86,7 +86,7 @@ impl CheckCashError for CheckCash {
     }
 }
 
-impl CheckCash {
+impl<'a> CheckCash<'a> {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,

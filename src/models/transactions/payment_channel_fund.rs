@@ -52,13 +52,13 @@ pub struct PaymentChannelFund<'a> {
     pub expiration: Option<u32>,
 }
 
-impl Model for PaymentChannelFund {
+impl<'a> Model for PaymentChannelFund<'a> {
     fn get_errors(&self) -> crate::models::XRPLModelResult<()> {
         self.validate_currencies()
     }
 }
 
-impl Transaction<'a, NoFlags> for PaymentChannelFund {
+impl<'a> Transaction<'a, NoFlags> for PaymentChannelFund<'a> {
     fn get_transaction_type(&self) -> &TransactionType {
         self.common_fields.get_transaction_type()
     }
@@ -72,7 +72,7 @@ impl Transaction<'a, NoFlags> for PaymentChannelFund {
     }
 }
 
-impl PaymentChannelFund {
+impl<'a> PaymentChannelFund<'a> {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,

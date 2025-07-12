@@ -56,14 +56,14 @@ pub struct EscrowCreate<'a> {
     pub condition: Option<Cow<'a, str>>,
 }
 
-impl Model for EscrowCreate {
+impl<'a> Model for EscrowCreate<'a> {
     fn get_errors(&self) -> XRPLModelResult<()> {
         self._get_finish_after_error()?;
         self.validate_currencies()
     }
 }
 
-impl Transaction<'a, NoFlags> for EscrowCreate {
+impl<'a> Transaction<'a, NoFlags> for EscrowCreate<'a> {
     fn get_transaction_type(&self) -> &TransactionType {
         self.common_fields.get_transaction_type()
     }
@@ -77,7 +77,7 @@ impl Transaction<'a, NoFlags> for EscrowCreate {
     }
 }
 
-impl EscrowCreateError for EscrowCreate {
+impl<'a> EscrowCreateError for EscrowCreate<'a> {
     fn _get_finish_after_error(&self) -> XRPLModelResult<()> {
         if let (Some(finish_after), Some(cancel_after)) = (self.finish_after, self.cancel_after) {
             if finish_after >= cancel_after {
@@ -96,7 +96,7 @@ impl EscrowCreateError for EscrowCreate {
     }
 }
 
-impl EscrowCreate {
+impl<'a> EscrowCreate<'a> {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,

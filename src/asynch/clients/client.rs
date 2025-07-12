@@ -6,11 +6,11 @@ use super::exceptions::XRPLClientResult;
 
 #[allow(async_fn_in_trait)]
 pub trait XRPLClient {
-    async fn request_impl<'a: 'b, 'b>(&self, request: XRPLRequest<'a>) -> XRPLClientResult<String>;
+    async fn request_impl(&self, request: XRPLRequest) -> XRPLClientResult<String>;
 
     fn get_host(&self) -> Url;
 
-    fn set_request_id(&self, request: &mut XRPLRequest<'_>) {
+    fn set_request_id(&self, request: &mut XRPLRequest) {
         let common_fields = request.get_common_fields_mut();
         if common_fields.id.is_none() {
             #[cfg(feature = "std")]

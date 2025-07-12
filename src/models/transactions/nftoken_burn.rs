@@ -47,13 +47,13 @@ pub struct NFTokenBurn<'a> {
     pub owner: Option<Cow<'a, str>>,
 }
 
-impl Model for NFTokenBurn {
+impl<'a> Model for NFTokenBurn<'a> {
     fn get_errors(&self) -> crate::models::XRPLModelResult<()> {
         self.validate_currencies()
     }
 }
 
-impl Transaction<'a, NoFlags> for NFTokenBurn {
+impl<'a> Transaction<'a, NoFlags> for NFTokenBurn<'a> {
     fn get_transaction_type(&self) -> &TransactionType {
         self.common_fields.get_transaction_type()
     }
@@ -67,7 +67,7 @@ impl Transaction<'a, NoFlags> for NFTokenBurn {
     }
 }
 
-impl NFTokenBurn {
+impl<'a> NFTokenBurn<'a> {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,

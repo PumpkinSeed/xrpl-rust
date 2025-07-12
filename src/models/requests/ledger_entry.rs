@@ -1,4 +1,4 @@
-use alloc::borrow::Cow;
+
 use derive_new::new;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
@@ -10,50 +10,50 @@ use super::{CommonFields, LedgerIndex, LookupByLedgerRequest, Request};
 /// Required fields for requesting a DepositPreauth if not
 /// querying by object ID.
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone, new)]
-pub struct DepositPreauth<'a> {
-    pub authorized: Cow<'a, str>,
-    pub owner: Cow<'a, str>,
+pub struct DepositPreauth {
+    pub authorized: String,
+    pub owner: String,
 }
 
 /// Required fields for requesting a DirectoryNode if not
 /// querying by object ID.
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone, new)]
-pub struct Directory<'a> {
-    pub dir_root: Cow<'a, str>,
-    pub owner: Cow<'a, str>,
+pub struct Directory {
+    pub dir_root: String,
+    pub owner: String,
     pub sub_index: Option<u8>,
 }
 
 /// Required fields for requesting a Escrow if not querying
 /// by object ID.
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone, new)]
-pub struct Escrow<'a> {
-    pub owner: Cow<'a, str>,
+pub struct Escrow {
+    pub owner: String,
     pub seq: u64,
 }
 
 /// Required fields for requesting a Escrow if not querying
 /// by object ID.
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone, new)]
-pub struct Offer<'a> {
-    pub account: Cow<'a, str>,
+pub struct Offer {
+    pub account: String,
     pub seq: u64,
 }
 
 /// Required fields for requesting a Ticket, if not
 /// querying by object ID.
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone, new)]
-pub struct Ticket<'a> {
-    pub owner: Cow<'a, str>,
+pub struct Ticket {
+    pub owner: String,
     pub ticket_sequence: u64,
 }
 
 /// Required fields for requesting a RippleState.
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone, new)]
-pub struct RippleState<'a> {
-    pub account: Cow<'a, str>,
-    pub currency: Cow<'a, str>,
+pub struct RippleState {
+    pub account: String,
+    pub currency: String,
 }
 
 /// The ledger_entry method returns a single ledger object
@@ -68,7 +68,7 @@ pub struct RippleState<'a> {
 /// `<https://xrpl.org/ledger_entry.html#ledger_entry>`
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
-pub struct LedgerEntry<'a> {
+pub struct LedgerEntry {
     /// The common fields shared by all requests.
     #[serde(flatten)]
     pub common_fields: CommonFields,
@@ -78,17 +78,17 @@ pub struct LedgerEntry<'a> {
     /// data in JSON format. The default is false.
     pub binary: Option<bool>,
     pub check: Option<String>,
-    pub deposit_preauth: Option<DepositPreauth<'a>>,
-    pub directory: Option<Directory<'a>>,
-    pub escrow: Option<Escrow<'a>>,
+    pub deposit_preauth: Option<DepositPreauth>,
+    pub directory: Option<Directory>,
+    pub escrow: Option<Escrow>,
     pub index: Option<String>,
     /// The unique identifier of a ledger.
     #[serde(flatten)]
     pub ledger_lookup: Option<LookupByLedgerRequest>,
-    pub offer: Option<Offer<'a>>,
+    pub offer: Option<Offer>,
     pub payment_channel: Option<String>,
-    pub ripple_state: Option<RippleState<'a>>,
-    pub ticket: Option<Ticket<'a>>,
+    pub ripple_state: Option<RippleState>,
+    pub ticket: Option<Ticket>,
 }
 
 impl Model for LedgerEntry {
@@ -165,16 +165,16 @@ impl LedgerEntry {
         account_root: Option<String>,
         binary: Option<bool>,
         check: Option<String>,
-        deposit_preauth: Option<DepositPreauth<'a>>,
-        directory: Option<Directory<'a>>,
-        escrow: Option<Escrow<'a>>,
+        deposit_preauth: Option<DepositPreauth>,
+        directory: Option<Directory>,
+        escrow: Option<Escrow>,
         index: Option<String>,
         ledger_hash: Option<String>,
         ledger_index: Option<LedgerIndex>,
-        offer: Option<Offer<'a>>,
+        offer: Option<Offer>,
         payment_channel: Option<String>,
-        ripple_state: Option<RippleState<'a>>,
-        ticket: Option<Ticket<'a>>,
+        ripple_state: Option<RippleState>,
+        ticket: Option<Ticket>,
     ) -> Self {
         Self {
             common_fields: CommonFields {

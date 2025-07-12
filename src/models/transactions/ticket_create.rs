@@ -41,13 +41,13 @@ pub struct TicketCreate<'a> {
     pub ticket_count: u32,
 }
 
-impl Model for TicketCreate {
+impl<'a> Model for TicketCreate<'a> {
     fn get_errors(&self) -> crate::models::XRPLModelResult<()> {
         self.validate_currencies()
     }
 }
 
-impl Transaction<'a, NoFlags> for TicketCreate {
+impl<'a> Transaction<'a, NoFlags> for TicketCreate<'a> {
     fn get_transaction_type(&self) -> &TransactionType {
         self.common_fields.get_transaction_type()
     }
@@ -61,7 +61,7 @@ impl Transaction<'a, NoFlags> for TicketCreate {
     }
 }
 
-impl TicketCreate {
+impl<'a> TicketCreate<'a> {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,

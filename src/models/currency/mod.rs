@@ -2,7 +2,7 @@ pub mod issued_currency;
 pub mod xrp;
 
 use crate::models::Model;
-use alloc::borrow::Cow;
+
 pub use issued_currency::*;
 use serde::{Deserialize, Serialize};
 use strum_macros::Display;

@@ -105,7 +105,7 @@ pub struct AccountTxTransactionV1<'a> {
     pub tx: Cow<'a, str>,
 }
 
-impl TryFrom<XRPLResult<'a>> for AccountTxVersionMap {
+impl<'a> TryFrom<XRPLResult<'a>> for AccountTxVersionMap<'a> {
     type Error = XRPLModelException;
 
     fn try_from(result: XRPLResult<'a>) -> XRPLModelResult<Self> {

@@ -56,15 +56,15 @@ pub struct NFTokenPage<'a> {
     pub previous_txn_lgr_seq: Option<u32>,
 }
 
-impl Model for NFTokenPage {}
+impl<'a> Model for NFTokenPage<'a> {}
 
-impl LedgerObject<NoFlags> for NFTokenPage {
+impl<'a> LedgerObject<NoFlags> for NFTokenPage<'a> {
     fn get_ledger_entry_type(&self) -> LedgerEntryType {
         self.common_fields.get_ledger_entry_type()
     }
 }
 
-impl NFTokenPage {
+impl<'a> NFTokenPage<'a> {
     pub fn new(
         index: Option<Cow<'a, str>>,
         ledger_index: Option<Cow<'a, str>>,

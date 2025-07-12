@@ -47,14 +47,14 @@ pub struct NFTokenCancelOffer<'a> {
     pub nftoken_offers: Vec<Cow<'a, str>>,
 }
 
-impl Model for NFTokenCancelOffer {
+impl<'a> Model for NFTokenCancelOffer<'a> {
     fn get_errors(&self) -> XRPLModelResult<()> {
         self._get_nftoken_offers_error()?;
         self.validate_currencies()
     }
 }
 
-impl Transaction<'a, NoFlags> for NFTokenCancelOffer {
+impl<'a> Transaction<'a, NoFlags> for NFTokenCancelOffer<'a> {
     fn get_transaction_type(&self) -> &TransactionType {
         self.common_fields.get_transaction_type()
     }
@@ -68,7 +68,7 @@ impl Transaction<'a, NoFlags> for NFTokenCancelOffer {
     }
 }
 
-impl NFTokenCancelOfferError for NFTokenCancelOffer {
+impl<'a> NFTokenCancelOfferError for NFTokenCancelOffer<'a> {
     fn _get_nftoken_offers_error(&self) -> XRPLModelResult<()> {
         if self.nftoken_offers.is_empty() {
             Err(XRPLNFTokenCancelOfferException::CollectionEmpty {
@@ -82,7 +82,7 @@ impl NFTokenCancelOfferError for NFTokenCancelOffer {
     }
 }
 
-impl NFTokenCancelOffer {
+impl<'a> NFTokenCancelOffer<'a> {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,

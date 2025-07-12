@@ -84,7 +84,7 @@ impl Model for AMMDeposit<'_> {
     }
 }
 
-impl Transaction<'a, AMMDepositFlag> for AMMDeposit {
+impl<'a> Transaction<'a, AMMDepositFlag> for AMMDeposit<'a> {
     fn get_common_fields(&self) -> &CommonFields<'_, AMMDepositFlag> {
         &self.common_fields
     }
@@ -98,7 +98,7 @@ impl Transaction<'a, AMMDepositFlag> for AMMDeposit {
     }
 }
 
-impl AMMDeposit {
+impl<'a> AMMDeposit<'a> {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,

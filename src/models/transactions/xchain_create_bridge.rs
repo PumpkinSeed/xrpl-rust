@@ -31,7 +31,7 @@ impl Model for XChainCreateBridge<'_> {
     }
 }
 
-impl Transaction<'a, NoFlags> for XChainCreateBridge {
+impl<'a> Transaction<'a, NoFlags> for XChainCreateBridge<'a> {
     fn get_transaction_type(&self) -> &super::TransactionType {
         self.common_fields.get_transaction_type()
     }
@@ -45,7 +45,7 @@ impl Transaction<'a, NoFlags> for XChainCreateBridge {
     }
 }
 
-impl XChainCreateBridge {
+impl<'a> XChainCreateBridge<'a> {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,
@@ -141,25 +141,25 @@ mod test_xchain_create_bridge {
 
     fn xrp_bridge<'a>() -> XChainBridge {
         XChainBridge {
-            locking_chain_door: Cow::Borrowed(ACCOUNT),
+            locking_chain_door: ACCOUNT.to_string(),
             locking_chain_issue: XRP::new().into(),
-            issuing_chain_door: Cow::Borrowed(GENESIS),
+            issuing_chain_door: GENESIS.to_string(),
             issuing_chain_issue: XRP::new().into(),
         }
     }
 
     fn iou_bridge<'a>() -> XChainBridge {
         XChainBridge {
-            locking_chain_door: Cow::Borrowed(ACCOUNT),
+            locking_chain_door: ACCOUNT.to_string(),
             locking_chain_issue: IssuedCurrency {
-                currency: Cow::Borrowed("USD"),
-                issuer: Cow::Borrowed(ISSUER),
+                currency: "USD".to_string(),
+                issuer: ISSUER.to_string(),
             }
             .into(),
-            issuing_chain_door: Cow::Borrowed(ACCOUNT2),
+            issuing_chain_door: ACCOUNT2.to_string(),
             issuing_chain_issue: IssuedCurrency {
-                currency: Cow::Borrowed("USD"),
-                issuer: Cow::Borrowed(ACCOUNT2),
+                currency: "USD".to_string(),
+                issuer: ACCOUNT2.to_string(),
             }
             .into(),
         }
@@ -209,16 +209,16 @@ mod test_xchain_create_bridge {
     #[should_panic]
     fn test_same_door_accounts() {
         let bridge = XChainBridge {
-            locking_chain_door: Cow::Borrowed(ACCOUNT),
+            locking_chain_door: ACCOUNT.to_string(),
             locking_chain_issue: IssuedCurrency {
-                currency: Cow::Borrowed("USD"),
-                issuer: Cow::Borrowed(ISSUER),
+                currency: "USD".to_string(),
+                issuer: ISSUER.to_string(),
             }
             .into(),
-            issuing_chain_door: Cow::Borrowed(ACCOUNT),
+            issuing_chain_door: ACCOUNT.to_string(),
             issuing_chain_issue: IssuedCurrency {
-                currency: Cow::Borrowed("USD"),
-                issuer: Cow::Borrowed(ACCOUNT),
+                currency: "USD".to_string(),
+                issuer: ACCOUNT.to_string(),
             }
             .into(),
         };
@@ -243,12 +243,12 @@ mod test_xchain_create_bridge {
     #[should_panic]
     fn test_xrp_iou_bridge() {
         let bridge = XChainBridge {
-            locking_chain_door: Cow::Borrowed(ACCOUNT),
+            locking_chain_door: ACCOUNT.to_string(),
             locking_chain_issue: XRP::new().into(),
-            issuing_chain_door: Cow::Borrowed(ACCOUNT),
+            issuing_chain_door: ACCOUNT.to_string(),
             issuing_chain_issue: IssuedCurrency {
-                currency: Cow::Borrowed("USD"),
-                issuer: Cow::Borrowed(ACCOUNT),
+                currency: "USD".to_string(),
+                issuer: ACCOUNT.to_string(),
             }
             .into(),
         };
@@ -273,13 +273,13 @@ mod test_xchain_create_bridge {
     #[should_panic]
     fn test_iou_xrp_bridge() {
         let bridge = XChainBridge {
-            locking_chain_door: Cow::Borrowed(ACCOUNT),
+            locking_chain_door: ACCOUNT.to_string(),
             locking_chain_issue: IssuedCurrency {
-                currency: Cow::Borrowed("USD"),
-                issuer: Cow::Borrowed(ISSUER),
+                currency: "USD".to_string(),
+                issuer: ISSUER.to_string(),
             }
             .into(),
-            issuing_chain_door: Cow::Borrowed(ACCOUNT),
+            issuing_chain_door: ACCOUNT.to_string(),
             issuing_chain_issue: XRP::new().into(),
         };
         let txn = XChainCreateBridge::new(
@@ -303,9 +303,9 @@ mod test_xchain_create_bridge {
     #[should_panic]
     fn test_account_not_in_bridge() {
         let bridge = XChainBridge {
-            locking_chain_door: Cow::Borrowed(ACCOUNT),
+            locking_chain_door: ACCOUNT.to_string(),
             locking_chain_issue: XRP::new().into(),
-            issuing_chain_door: Cow::Borrowed(ACCOUNT2),
+            issuing_chain_door: ACCOUNT2.to_string(),
             issuing_chain_issue: XRP::new().into(),
         };
         let txn = XChainCreateBridge::new(

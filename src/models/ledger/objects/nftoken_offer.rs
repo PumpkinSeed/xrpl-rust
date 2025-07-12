@@ -71,15 +71,15 @@ pub struct NFTokenOffer<'a> {
     pub owner_node: Option<Cow<'a, str>>,
 }
 
-impl Model for NFTokenOffer {}
+impl<'a> Model for NFTokenOffer<'a> {}
 
-impl LedgerObject<NFTokenOfferFlag> for NFTokenOffer {
+impl<'a> LedgerObject<NFTokenOfferFlag> for NFTokenOffer<'a> {
     fn get_ledger_entry_type(&self) -> LedgerEntryType {
         self.common_fields.get_ledger_entry_type()
     }
 }
 
-impl NFTokenOffer {
+impl<'a> NFTokenOffer<'a> {
     pub fn new(
         flags: FlagCollection<NFTokenOfferFlag>,
         index: Option<Cow<'a, str>>,

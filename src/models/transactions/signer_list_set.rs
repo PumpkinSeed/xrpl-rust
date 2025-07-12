@@ -66,7 +66,7 @@ pub struct SignerListSet<'a> {
     pub signer_entries: Option<Vec<SignerEntry>>,
 }
 
-impl Model for SignerListSet {
+impl<'a> Model for SignerListSet<'a> {
     fn get_errors(&self) -> XRPLModelResult<()> {
         self._get_signer_entries_error()?;
         self._get_signer_quorum_error()?;
@@ -74,7 +74,7 @@ impl Model for SignerListSet {
     }
 }
 
-impl Transaction<'a, NoFlags> for SignerListSet {
+impl<'a> Transaction<'a, NoFlags> for SignerListSet<'a> {
     fn get_transaction_type(&self) -> &TransactionType {
         self.common_fields.get_transaction_type()
     }
@@ -88,7 +88,7 @@ impl Transaction<'a, NoFlags> for SignerListSet {
     }
 }
 
-impl SignerListSetError for SignerListSet {
+impl<'a> SignerListSetError for SignerListSet<'a> {
     fn _get_signer_entries_error(&self) -> XRPLModelResult<()> {
         if let Some(signer_entries) = &self.signer_entries {
             if self.signer_quorum == 0 {
@@ -173,7 +173,7 @@ impl SignerListSetError for SignerListSet {
     }
 }
 
-impl SignerListSet {
+impl<'a> SignerListSet<'a> {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,

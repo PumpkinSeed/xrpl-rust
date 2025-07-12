@@ -62,15 +62,15 @@ pub struct Check<'a> {
     pub source_tag: Option<u32>,
 }
 
-impl Model for Check {}
+impl<'a> Model for Check<'a> {}
 
-impl LedgerObject<NoFlags> for Check {
+impl<'a> LedgerObject<NoFlags> for Check<'a> {
     fn get_ledger_entry_type(&self) -> LedgerEntryType {
         self.common_fields.get_ledger_entry_type()
     }
 }
 
-impl Check {
+impl<'a> Check<'a> {
     pub fn new(
         index: Option<Cow<'a, str>>,
         ledger_index: Option<Cow<'a, str>>,

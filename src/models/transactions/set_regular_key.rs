@@ -47,13 +47,13 @@ pub struct SetRegularKey<'a> {
     pub regular_key: Option<Cow<'a, str>>,
 }
 
-impl Model for SetRegularKey {
+impl<'a> Model for SetRegularKey<'a> {
     fn get_errors(&self) -> crate::models::XRPLModelResult<()> {
         self.validate_currencies()
     }
 }
 
-impl Transaction<'a, NoFlags> for SetRegularKey {
+impl<'a> Transaction<'a, NoFlags> for SetRegularKey<'a> {
     fn get_transaction_type(&self) -> &TransactionType {
         self.common_fields.get_transaction_type()
     }
@@ -67,7 +67,7 @@ impl Transaction<'a, NoFlags> for SetRegularKey {
     }
 }
 
-impl SetRegularKey {
+impl<'a> SetRegularKey<'a> {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,

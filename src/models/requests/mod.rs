@@ -116,7 +116,7 @@ pub enum RequestMethod {
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 #[serde(untagged)]
-pub enum XRPLRequest<'a> {
+pub enum XRPLRequest {
     AccountChannels(account_channels::AccountChannels),
     AccountCurrencies(account_currencies::AccountCurrencies),
     AccountInfo(account_info::AccountInfo),
@@ -147,7 +147,7 @@ pub enum XRPLRequest<'a> {
     LedgerClosed(ledger_closed::LedgerClosed),
     LedgerCurrent(ledger_current::LedgerCurrent),
     LedgerData(ledger_data::LedgerData),
-    LedgerEntry(ledger_entry::LedgerEntry<'a>),
+    LedgerEntry(ledger_entry::LedgerEntry),
     Subscribe(subscribe::Subscribe),
     Unsubscribe(unsubscribe::Unsubscribe),
     Fee(fee::Fee),
@@ -320,7 +320,7 @@ impl From<ledger_data::LedgerData> for XRPLRequest {
     }
 }
 
-impl From<ledger_entry::LedgerEntry<'a>> for XRPLRequest {
+impl From<ledger_entry::LedgerEntry> for XRPLRequest {
     fn from(request: ledger_entry::LedgerEntry) -> Self {
         XRPLRequest::LedgerEntry(request)
     }

@@ -69,15 +69,15 @@ pub struct Offer<'a> {
     pub expiration: Option<u32>,
 }
 
-impl Model for Offer {}
+impl<'a> Model for Offer<'a> {}
 
-impl LedgerObject<OfferFlag> for Offer {
+impl<'a> LedgerObject<OfferFlag> for Offer<'a> {
     fn get_ledger_entry_type(&self) -> LedgerEntryType {
         self.common_fields.get_ledger_entry_type()
     }
 }
 
-impl Offer {
+impl<'a> Offer<'a> {
     pub fn new(
         flags: FlagCollection<OfferFlag>,
         index: Option<Cow<'a, str>>,

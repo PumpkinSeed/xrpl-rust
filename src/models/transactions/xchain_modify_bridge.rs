@@ -42,7 +42,7 @@ impl Model for XChainModifyBridge<'_> {
     }
 }
 
-impl Transaction<'a, XChainModifyBridgeFlags> for XChainModifyBridge {
+impl<'a> Transaction<'a, XChainModifyBridgeFlags> for XChainModifyBridge<'a> {
     fn get_common_fields(&self) -> &CommonFields<'_, XChainModifyBridgeFlags> {
         &self.common_fields
     }
@@ -56,7 +56,7 @@ impl Transaction<'a, XChainModifyBridgeFlags> for XChainModifyBridge {
     }
 }
 
-impl XChainModifyBridge {
+impl<'a> XChainModifyBridge<'a> {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,

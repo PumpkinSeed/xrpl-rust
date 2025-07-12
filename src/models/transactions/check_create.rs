@@ -52,13 +52,13 @@ pub struct CheckCreate<'a> {
     pub invoice_id: Option<Cow<'a, str>>,
 }
 
-impl Model for CheckCreate {
+impl<'a> Model for CheckCreate<'a> {
     fn get_errors(&self) -> crate::models::XRPLModelResult<()> {
         self.validate_currencies()
     }
 }
 
-impl Transaction<'a, NoFlags> for CheckCreate {
+impl<'a> Transaction<'a, NoFlags> for CheckCreate<'a> {
     fn get_transaction_type(&self) -> &TransactionType {
         self.common_fields.get_transaction_type()
     }
@@ -72,7 +72,7 @@ impl Transaction<'a, NoFlags> for CheckCreate {
     }
 }
 
-impl CheckCreate {
+impl<'a> CheckCreate<'a> {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,

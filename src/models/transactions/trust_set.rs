@@ -72,13 +72,13 @@ pub struct TrustSet<'a> {
     pub quality_out: Option<u32>,
 }
 
-impl Model for TrustSet {
+impl<'a> Model for TrustSet<'a> {
     fn get_errors(&self) -> crate::models::XRPLModelResult<()> {
         self.validate_currencies()
     }
 }
 
-impl Transaction<'a, TrustSetFlag> for TrustSet {
+impl<'a> Transaction<'a, TrustSetFlag> for TrustSet<'a> {
     fn has_flag(&self, flag: &TrustSetFlag) -> bool {
         self.common_fields.has_flag(flag)
     }
@@ -96,7 +96,7 @@ impl Transaction<'a, TrustSetFlag> for TrustSet {
     }
 }
 
-impl TrustSet {
+impl<'a> TrustSet<'a> {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,

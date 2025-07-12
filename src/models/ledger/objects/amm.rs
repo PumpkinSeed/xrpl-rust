@@ -89,15 +89,15 @@ pub struct AMM<'a> {
     pub vote_slots: Option<Vec<VoteEntry>>,
 }
 
-impl Model for AMM {}
+impl<'a> Model for AMM<'a> {}
 
-impl LedgerObject<NoFlags> for AMM {
+impl<'a> LedgerObject<NoFlags> for AMM<'a> {
     fn get_ledger_entry_type(&self) -> LedgerEntryType {
         self.common_fields.get_ledger_entry_type()
     }
 }
 
-impl AMM {
+impl<'a> AMM<'a> {
     pub fn new(
         index: Option<Cow<'a, str>>,
         ledger_index: Option<Cow<'a, str>>,

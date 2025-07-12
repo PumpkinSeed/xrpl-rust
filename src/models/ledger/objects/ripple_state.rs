@@ -89,15 +89,15 @@ pub struct RippleState<'a> {
     pub low_quality_out: Option<u32>,
 }
 
-impl Model for RippleState {}
+impl<'a> Model for RippleState<'a> {}
 
-impl LedgerObject<RippleStateFlag> for RippleState {
+impl<'a> LedgerObject<RippleStateFlag> for RippleState<'a> {
     fn get_ledger_entry_type(&self) -> LedgerEntryType {
         self.common_fields.get_ledger_entry_type()
     }
 }
 
-impl RippleState {
+impl<'a> RippleState<'a> {
     pub fn new(
         flags: FlagCollection<RippleStateFlag>,
         index: Option<Cow<'a, str>>,

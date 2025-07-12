@@ -74,7 +74,7 @@ impl Model for AMMWithdraw<'_> {
     }
 }
 
-impl Transaction<'a, AMMWithdrawFlag> for AMMWithdraw {
+impl<'a> Transaction<'a, AMMWithdrawFlag> for AMMWithdraw<'a> {
     fn get_common_fields(&self) -> &CommonFields<'_, AMMWithdrawFlag> {
         &self.common_fields
     }
@@ -88,7 +88,7 @@ impl Transaction<'a, AMMWithdrawFlag> for AMMWithdraw {
     }
 }
 
-impl AMMWithdraw {
+impl<'a> AMMWithdraw<'a> {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,

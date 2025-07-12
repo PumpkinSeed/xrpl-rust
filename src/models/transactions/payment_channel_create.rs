@@ -60,13 +60,13 @@ pub struct PaymentChannelCreate<'a> {
     pub destination_tag: Option<u32>,
 }
 
-impl Model for PaymentChannelCreate {
+impl<'a> Model for PaymentChannelCreate<'a> {
     fn get_errors(&self) -> crate::models::XRPLModelResult<()> {
         self.validate_currencies()
     }
 }
 
-impl Transaction<'a, NoFlags> for PaymentChannelCreate {
+impl<'a> Transaction<'a, NoFlags> for PaymentChannelCreate<'a> {
     fn get_transaction_type(&self) -> &TransactionType {
         self.common_fields.get_transaction_type()
     }
@@ -80,7 +80,7 @@ impl Transaction<'a, NoFlags> for PaymentChannelCreate {
     }
 }
 
-impl PaymentChannelCreate {
+impl<'a> PaymentChannelCreate<'a> {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,

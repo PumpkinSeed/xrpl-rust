@@ -18,7 +18,7 @@ pub enum TxVersionMap<'a> {
     V1(TxV1<'a>),
 }
 
-impl TxVersionMap {
+impl<'a> TxVersionMap<'a> {
     pub fn get_transaction_metadata(&self) -> Option<&TransactionMetadata<'a>> {
         match self {
             TxVersionMap::Default(tx) => tx.meta.as_ref(),
@@ -100,7 +100,7 @@ pub enum Transaction<'a> {
     },
 }
 
-impl TryFrom<XRPLResult<'a>> for TxVersionMap {
+impl<'a> TryFrom<XRPLResult<'a>> for TxVersionMap<'a> {
     type Error = XRPLModelException;
 
     fn try_from(result: XRPLResult<'a>) -> XRPLModelResult<Self> {

@@ -49,7 +49,7 @@ impl Model for AMMBid<'_> {
     }
 }
 
-impl Transaction<'a, NoFlags> for AMMBid {
+impl<'a> Transaction<'a, NoFlags> for AMMBid<'a> {
     fn get_common_fields(&self) -> &CommonFields<'_, NoFlags> {
         &self.common_fields
     }

@@ -1,5 +1,5 @@
 use crate::models::{Model, XRPLModelException, XRPLModelResult};
-use alloc::borrow::Cow;
+
 use bigdecimal::BigDecimal;
 use core::convert::TryInto;
 use core::str::FromStr;

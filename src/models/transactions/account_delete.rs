@@ -46,13 +46,13 @@ pub struct AccountDelete<'a> {
     pub destination_tag: Option<u32>,
 }
 
-impl Model for AccountDelete {
+impl<'a> Model for AccountDelete<'a> {
     fn get_errors(&self) -> crate::models::XRPLModelResult<()> {
         self.validate_currencies()
     }
 }
 
-impl Transaction<'a, NoFlags> for AccountDelete {
+impl<'a> Transaction<'a, NoFlags> for AccountDelete<'a> {
     fn get_transaction_type(&self) -> &TransactionType {
         self.common_fields.get_transaction_type()
     }
@@ -66,7 +66,7 @@ impl Transaction<'a, NoFlags> for AccountDelete {
     }
 }
 
-impl AccountDelete {
+impl<'a> AccountDelete<'a> {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,

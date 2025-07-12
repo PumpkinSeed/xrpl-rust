@@ -43,13 +43,13 @@ pub struct OfferCancel<'a> {
     pub offer_sequence: u32,
 }
 
-impl Model for OfferCancel {
+impl<'a> Model for OfferCancel<'a> {
     fn get_errors(&self) -> crate::models::XRPLModelResult<()> {
         self.validate_currencies()
     }
 }
 
-impl Transaction<'a, NoFlags> for OfferCancel {
+impl<'a> Transaction<'a, NoFlags> for OfferCancel<'a> {
     fn get_transaction_type(&self) -> &TransactionType {
         self.common_fields.get_transaction_type()
     }
@@ -63,7 +63,7 @@ impl Transaction<'a, NoFlags> for OfferCancel {
     }
 }
 
-impl OfferCancel {
+impl<'a> OfferCancel<'a> {
     pub fn new(
         account: Cow<'a, str>,
         account_txn_id: Option<Cow<'a, str>>,
