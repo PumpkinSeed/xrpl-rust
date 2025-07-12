@@ -1,7 +1,6 @@
 use crate::models::FlagCollection;
 use crate::models::Model;
 use crate::models::{ledger::objects::LedgerEntryType, NoFlags};
-use alloc::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
@@ -14,7 +13,7 @@ use super::{CommonFields, LedgerObject};
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 #[serde(rename_all = "PascalCase")]
-pub struct Ticket<'a> {
+pub struct Ticket {
     /// The base fields for all ledger object models.
     ///
     /// See Ledger Object Common Fields:
@@ -26,13 +25,13 @@ pub struct Ticket<'a> {
     // See Ticket fields:
     // `<https://xrpl.org/ticket.html#ticket-fields>`
     /// The account that owns this Ticket.
-    pub account: Cow<'a, str>,
+    pub account: String,
     /// A hint indicating which page of the owner directory links to this object, in case the
     /// directory consists of multiple pages.
-    pub owner_node: Cow<'a, str>,
+    pub owner_node: String,
     /// The identifying hash of the transaction that most recently modified this object.
     #[serde(rename = "PreviousTxnID")]
-    pub previous_txn_id: Cow<'a, str>,
+    pub previous_txn_id: String,
     /// The index of the ledger that contains the transaction that most recently
     /// modified this object.
     pub previous_txn_lgr_seq: u32,
@@ -40,21 +39,21 @@ pub struct Ticket<'a> {
     pub ticket_sequence: u32,
 }
 
-impl<'a> Model for Ticket<'a> {}
+impl Model for Ticket {}
 
-impl<'a> LedgerObject<NoFlags> for Ticket<'a> {
+impl LedgerObject<NoFlags> for Ticket {
     fn get_ledger_entry_type(&self) -> LedgerEntryType {
         self.common_fields.get_ledger_entry_type()
     }
 }
 
-impl<'a> Ticket<'a> {
+impl Ticket {
     pub fn new(
-        index: Option<Cow<'a, str>>,
-        ledger_index: Option<Cow<'a, str>>,
-        account: Cow<'a, str>,
-        owner_node: Cow<'a, str>,
-        previous_txn_id: Cow<'a, str>,
+        index: Option<String>,
+        ledger_index: Option<String>,
+        account: String,
+        owner_node: String,
+        previous_txn_id: String,
         previous_txn_lgr_seq: u32,
         ticket_sequence: u32,
     ) -> Self {
@@ -81,11 +80,11 @@ mod tests {
     #[test]
     fn test_serde() {
         let ticket = Ticket::new(
-            Some(Cow::from("ForTest")),
+            Some("ForTest".to_string()),
             None,
-            Cow::from("rEhxGqkqPPSxQ3P25J66ft5TwpzV14k2de"),
-            Cow::from("0000000000000000"),
-            Cow::from("F19AD4577212D3BEACA0F75FE1BA1644F2E854D46E8D62E9C95D18E9708CBFB1"),
+            "rEhxGqkqPPSxQ3P25J66ft5TwpzV14k2de".to_string(),
+            "0000000000000000".to_string(),
+            "F19AD4577212D3BEACA0F75FE1BA1644F2E854D46E8D62E9C95D18E9708CBFB1".to_string(),
             4,
             3,
         );

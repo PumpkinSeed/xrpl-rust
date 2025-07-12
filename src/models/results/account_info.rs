@@ -138,7 +138,7 @@ pub struct AccountInfoV1<'a> {
     /// If requested, array of SignerList ledger objects associated with this
     /// account for Multi-Signing. Since an account can own at most one
     /// SignerList, this array must have exactly one member if it is present.
-    pub signer_lists: Option<Cow<'a, [SignerList<'a>]>>,
+    pub signer_lists: Option<Cow<'a, [SignerList]>>,
 }
 
 /// Response from an account_info request, containing information about an
@@ -154,7 +154,7 @@ pub struct AccountInfo<'a> {
     /// If requested, array of SignerList ledger objects associated with this
     /// account for Multi-Signing. Since an account can own at most one
     /// SignerList, this array must have exactly one member if it is present.
-    pub signer_lists: Option<Cow<'a, [SignerList<'a>]>>,
+    pub signer_lists: Option<Cow<'a, [SignerList]>>,
 }
 
 impl<'a> AccountInfoVersionMap<'a> {

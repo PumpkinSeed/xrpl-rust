@@ -1,7 +1,6 @@
 use crate::models::ledger::objects::LedgerEntryType;
 use crate::models::FlagCollection;
 use crate::models::{amount::Amount, Model};
-use alloc::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
@@ -43,7 +42,7 @@ pub enum RippleStateFlag {
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 #[serde(rename_all = "PascalCase")]
-pub struct RippleState<'a> {
+pub struct RippleState {
     /// The base fields for all ledger object models.
     ///
     /// See Ledger Object Common Fields:
@@ -62,16 +61,16 @@ pub struct RippleState<'a> {
     pub high_limit: Amount,
     /// (Omitted in some historical ledgers) A hint indicating which page of the high account's
     /// owner directory links to this object, in case the directory consists of multiple pages.
-    pub high_node: Cow<'a, str>,
+    pub high_node: String,
     /// The limit that the low account has set on the trust line. The issuer is the address of
     /// the low account that set this limit.
     pub low_limit: Amount,
     /// Omitted in some historical ledgers) A hint indicating which page of the low account's
     /// owner directory links to this object, in case the directory consists of multiple pages.
-    pub low_node: Cow<'a, str>,
+    pub low_node: String,
     /// The identifying hash of the transaction that most recently modified this object.
     #[serde(rename = "PreviousTxnID")]
-    pub previous_txn_id: Cow<'a, str>,
+    pub previous_txn_id: String,
     /// The index of the ledger that contains the transaction that most recently
     /// modified this object.
     pub previous_txn_lgr_seq: u32,
@@ -89,25 +88,25 @@ pub struct RippleState<'a> {
     pub low_quality_out: Option<u32>,
 }
 
-impl<'a> Model for RippleState<'a> {}
+impl Model for RippleState {}
 
-impl<'a> LedgerObject<RippleStateFlag> for RippleState<'a> {
+impl LedgerObject<RippleStateFlag> for RippleState {
     fn get_ledger_entry_type(&self) -> LedgerEntryType {
         self.common_fields.get_ledger_entry_type()
     }
 }
 
-impl<'a> RippleState<'a> {
+impl RippleState {
     pub fn new(
         flags: FlagCollection<RippleStateFlag>,
-        index: Option<Cow<'a, str>>,
-        ledger_index: Option<Cow<'a, str>>,
+        index: Option<String>,
+        ledger_index: Option<String>,
         balance: Amount,
         high_limit: Amount,
-        high_node: Cow<'a, str>,
+        high_node: String,
         low_limit: Amount,
-        low_node: Cow<'a, str>,
-        previous_txn_id: Cow<'a, str>,
+        low_node: String,
+        previous_txn_id: String,
         previous_txn_lgr_seq: u32,
         high_quality_in: Option<u32>,
         high_quality_out: Option<u32>,
@@ -140,15 +139,13 @@ impl<'a> RippleState<'a> {
 mod tests {
     use super::*;
     use crate::models::amount::IssuedCurrencyAmount;
-    use alloc::{borrow::Cow, vec};
+    use alloc::vec;
 
     #[test]
     fn test_serde() {
         let ripple_state = RippleState::new(
             vec![RippleStateFlag::LsfHighReserve, RippleStateFlag::LsfLowAuth].into(),
-            Some(Cow::from(
-                "9CA88CDEDFF9252B3DE183CE35B038F57282BC9503CDFA1923EF9A95DF0D6F7B",
-            )),
+            Some("9CA88CDEDFF9252B3DE183CE35B038F57282BC9503CDFA1923EF9A95DF0D6F7B".to_string()),
             None,
             Amount::IssuedCurrencyAmount(IssuedCurrencyAmount::new(
                 "USD".into(),
@@ -160,14 +157,14 @@ mod tests {
                 "rf1BiGeXwwQoi8Z2ueFYTEXSwuJYfV2Jpn".into(),
                 "110".into(),
             )),
-            Cow::from("0000000000000000"),
+            "0000000000000000".to_string(),
             Amount::IssuedCurrencyAmount(IssuedCurrencyAmount::new(
                 "USD".into(),
                 "rsA2LpzuawewSBQXkiju3YQTMzW13pAAdW".into(),
                 "0".into(),
             )),
-            Cow::from("0000000000000000"),
-            Cow::from("E3FE6EA3D48F0C2B639448020EA4F03D4F4F8FFDB243A852A0F59177921B4879"),
+            "0000000000000000".to_string(),
+            "E3FE6EA3D48F0C2B639448020EA4F03D4F4F8FFDB243A852A0F59177921B4879".to_string(),
             14090896,
             None,
             None,

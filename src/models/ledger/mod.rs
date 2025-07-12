@@ -6,29 +6,29 @@ use serde_json::Value;
 pub mod objects;
 
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
-pub enum LedgerVersionMap<'a> {
-    Default(Ledger<'a>),
-    V1(LedgerV1<'a>),
+pub enum LedgerVersionMap {
+    Default(Ledger),
+    V1(LedgerV1),
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
-pub struct Ledger<'a> {
+pub struct Ledger {
     #[serde(flatten)]
-    pub base: BaseLedger<'a>,
+    pub base: BaseLedger,
     pub ledger_index: u32,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
-pub struct LedgerV1<'a> {
+pub struct LedgerV1 {
     #[serde(flatten)]
-    pub base: BaseLedger<'a>,
+    pub base: BaseLedger,
     pub ledger_index: String,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
-pub struct BaseLedger<'a> {
+pub struct BaseLedger {
     pub account_hash: String,
-    pub account_state: Option<Vec<LedgerEntry<'a>>>,
+    pub account_state: Option<Vec<LedgerEntry>>,
     pub close_flags: u32,
     pub close_time: u64,
     pub close_time_human: String,

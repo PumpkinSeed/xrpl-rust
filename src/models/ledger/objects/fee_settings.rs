@@ -1,7 +1,6 @@
 use crate::models::FlagCollection;
 use crate::models::Model;
 use crate::models::{ledger::objects::LedgerEntryType, NoFlags};
-use alloc::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
@@ -16,7 +15,7 @@ use super::{CommonFields, LedgerObject};
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 #[serde(rename_all = "PascalCase")]
-pub struct FeeSettings<'a> {
+pub struct FeeSettings {
     /// The base fields for all ledger object models.
     ///
     /// See Ledger Object Common Fields:
@@ -28,7 +27,7 @@ pub struct FeeSettings<'a> {
     // See FeeSettings fields:
     // `<https://xrpl.org/feesettings.html#feesettings-fields>`
     /// The transaction cost of the "reference transaction" in drops of XRP as hexadecimal.
-    pub base_fee: Cow<'a, str>,
+    pub base_fee: String,
     /// The BaseFee translated into "fee units".
     pub reference_fee_units: u32,
     /// The base reserve for an account in the XRP Ledger, as drops of XRP.
@@ -37,19 +36,19 @@ pub struct FeeSettings<'a> {
     pub reserve_increment: u32,
 }
 
-impl<'a> Model for FeeSettings<'a> {}
+impl Model for FeeSettings {}
 
-impl<'a> LedgerObject<NoFlags> for FeeSettings<'a> {
+impl LedgerObject<NoFlags> for FeeSettings {
     fn get_ledger_entry_type(&self) -> LedgerEntryType {
         self.common_fields.get_ledger_entry_type()
     }
 }
 
-impl<'a> FeeSettings<'a> {
+impl FeeSettings {
     pub fn new(
-        index: Option<Cow<'a, str>>,
-        ledger_index: Option<Cow<'a, str>>,
-        base_fee: Cow<'a, str>,
+        index: Option<String>,
+        ledger_index: Option<String>,
+        base_fee: String,
         reference_fee_units: u32,
         reserve_base: u32,
         reserve_increment: u32,
@@ -76,11 +75,9 @@ mod tests {
     #[test]
     fn test_serde() {
         let fee_settings = FeeSettings::new(
-            Some(Cow::from(
-                "4BC50C9B0D8515D3EAAE1E74B29A95804346C491EE1A95BF25E4AAB854A6A651",
-            )),
+            Some("4BC50C9B0D8515D3EAAE1E74B29A95804346C491EE1A95BF25E4AAB854A6A651".to_string()),
             None,
-            Cow::from("000000000000000A"),
+            "000000000000000A".to_string(),
             10,
             20000000,
             5000000,

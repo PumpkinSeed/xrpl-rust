@@ -1,7 +1,6 @@
 use crate::models::ledger::objects::LedgerEntryType;
 use crate::models::FlagCollection;
 use crate::models::{amount::Amount, Model};
-use alloc::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
@@ -31,7 +30,7 @@ pub enum OfferFlag {
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 #[serde(rename_all = "PascalCase")]
-pub struct Offer<'a> {
+pub struct Offer {
     /// The base fields for all ledger object models.
     ///
     /// See Ledger Object Common Fields:
@@ -43,18 +42,18 @@ pub struct Offer<'a> {
     // See Offer fields:
     // `<https://xrpl.org/offer.html#offer-fields>`
     /// The address of the account that owns this `Offer`.
-    pub account: Cow<'a, str>,
+    pub account: String,
     /// The ID of the `Offer Directory` that links to this Offer.
-    pub book_directory: Cow<'a, str>,
+    pub book_directory: String,
     /// A hint indicating which page of the offer directory links to this object, in case
     /// the directory consists of multiple pages.
-    pub book_node: Cow<'a, str>,
+    pub book_node: String,
     /// A hint indicating which page of the owner directory links to this object, in case
     /// the directory consists of multiple pages.
-    pub owner_node: Cow<'a, str>,
+    pub owner_node: String,
     /// The identifying hash of the transaction that most recently modified this object.
     #[serde(rename = "PreviousTxnID")]
-    pub previous_txn_id: Cow<'a, str>,
+    pub previous_txn_id: String,
     /// The index of the ledger that contains the transaction that most recently modified
     /// this object.
     pub previous_txn_lgr_seq: u32,
@@ -69,24 +68,24 @@ pub struct Offer<'a> {
     pub expiration: Option<u32>,
 }
 
-impl<'a> Model for Offer<'a> {}
+impl Model for Offer {}
 
-impl<'a> LedgerObject<OfferFlag> for Offer<'a> {
+impl LedgerObject<OfferFlag> for Offer {
     fn get_ledger_entry_type(&self) -> LedgerEntryType {
         self.common_fields.get_ledger_entry_type()
     }
 }
 
-impl<'a> Offer<'a> {
+impl Offer {
     pub fn new(
         flags: FlagCollection<OfferFlag>,
-        index: Option<Cow<'a, str>>,
-        ledger_index: Option<Cow<'a, str>>,
-        account: Cow<'a, str>,
-        book_directory: Cow<'a, str>,
-        book_node: Cow<'a, str>,
-        owner_node: Cow<'a, str>,
-        previous_txn_id: Cow<'a, str>,
+        index: Option<String>,
+        ledger_index: Option<String>,
+        account: String,
+        book_directory: String,
+        book_node: String,
+        owner_node: String,
+        previous_txn_id: String,
         previous_txn_lgr_seq: u32,
         sequence: u32,
         taker_gets: Amount,
@@ -118,22 +117,19 @@ impl<'a> Offer<'a> {
 mod tests {
     use super::*;
     use crate::models::amount::IssuedCurrencyAmount;
-    use alloc::borrow::Cow;
     use alloc::vec;
 
     #[test]
     fn test_serde() {
         let offer = Offer::new(
             vec![OfferFlag::LsfSell].into(),
-            Some(Cow::from(
-                "96F76F27D8A327FC48753167EC04A46AA0E382E6F57F32FD12274144D00F1797",
-            )),
+            Some("96F76F27D8A327FC48753167EC04A46AA0E382E6F57F32FD12274144D00F1797".to_string()),
             None,
-            Cow::from("rBqb89MRQJnMPq8wTwEbtz4kvxrEDfcYvt"),
-            Cow::from("ACC27DE91DBA86FC509069EAF4BC511D73128B780F2E54BF5E07A369E2446000"),
-            Cow::from("0000000000000000"),
-            Cow::from("0000000000000000"),
-            Cow::from("F0AB71E777B2DA54B86231E19B82554EF1F8211F92ECA473121C655BFC5329BF"),
+            "rBqb89MRQJnMPq8wTwEbtz4kvxrEDfcYvt".to_string(),
+            "ACC27DE91DBA86FC509069EAF4BC511D73128B780F2E54BF5E07A369E2446000".to_string(),
+            "0000000000000000".to_string(),
+            "0000000000000000".to_string(),
+            "F0AB71E777B2DA54B86231E19B82554EF1F8211F92ECA473121C655BFC5329BF".to_string(),
             14524914,
             866,
             Amount::IssuedCurrencyAmount(IssuedCurrencyAmount::new(

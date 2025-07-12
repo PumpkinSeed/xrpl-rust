@@ -1,7 +1,6 @@
 use crate::models::FlagCollection;
 use crate::models::Model;
 use crate::models::{ledger::objects::LedgerEntryType, NoFlags};
-use alloc::borrow::Cow;
 use alloc::string::String;
 use alloc::vec::Vec;
 use derive_new::new;
@@ -30,7 +29,7 @@ serde_with_tag! {
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 #[serde(rename_all = "PascalCase")]
-pub struct NegativeUNL<'a> {
+pub struct NegativeUNL {
     /// The base fields for all ledger object models.
     ///
     /// See Ledger Object Common Fields:
@@ -46,27 +45,27 @@ pub struct NegativeUNL<'a> {
     pub disabled_validators: Option<Vec<DisabledValidator>>,
     /// The public key of a trusted validator that is scheduled to be disabled in the
     /// next flag ledger.
-    pub validator_to_disable: Option<Cow<'a, str>>,
+    pub validator_to_disable: Option<String>,
     /// The public key of a trusted validator in the Negative UNL that is scheduled to be
     /// re-enabled in the next flag ledger.
-    pub validator_to_re_enable: Option<Cow<'a, str>>,
+    pub validator_to_re_enable: Option<String>,
 }
 
-impl<'a> Model for NegativeUNL<'a> {}
+impl Model for NegativeUNL {}
 
-impl<'a> LedgerObject<NoFlags> for NegativeUNL<'a> {
+impl LedgerObject<NoFlags> for NegativeUNL {
     fn get_ledger_entry_type(&self) -> LedgerEntryType {
         self.common_fields.get_ledger_entry_type()
     }
 }
 
-impl<'a> NegativeUNL<'a> {
+impl NegativeUNL {
     pub fn new(
-        index: Option<Cow<'a, str>>,
-        ledger_index: Option<Cow<'a, str>>,
+        index: Option<String>,
+        ledger_index: Option<String>,
         disabled_validators: Option<Vec<DisabledValidator>>,
-        validator_to_disable: Option<Cow<'a, str>>,
-        validator_to_re_enable: Option<Cow<'a, str>>,
+        validator_to_disable: Option<String>,
+        validator_to_re_enable: Option<String>,
     ) -> Self {
         Self {
             common_fields: CommonFields::new(
@@ -91,9 +90,7 @@ mod tests {
     #[test]
     fn test_serde() {
         let negative_unl = NegativeUNL::new(
-            Some(Cow::from(
-                "2E8A59AA9D3B5B186B0B9E0F62E6C02587CA74A4D778938E957B6357D364B244",
-            )),
+            Some("2E8A59AA9D3B5B186B0B9E0F62E6C02587CA74A4D778938E957B6357D364B244".to_string()),
             None,
             Some(vec![DisabledValidator::new(
                 1609728,
