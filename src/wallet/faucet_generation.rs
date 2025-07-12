@@ -14,8 +14,8 @@ pub fn generate_faucet_wallet<'a, C>(
     client: &C,
     wallet: Option<Wallet>,
     faucet_host: Option<Url>,
-    usage_context: Option<Cow<'a, str>>,
-    user_agent: Option<Cow<'a, str>>,
+    usage_context: Option<String>,
+    user_agent: Option<String>,
 ) -> XRPLHelperResult<Wallet>
 where
     C: XRPLFaucet + XRPLAsyncClient,

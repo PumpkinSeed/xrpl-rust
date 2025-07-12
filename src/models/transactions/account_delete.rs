@@ -25,13 +25,13 @@ use super::{Memo, Signer};
     Debug, Serialize, Deserialize, PartialEq, Eq, Clone, xrpl_rust_macros::ValidateCurrencies,
 )]
 #[serde(rename_all = "PascalCase")]
-pub struct AccountDelete<'a> {
+pub struct AccountDelete {
     /// The base fields for all transaction models.
     ///
     /// See Transaction Common Fields:
     /// `<https://xrpl.org/transaction-common-fields.html>`
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, NoFlags>,
+    pub common_fields: CommonFields<NoFlags>,
     // The custom fields for the AccountDelete model.
     //
     // See AccountDelete fields:
@@ -39,37 +39,37 @@ pub struct AccountDelete<'a> {
     /// The address of an account to receive any leftover XRP after
     /// deleting the sending account. Must be a funded account in
     /// the ledger, and must not be the sending account.
-    pub destination: Cow<'a, str>,
+    pub destination: String,
     /// Arbitrary destination tag that identifies a hosted
     /// recipient or other information for the recipient
     /// of the deleted account's leftover XRP.
     pub destination_tag: Option<u32>,
 }
 
-impl<'a> Model for AccountDelete<'a> {
+impl Model for AccountDelete {
     fn get_errors(&self) -> crate::models::XRPLModelResult<()> {
         self.validate_currencies()
     }
 }
 
-impl<'a> Transaction<'a, NoFlags> for AccountDelete<'a> {
+impl Transaction<NoFlags> for AccountDelete {
     fn get_transaction_type(&self) -> &TransactionType {
         self.common_fields.get_transaction_type()
     }
 
-    fn get_common_fields(&self) -> &CommonFields<'_, NoFlags> {
+    fn get_common_fields(&self) -> &CommonFields<NoFlags> {
         self.common_fields.get_common_fields()
     }
 
-    fn get_mut_common_fields(&mut self) -> &mut CommonFields<'a, NoFlags> {
+    fn get_mut_common_fields(&mut self) -> &mut CommonFields<NoFlags> {
         self.common_fields.get_mut_common_fields()
     }
 }
 
-impl<'a> AccountDelete<'a> {
+impl AccountDelete {
     pub fn new(
-        account: Cow<'a, str>,
-        account_txn_id: Option<Cow<'a, str>>,
+        account: String,
+        account_txn_id: Option<String>,
         fee: Option<XRPAmount>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
@@ -77,7 +77,7 @@ impl<'a> AccountDelete<'a> {
         signers: Option<Vec<Signer>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
-        destination: Cow<'a, str>,
+        destination: String,
         destination_tag: Option<u32>,
     ) -> Self {
         Self {

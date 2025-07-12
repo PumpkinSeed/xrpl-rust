@@ -75,7 +75,7 @@ pub mod json_rpc {
         async fn request_funding(
             &self,
             url: Option<Url>,
-            request: FundFaucet<'_>,
+            request: FundFaucet,
         ) -> XRPLClientResult<()> {
             self.0.request_funding(url, request).await
         }

@@ -56,7 +56,7 @@ pub enum OfferCreateFlag {
     Debug, Serialize, Deserialize, PartialEq, Eq, Clone, xrpl_rust_macros::ValidateCurrencies,
 )]
 #[serde(rename_all = "PascalCase")]
-pub struct OfferCreate<'a> {
+pub struct OfferCreate {
     // The base fields for all transaction models.
     //
     // See Transaction Types:
@@ -66,7 +66,7 @@ pub struct OfferCreate<'a> {
     // `<https://xrpl.org/transaction-common-fields.html>`
     /// The type of transaction.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, OfferCreateFlag>,
+    pub common_fields: CommonFields<OfferCreateFlag>,
     // The custom fields for the OfferCreate model.
     //
     // See OfferCreate fields:
@@ -81,13 +81,13 @@ pub struct OfferCreate<'a> {
     pub offer_sequence: Option<u32>,
 }
 
-impl<'a> Model for OfferCreate<'a> {
+impl Model for OfferCreate {
     fn get_errors(&self) -> crate::models::XRPLModelResult<()> {
         self.validate_currencies()
     }
 }
 
-impl<'a> Transaction<'a, OfferCreateFlag> for OfferCreate<'a> {
+impl Transaction<OfferCreateFlag> for OfferCreate {
     fn has_flag(&self, flag: &OfferCreateFlag) -> bool {
         self.common_fields.has_flag(flag)
     }
@@ -96,19 +96,19 @@ impl<'a> Transaction<'a, OfferCreateFlag> for OfferCreate<'a> {
         self.common_fields.get_transaction_type()
     }
 
-    fn get_common_fields(&self) -> &CommonFields<'_, OfferCreateFlag> {
+    fn get_common_fields(&self) -> &CommonFields<OfferCreateFlag> {
         self.common_fields.get_common_fields()
     }
 
-    fn get_mut_common_fields(&mut self) -> &mut CommonFields<'a, OfferCreateFlag> {
+    fn get_mut_common_fields(&mut self) -> &mut CommonFields<OfferCreateFlag> {
         self.common_fields.get_mut_common_fields()
     }
 }
 
-impl<'a> OfferCreate<'a> {
+impl OfferCreate {
     pub fn new(
-        account: Cow<'a, str>,
-        account_txn_id: Option<Cow<'a, str>>,
+        account: String,
+        account_txn_id: Option<String>,
         fee: Option<XRPAmount>,
         flags: Option<FlagCollection<OfferCreateFlag>>,
         last_ledger_sequence: Option<u32>,

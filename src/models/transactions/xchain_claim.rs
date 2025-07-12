@@ -12,44 +12,44 @@ use super::{CommonFields, Memo, Signer, Transaction, TransactionType};
 #[skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, xrpl_rust_macros::ValidateCurrencies)]
 #[serde(rename_all = "PascalCase")]
-pub struct XChainClaim<'a> {
+pub struct XChainClaim {
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, NoFlags>,
+    pub common_fields: CommonFields<NoFlags>,
     pub amount: Amount,
-    pub destination: Cow<'a, str>,
+    pub destination: String,
     #[serde(rename = "XChainBridge")]
     pub xchain_bridge: XChainBridge,
     #[serde(rename = "XChainClaimID")]
-    pub xchain_claim_id: Cow<'a, str>,
+    pub xchain_claim_id: String,
     // #[serde(skip_serializing_if = "Option::is_none")]
     pub destination_tag: Option<u32>,
 }
 
-impl Model for XChainClaim<'_> {
+impl Model for XChainClaim {
     fn get_errors(&self) -> XRPLModelResult<()> {
         self.validate_currencies()?;
         self.get_amount_mismatch_error()
     }
 }
 
-impl<'a> Transaction<'a, NoFlags> for XChainClaim<'a> {
+impl Transaction<NoFlags> for XChainClaim {
     fn get_transaction_type(&self) -> &super::TransactionType {
         self.common_fields.get_transaction_type()
     }
 
-    fn get_common_fields(&self) -> &CommonFields<'_, NoFlags> {
+    fn get_common_fields(&self) -> &CommonFields<NoFlags> {
         &self.common_fields
     }
 
-    fn get_mut_common_fields(&mut self) -> &mut CommonFields<'a, NoFlags> {
+    fn get_mut_common_fields(&mut self) -> &mut CommonFields<NoFlags> {
         &mut self.common_fields
     }
 }
 
-impl<'a> XChainClaim<'a> {
+impl XChainClaim {
     pub fn new(
-        account: Cow<'a, str>,
-        account_txn_id: Option<Cow<'a, str>>,
+        account: String,
+        account_txn_id: Option<String>,
         fee: Option<crate::models::XRPAmount>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
@@ -58,11 +58,11 @@ impl<'a> XChainClaim<'a> {
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
         amount: Amount,
-        destination: Cow<'a, str>,
+        destination: String,
         xchain_bridge: XChainBridge,
-        xchain_claim_id: Cow<'a, str>,
+        xchain_claim_id: String,
         destination_tag: Option<u32>,
-    ) -> XChainClaim<'a> {
+    ) -> XChainClaim {
         XChainClaim {
             common_fields: CommonFields::new(
                 account,

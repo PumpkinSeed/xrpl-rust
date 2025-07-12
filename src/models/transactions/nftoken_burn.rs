@@ -22,7 +22,7 @@ use super::CommonFields;
     Debug, Serialize, Deserialize, PartialEq, Eq, Clone, xrpl_rust_macros::ValidateCurrencies,
 )]
 #[serde(rename_all = "PascalCase")]
-pub struct NFTokenBurn<'a> {
+pub struct NFTokenBurn {
     // The base fields for all transaction models.
     //
     // See Transaction Types:
@@ -32,45 +32,45 @@ pub struct NFTokenBurn<'a> {
     // `<https://xrpl.org/transaction-common-fields.html>`
     /// The type of transaction.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, NoFlags>,
+    pub common_fields: CommonFields<NoFlags>,
     // The custom fields for the NFTokenBurn model.
     //
     // See NFTokenBurn fields:
     // `<https://xrpl.org/nftokenburn.html#nftokenburn-fields>`
     #[serde(rename = "NFTokenID")]
     /// The NFToken to be removed by this transaction.
-    pub nftoken_id: Cow<'a, str>,
+    pub nftoken_id: String,
     /// The owner of the NFToken to burn. Only used if that owner is
     /// different than the account sending this transaction. The
     /// issuer or authorized minter can use this field to burn NFTs
     /// that have the lsfBurnable flag enabled.
-    pub owner: Option<Cow<'a, str>>,
+    pub owner: Option<String>,
 }
 
-impl<'a> Model for NFTokenBurn<'a> {
+impl Model for NFTokenBurn {
     fn get_errors(&self) -> crate::models::XRPLModelResult<()> {
         self.validate_currencies()
     }
 }
 
-impl<'a> Transaction<'a, NoFlags> for NFTokenBurn<'a> {
+impl Transaction<NoFlags> for NFTokenBurn {
     fn get_transaction_type(&self) -> &TransactionType {
         self.common_fields.get_transaction_type()
     }
 
-    fn get_common_fields(&self) -> &CommonFields<'_, NoFlags> {
+    fn get_common_fields(&self) -> &CommonFields<NoFlags> {
         self.common_fields.get_common_fields()
     }
 
-    fn get_mut_common_fields(&mut self) -> &mut CommonFields<'a, NoFlags> {
+    fn get_mut_common_fields(&mut self) -> &mut CommonFields<NoFlags> {
         self.common_fields.get_mut_common_fields()
     }
 }
 
-impl<'a> NFTokenBurn<'a> {
+impl NFTokenBurn {
     pub fn new(
-        account: Cow<'a, str>,
-        account_txn_id: Option<Cow<'a, str>>,
+        account: String,
+        account_txn_id: Option<String>,
         fee: Option<XRPAmount>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
@@ -78,8 +78,8 @@ impl<'a> NFTokenBurn<'a> {
         signers: Option<Vec<Signer>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
-        nftoken_id: Cow<'a, str>,
-        owner: Option<Cow<'a, str>>,
+        nftoken_id: String,
+        owner: Option<String>,
     ) -> Self {
         Self {
             common_fields: CommonFields::new(

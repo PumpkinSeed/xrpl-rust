@@ -28,7 +28,7 @@ pub enum UNLModifyDisabling {
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 #[serde(rename_all = "PascalCase")]
-pub struct UNLModify<'a> {
+pub struct UNLModify {
     // The base fields for all transaction models.
     //
     // See Transaction Types:
@@ -38,36 +38,36 @@ pub struct UNLModify<'a> {
     // `<https://xrpl.org/transaction-common-fields.html>`
     /// The type of transaction.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, NoFlags>,
+    pub common_fields: CommonFields<NoFlags>,
     /// The custom fields for the UNLModify model.
     ///
     /// See UNLModify fields:
     /// `<https://xrpl.org/unlmodify.html#unlmodify-fields>`
     pub ledger_sequence: u32,
     pub unlmodify_disabling: UNLModifyDisabling,
-    pub unlmodify_validator: Cow<'a, str>,
+    pub unlmodify_validator: String,
 }
 
-impl<'a> Model for UNLModify<'a> {}
+impl Model for UNLModify {}
 
-impl<'a> Transaction<'a, NoFlags> for UNLModify<'a> {
+impl Transaction<NoFlags> for UNLModify {
     fn get_transaction_type(&self) -> &TransactionType {
         self.common_fields.get_transaction_type()
     }
 
-    fn get_common_fields(&self) -> &CommonFields<'_, NoFlags> {
+    fn get_common_fields(&self) -> &CommonFields<NoFlags> {
         self.common_fields.get_common_fields()
     }
 
-    fn get_mut_common_fields(&mut self) -> &mut CommonFields<'a, NoFlags> {
+    fn get_mut_common_fields(&mut self) -> &mut CommonFields<NoFlags> {
         self.common_fields.get_mut_common_fields()
     }
 }
 
-impl<'a> UNLModify<'a> {
+impl UNLModify {
     pub fn new(
-        account: Cow<'a, str>,
-        account_txn_id: Option<Cow<'a, str>>,
+        account: String,
+        account_txn_id: Option<String>,
         fee: Option<XRPAmount>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
@@ -77,7 +77,7 @@ impl<'a> UNLModify<'a> {
         ticket_sequence: Option<u32>,
         ledger_sequence: u32,
         unlmodify_disabling: UNLModifyDisabling,
-        unlmodify_validator: Cow<'a, str>,
+        unlmodify_validator: String,
     ) -> Self {
         Self {
             common_fields: CommonFields::new(

@@ -33,8 +33,8 @@ pub enum AMMWithdrawFlag {
     Debug, Serialize, Deserialize, PartialEq, Eq, Clone, xrpl_rust_macros::ValidateCurrencies,
 )]
 #[serde(rename_all = "PascalCase")]
-pub struct AMMWithdraw<'a> {
-    pub common_fields: CommonFields<'a, AMMWithdrawFlag>,
+pub struct AMMWithdraw {
+    pub common_fields: CommonFields<AMMWithdrawFlag>,
     /// The definition for one of the assets in the AMM's pool.
     pub asset: Currency,
     /// The definition for the other asset in the AMM's pool.
@@ -55,7 +55,7 @@ pub struct AMMWithdraw<'a> {
     pub lp_token_in: Option<IssuedCurrencyAmount>,
 }
 
-impl Model for AMMWithdraw<'_> {
+impl Model for AMMWithdraw {
     fn get_errors(&self) -> crate::models::XRPLModelResult<()> {
         self.validate_currencies()?;
         if self.amount2.is_some() && self.amount.is_none() {
@@ -74,24 +74,24 @@ impl Model for AMMWithdraw<'_> {
     }
 }
 
-impl<'a> Transaction<'a, AMMWithdrawFlag> for AMMWithdraw<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'_, AMMWithdrawFlag> {
+impl Transaction<AMMWithdrawFlag> for AMMWithdraw {
+    fn get_transaction_type(&self) -> &TransactionType {
+        self.common_fields.get_transaction_type()
+    }
+
+    fn get_common_fields(&self) -> &CommonFields<AMMWithdrawFlag> {
         &self.common_fields
     }
 
-    fn get_mut_common_fields(&mut self) -> &mut CommonFields<'a, AMMWithdrawFlag> {
+    fn get_mut_common_fields(&mut self) -> &mut CommonFields<AMMWithdrawFlag> {
         self.common_fields.get_mut_common_fields()
-    }
-
-    fn get_transaction_type(&self) -> &super::TransactionType {
-        self.common_fields.get_transaction_type()
     }
 }
 
-impl<'a> AMMWithdraw<'a> {
+impl AMMWithdraw {
     pub fn new(
-        account: Cow<'a, str>,
-        account_txn_id: Option<Cow<'a, str>>,
+        account: String,
+        account_txn_id: Option<String>,
         fee: Option<XRPAmount>,
         flags: Option<FlagCollection<AMMWithdrawFlag>>,
         last_ledger_sequence: Option<u32>,

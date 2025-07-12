@@ -73,7 +73,7 @@ pub trait XRPLFaucet: XRPLClient {
     async fn request_funding(
         &self,
         url: Option<Url>,
-        request: FundFaucet<'_>,
+        request: FundFaucet,
     ) -> XRPLClientResult<()>;
 }
 

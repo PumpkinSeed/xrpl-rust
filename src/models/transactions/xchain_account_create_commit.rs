@@ -13,17 +13,17 @@ use super::{CommonFields, Memo, Signer, Transaction, TransactionType};
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, xrpl_rust_macros::ValidateCurrencies)]
 #[serde(rename_all = "PascalCase")]
-pub struct XChainAccountCreateCommit<'a> {
+pub struct XChainAccountCreateCommit {
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, NoFlags>,
+    pub common_fields: CommonFields<NoFlags>,
     pub amount: Amount,
-    pub destination: Cow<'a, str>,
+    pub destination: String,
     #[serde(rename = "XChainBridge")]
     pub xchain_bridge: XChainBridge,
     pub signature_reward: Option<Amount>,
 }
 
-impl Model for XChainAccountCreateCommit<'_> {
+impl Model for XChainAccountCreateCommit {
     fn get_errors(&self) -> crate::models::XRPLModelResult<()> {
         self.validate_currencies()?;
 
@@ -31,24 +31,24 @@ impl Model for XChainAccountCreateCommit<'_> {
     }
 }
 
-impl<'a> Transaction<'a, NoFlags> for XChainAccountCreateCommit<'a> {
+impl Transaction<NoFlags> for XChainAccountCreateCommit {
     fn get_transaction_type(&self) -> &super::TransactionType {
         self.common_fields.get_transaction_type()
     }
 
-    fn get_common_fields(&self) -> &CommonFields<'_, NoFlags> {
+    fn get_common_fields(&self) -> &CommonFields<NoFlags> {
         &self.common_fields
     }
 
-    fn get_mut_common_fields(&mut self) -> &mut CommonFields<'a, NoFlags> {
+    fn get_mut_common_fields(&mut self) -> &mut CommonFields<NoFlags> {
         &mut self.common_fields
     }
 }
 
-impl<'a> XChainAccountCreateCommit<'a> {
+impl XChainAccountCreateCommit {
     pub fn new(
-        account: Cow<'a, str>,
-        account_txn_id: Option<Cow<'a, str>>,
+        account: String,
+        account_txn_id: Option<String>,
         fee: Option<XRPAmount>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
@@ -57,10 +57,10 @@ impl<'a> XChainAccountCreateCommit<'a> {
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
         amount: Amount,
-        destination: Cow<'a, str>,
+        destination: String,
         xchain_bridge: XChainBridge,
         signature_reward: Option<Amount>,
-    ) -> XChainAccountCreateCommit<'a> {
+    ) -> XChainAccountCreateCommit {
         XChainAccountCreateCommit {
             common_fields: CommonFields::new(
                 account,
@@ -99,27 +99,27 @@ mod test {
     const ISSUER: &str = "rGWrZyQqhTp9Xu7G5Pkayo7bXjH4k4QYpf";
     const GENESIS: &str = "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh";
 
-    fn xrp_bridge<'a>() -> XChainBridge {
+    fn xrp_bridge() -> XChainBridge {
         XChainBridge {
-            locking_chain_door: Cow::Borrowed(ACCOUNT),
+            locking_chain_door: ACCOUNT.to_string(),
             locking_chain_issue: XRP::new().into(),
-            issuing_chain_door: Cow::Borrowed(GENESIS),
+            issuing_chain_door: GENESIS.to_string(),
             issuing_chain_issue: XRP::new().into(),
         }
     }
 
-    fn iou_bridge<'a>() -> XChainBridge {
+    fn iou_bridge() -> XChainBridge {
         XChainBridge {
-            locking_chain_door: Cow::Borrowed(ACCOUNT),
+            locking_chain_door: ACCOUNT.to_string(),
             locking_chain_issue: IssuedCurrency {
-                currency: Cow::Borrowed("USD"),
-                issuer: Cow::Borrowed(ISSUER),
+                currency: "USD".to_string(),
+                issuer: ISSUER.to_string(),
             }
             .into(),
-            issuing_chain_door: Cow::Borrowed(ACCOUNT2),
+            issuing_chain_door: ACCOUNT2.to_string(),
             issuing_chain_issue: IssuedCurrency {
-                currency: Cow::Borrowed("USD"),
-                issuer: Cow::Borrowed(ACCOUNT2),
+                currency: "USD".to_string(),
+                issuer: ACCOUNT2.to_string(),
             }
             .into(),
         }
@@ -144,14 +144,14 @@ mod test {
                     }
                 }
             }"#;
-        let txn: XChainAccountCreateCommit<'_> = serde_json::from_str(json).unwrap();
+        let txn: XChainAccountCreateCommit = serde_json::from_str(json).unwrap();
         assert_eq!(txn.amount, "20000000".into());
     }
 
     #[test]
     fn test_successful() {
         let txn = XChainAccountCreateCommit::new(
-            Cow::Borrowed(ACCOUNT),
+            ACCOUNT.to_string(),
             None,
             None,
             None,
@@ -161,7 +161,7 @@ mod test {
             None,
             None,
             XRPAmount::from("1000000").into(),
-            Cow::Borrowed(ACCOUNT2),
+            ACCOUNT2.to_string(),
             xrp_bridge(),
             Some(XRPAmount::from("200").into()),
         );
@@ -174,7 +174,7 @@ mod test {
     fn test_bad_signature_reward() {
         // Simulate a bad signature_reward by using a non-numeric string if your Amount type panics or errors on parse
         let tx = XChainAccountCreateCommit::new(
-            Cow::Borrowed(ACCOUNT),
+            ACCOUNT.to_string(),
             None,
             None,
             None,
@@ -184,7 +184,7 @@ mod test {
             None,
             None,
             XRPAmount::from("1000000").into(),
-            Cow::Borrowed(ACCOUNT2),
+            ACCOUNT2.to_string(),
             xrp_bridge(),
             Some(XRPAmount::from("hello").into()), // Should error
         );
@@ -197,7 +197,7 @@ mod test {
     fn test_bad_amount() {
         // Simulate a bad amount by using a non-numeric string if your Amount type panics or errors on parse
         let tx = XChainAccountCreateCommit::new(
-            Cow::Borrowed(ACCOUNT),
+            ACCOUNT.to_string(),
             None,
             None,
             None,
@@ -207,7 +207,7 @@ mod test {
             None,
             None,
             XRPAmount::from("hello").into(), // Should error
-            Cow::Borrowed(ACCOUNT2),
+            ACCOUNT2.to_string(),
             xrp_bridge(),
             Some(XRPAmount::from("200").into()),
         );

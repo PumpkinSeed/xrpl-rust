@@ -11,29 +11,29 @@ use super::{CommonFields, Memo, Signer, Transaction, TransactionType};
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, xrpl_rust_macros::ValidateCurrencies)]
 #[serde(rename_all = "PascalCase")]
-pub struct XChainCommit<'a> {
+pub struct XChainCommit {
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, NoFlags>,
+    pub common_fields: CommonFields<NoFlags>,
     pub amount: Amount,
     #[serde(rename = "XChainBridge")]
     pub xchain_bridge: XChainBridge,
     #[serde(rename = "XChainClaimID")]
-    pub xchain_claim_id: Cow<'a, str>,
-    pub other_chain_destination: Option<Cow<'a, str>>,
+    pub xchain_claim_id: String,
+    pub other_chain_destination: Option<String>,
 }
 
-impl Model for XChainCommit<'_> {
+impl Model for XChainCommit {
     fn get_errors(&self) -> crate::models::XRPLModelResult<()> {
         self.validate_currencies()
     }
 }
 
-impl<'a> Transaction<'a, NoFlags> for XChainCommit<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'_, NoFlags> {
+impl Transaction<NoFlags> for XChainCommit {
+    fn get_common_fields(&self) -> &CommonFields<NoFlags> {
         &self.common_fields
     }
 
-    fn get_mut_common_fields(&mut self) -> &mut CommonFields<'a, NoFlags> {
+    fn get_mut_common_fields(&mut self) -> &mut CommonFields<NoFlags> {
         &mut self.common_fields
     }
 
@@ -42,10 +42,10 @@ impl<'a> Transaction<'a, NoFlags> for XChainCommit<'a> {
     }
 }
 
-impl<'a> XChainCommit<'a> {
+impl XChainCommit {
     pub fn new(
-        account: Cow<'a, str>,
-        account_txn_id: Option<Cow<'a, str>>,
+        account: String,
+        account_txn_id: Option<String>,
         fee: Option<XRPAmount>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
@@ -55,9 +55,9 @@ impl<'a> XChainCommit<'a> {
         ticket_sequence: Option<u32>,
         amount: Amount,
         xchain_bridge: XChainBridge,
-        xchain_claim_id: Cow<'a, str>,
-        other_chain_destination: Option<Cow<'a, str>>,
-    ) -> XChainCommit<'a> {
+        xchain_claim_id: String,
+        other_chain_destination: Option<String>,
+    ) -> XChainCommit {
         XChainCommit {
             common_fields: CommonFields::new(
                 account,
@@ -110,13 +110,13 @@ mod test_serde {
     #[test]
     fn test_deserialize() {
         let json = EXAMPLE_JSON;
-        let deserialized: Result<XChainCommit<'_>, _> = serde_json::from_str(json);
+        let deserialized: Result<XChainCommit, _> = serde_json::from_str(json);
         assert!(deserialized.is_ok());
     }
 
     #[test]
     fn test_serialize() {
-        let attestation: XChainCommit<'_> = serde_json::from_str(EXAMPLE_JSON).unwrap();
+        let attestation: XChainCommit = serde_json::from_str(EXAMPLE_JSON).unwrap();
         let actual = serde_json::to_value(&attestation).unwrap();
         let expected: Value = serde_json::from_str(EXAMPLE_JSON).unwrap();
 

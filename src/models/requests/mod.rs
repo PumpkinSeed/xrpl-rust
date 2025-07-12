@@ -510,15 +510,9 @@ impl<'a> From<&'a str> for Marker {
     }
 }
 
-impl<'a> From<Cow<'a, str>> for Marker{
-    fn from(value: Cow<'a, str>) -> Self {
-        Marker::Str(value.to_string())
-    }
-}
-
-impl From<String> for Marker {
+impl From<String> for Marker{
     fn from(value: String) -> Self {
-        Marker::Str(value)
+        Marker::Str(value.to_string())
     }
 }
 
@@ -557,8 +551,8 @@ pub trait Request {
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 #[serde(rename_all = "camelCase")]
-pub struct FundFaucet<'a> {
-    pub destination: Cow<'a, str>,
-    pub usage_context: Option<Cow<'a, str>>,
-    pub user_agent: Option<Cow<'a, str>>,
+pub struct FundFaucet {
+    pub destination: String,
+    pub usage_context: Option<String>,
+    pub user_agent: Option<String>,
 }

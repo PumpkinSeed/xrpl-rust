@@ -24,7 +24,7 @@ use super::CommonFields;
     Debug, Serialize, Deserialize, PartialEq, Eq, Clone, xrpl_rust_macros::ValidateCurrencies,
 )]
 #[serde(rename_all = "PascalCase")]
-pub struct NFTokenAcceptOffer<'a> {
+pub struct NFTokenAcceptOffer {
     // The base fields for all transaction models.
     //
     // See Transaction Types:
@@ -34,17 +34,17 @@ pub struct NFTokenAcceptOffer<'a> {
     // `<https://xrpl.org/transaction-common-fields.html>`
     /// The type of transaction.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, NoFlags>,
+    pub common_fields: CommonFields<NoFlags>,
     // The custom fields for the NFTokenAcceptOffer model.
     //
     // See NFTokenAcceptOffer fields:
     // `<https://xrpl.org/nftokenacceptoffer.html#nftokenacceptoffer-fields>`
     /// Identifies the NFTokenOffer that offers to sell the NFToken.
     #[serde(rename = "NFTokenSellOffer")]
-    pub nftoken_sell_offer: Option<Cow<'a, str>>,
+    pub nftoken_sell_offer: Option<String>,
     /// Identifies the NFTokenOffer that offers to buy the NFToken.
     #[serde(rename = "NFTokenBuyOffer")]
-    pub nftoken_buy_offer: Option<Cow<'a, str>>,
+    pub nftoken_buy_offer: Option<String>,
     #[serde(rename = "NFTokenBrokerFee")]
     /// This field is only valid in brokered mode, and specifies the
     /// amount that the broker keeps as part of their fee for bringing
@@ -56,7 +56,7 @@ pub struct NFTokenAcceptOffer<'a> {
     pub nftoken_broker_fee: Option<Amount>,
 }
 
-impl<'a> Model for NFTokenAcceptOffer<'a> {
+impl Model for NFTokenAcceptOffer {
     fn get_errors(&self) -> XRPLModelResult<()> {
         self._get_brokered_mode_error()?;
         self._get_nftoken_broker_fee_error()?;
@@ -64,21 +64,21 @@ impl<'a> Model for NFTokenAcceptOffer<'a> {
     }
 }
 
-impl<'a> Transaction<'a, NoFlags> for NFTokenAcceptOffer<'a> {
+impl Transaction<NoFlags> for NFTokenAcceptOffer {
     fn get_transaction_type(&self) -> &TransactionType {
         self.common_fields.get_transaction_type()
     }
 
-    fn get_common_fields(&self) -> &CommonFields<'_, NoFlags> {
+    fn get_common_fields(&self) -> &CommonFields<NoFlags> {
         self.common_fields.get_common_fields()
     }
 
-    fn get_mut_common_fields(&mut self) -> &mut CommonFields<'a, NoFlags> {
+    fn get_mut_common_fields(&mut self) -> &mut CommonFields<NoFlags> {
         self.common_fields.get_mut_common_fields()
     }
 }
 
-impl<'a> NFTokenAcceptOfferError for NFTokenAcceptOffer<'a> {
+impl NFTokenAcceptOfferError for NFTokenAcceptOffer {
     fn _get_brokered_mode_error(&self) -> XRPLModelResult<()> {
         if self.nftoken_broker_fee.is_some()
             && self.nftoken_sell_offer.is_none()
@@ -106,10 +106,10 @@ impl<'a> NFTokenAcceptOfferError for NFTokenAcceptOffer<'a> {
     }
 }
 
-impl<'a> NFTokenAcceptOffer<'a> {
+impl NFTokenAcceptOffer {
     pub fn new(
-        account: Cow<'a, str>,
-        account_txn_id: Option<Cow<'a, str>>,
+        account: String,
+        account_txn_id: Option<String>,
         fee: Option<XRPAmount>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
@@ -117,8 +117,8 @@ impl<'a> NFTokenAcceptOffer<'a> {
         signers: Option<Vec<Signer>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
-        nftoken_sell_offer: Option<Cow<'a, str>>,
-        nftoken_buy_offer: Option<Cow<'a, str>>,
+        nftoken_sell_offer: Option<String>,
+        nftoken_buy_offer: Option<String>,
         nftoken_broker_fee: Option<Amount>,
     ) -> Self {
         Self {

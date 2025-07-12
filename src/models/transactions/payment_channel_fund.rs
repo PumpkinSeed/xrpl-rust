@@ -23,7 +23,7 @@ use super::CommonFields;
     Debug, Serialize, Deserialize, PartialEq, Eq, Clone, xrpl_rust_macros::ValidateCurrencies,
 )]
 #[serde(rename_all = "PascalCase")]
-pub struct PaymentChannelFund<'a> {
+pub struct PaymentChannelFund {
     // The base fields for all transaction models.
     //
     // See Transaction Types:
@@ -33,7 +33,7 @@ pub struct PaymentChannelFund<'a> {
     // `<https://xrpl.org/transaction-common-fields.html>`
     /// The type of transaction.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, NoFlags>,
+    pub common_fields: CommonFields<NoFlags>,
     // The custom fields for the PaymentChannelFund model.
     //
     // See PaymentChannelFund fields:
@@ -41,7 +41,7 @@ pub struct PaymentChannelFund<'a> {
     /// Amount of XRP, in drops to add to the channel. Must be a positive amount of XRP.
     pub amount: XRPAmount,
     /// The unique ID of the channel to fund, as a 64-character hexadecimal string.
-    pub channel: Cow<'a, str>,
+    pub channel: String,
     /// New Expiration time to set for the channel, in seconds since the Ripple Epoch.
     /// This must be later than either the current time plus the SettleDelay of the
     /// channel, or the existing Expiration of the channel. After the Expiration time,
@@ -52,30 +52,30 @@ pub struct PaymentChannelFund<'a> {
     pub expiration: Option<u32>,
 }
 
-impl<'a> Model for PaymentChannelFund<'a> {
+impl Model for PaymentChannelFund {
     fn get_errors(&self) -> crate::models::XRPLModelResult<()> {
         self.validate_currencies()
     }
 }
 
-impl<'a> Transaction<'a, NoFlags> for PaymentChannelFund<'a> {
+impl Transaction<NoFlags> for PaymentChannelFund {
     fn get_transaction_type(&self) -> &TransactionType {
         self.common_fields.get_transaction_type()
     }
 
-    fn get_common_fields(&self) -> &CommonFields<'_, NoFlags> {
+    fn get_common_fields(&self) -> &CommonFields<NoFlags> {
         self.common_fields.get_common_fields()
     }
 
-    fn get_mut_common_fields(&mut self) -> &mut CommonFields<'a, NoFlags> {
+    fn get_mut_common_fields(&mut self) -> &mut CommonFields<NoFlags> {
         self.common_fields.get_mut_common_fields()
     }
 }
 
-impl<'a> PaymentChannelFund<'a> {
+impl PaymentChannelFund {
     pub fn new(
-        account: Cow<'a, str>,
-        account_txn_id: Option<Cow<'a, str>>,
+        account: String,
+        account_txn_id: Option<String>,
         fee: Option<XRPAmount>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
@@ -84,7 +84,7 @@ impl<'a> PaymentChannelFund<'a> {
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
         amount: XRPAmount,
-        channel: Cow<'a, str>,
+        channel: String,
         expiration: Option<u32>,
     ) -> Self {
         Self {

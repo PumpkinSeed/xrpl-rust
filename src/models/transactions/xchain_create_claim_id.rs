@@ -15,40 +15,40 @@ use super::{CommonFields, Memo, Signer, Transaction, TransactionType};
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, xrpl_rust_macros::ValidateCurrencies)]
 #[serde(rename_all = "PascalCase")]
-pub struct XChainCreateClaimID<'a> {
+pub struct XChainCreateClaimID {
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, NoFlags>,
-    pub other_chain_source: Cow<'a, str>,
+    pub common_fields: CommonFields<NoFlags>,
+    pub other_chain_source: String,
     pub signature_reward: XRPAmount,
     #[serde(rename = "XChainBridge")]
     pub xchain_bridge: XChainBridge,
 }
 
-impl Model for XChainCreateClaimID<'_> {
+impl Model for XChainCreateClaimID {
     fn get_errors(&self) -> XRPLModelResult<()> {
         self.validate_currencies()?;
         self.get_other_chain_source_is_invalid_error()
     }
 }
 
-impl<'a> Transaction<'a, NoFlags> for XChainCreateClaimID<'a> {
+impl Transaction<NoFlags> for XChainCreateClaimID {
     fn get_transaction_type(&self) -> &super::TransactionType {
         self.common_fields.get_transaction_type()
     }
 
-    fn get_common_fields(&self) -> &CommonFields<'_, NoFlags> {
+    fn get_common_fields(&self) -> &CommonFields<NoFlags> {
         &self.common_fields
     }
 
-    fn get_mut_common_fields(&mut self) -> &mut CommonFields<'a, NoFlags> {
+    fn get_mut_common_fields(&mut self) -> &mut CommonFields<NoFlags> {
         &mut self.common_fields
     }
 }
 
-impl<'a> XChainCreateClaimID<'a> {
+impl XChainCreateClaimID {
     pub fn new(
-        account: Cow<'a, str>,
-        account_txn_id: Option<Cow<'a, str>>,
+        account: String,
+        account_txn_id: Option<String>,
         fee: Option<XRPAmount>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
@@ -56,10 +56,10 @@ impl<'a> XChainCreateClaimID<'a> {
         signers: Option<Vec<Signer>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
-        other_chain_source: Cow<'a, str>,
+        other_chain_source: String,
         signature_reward: XRPAmount,
         xchain_bridge: XChainBridge,
-    ) -> XChainCreateClaimID<'a> {
+    ) -> XChainCreateClaimID {
         XChainCreateClaimID {
             common_fields: CommonFields::new(
                 account,
@@ -105,7 +105,7 @@ mod test_xchain_create_claim_id {
     const SOURCE: &str = "rJrRMgiRgrU6hDF4pgu5DXQdWyPbY35ErN";
     const SIGNATURE_REWARD: &str = "200";
 
-    fn xrp_bridge<'a>() -> XChainBridge {
+    fn xrp_bridge() -> XChainBridge {
         XChainBridge {
             locking_chain_door: ACCOUNT.to_string(),
             locking_chain_issue: XRP::new().into(),
@@ -117,7 +117,7 @@ mod test_xchain_create_claim_id {
     #[test]
     fn test_successful() {
         let txn = XChainCreateClaimID::new(
-            Cow::Borrowed(ACCOUNT),
+            ACCOUNT.to_string(),
             None,
             None,
             None,
@@ -126,7 +126,7 @@ mod test_xchain_create_claim_id {
             None,
             None,
             None,
-            Cow::Borrowed(SOURCE),
+            SOURCE.to_string(),
             Cow::Borrowed(SIGNATURE_REWARD).into(),
             xrp_bridge(),
         );
@@ -137,7 +137,7 @@ mod test_xchain_create_claim_id {
     #[should_panic]
     fn test_bad_signature_reward() {
         let txn = XChainCreateClaimID::new(
-            Cow::Borrowed(ACCOUNT),
+            ACCOUNT.to_string(),
             None,
             None,
             None,
@@ -146,7 +146,7 @@ mod test_xchain_create_claim_id {
             None,
             None,
             None,
-            Cow::Borrowed(SOURCE),
+            SOURCE.to_string(),
             Cow::Borrowed("hello").into(),
             xrp_bridge(),
         );
@@ -157,7 +157,7 @@ mod test_xchain_create_claim_id {
     #[should_panic]
     fn test_bad_other_chain_source() {
         let txn = XChainCreateClaimID::new(
-            Cow::Borrowed(ACCOUNT),
+            ACCOUNT.to_string(),
             None,
             None,
             None,
@@ -166,7 +166,7 @@ mod test_xchain_create_claim_id {
             None,
             None,
             None,
-            Cow::Borrowed("hello"),
+            Cow::Borrowed("hello").into(),
             Cow::Borrowed(SIGNATURE_REWARD).into(),
             xrp_bridge(),
         );

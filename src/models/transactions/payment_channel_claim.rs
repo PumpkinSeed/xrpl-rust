@@ -52,7 +52,7 @@ pub enum PaymentChannelClaimFlag {
     Debug, Serialize, Deserialize, PartialEq, Eq, Clone, xrpl_rust_macros::ValidateCurrencies,
 )]
 #[serde(rename_all = "PascalCase")]
-pub struct PaymentChannelClaim<'a> {
+pub struct PaymentChannelClaim {
     // The base fields for all transaction models.
     //
     // See Transaction Types:
@@ -62,41 +62,41 @@ pub struct PaymentChannelClaim<'a> {
     // `<https://xrpl.org/transaction-common-fields.html>`
     /// The type of transaction.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, PaymentChannelClaimFlag>,
+    pub common_fields: CommonFields<PaymentChannelClaimFlag>,
     // The custom fields for the PaymentChannelClaim model.
     //
     // See PaymentChannelClaim fields:
     // `<https://xrpl.org/paymentchannelclaim.html#paymentchannelclaim-fields>`
     /// The unique ID of the channel, as a 64-character hexadecimal string.
-    pub channel: Cow<'a, str>,
+    pub channel: String,
     /// otal amount of XRP, in drops, delivered by this channel after processing this claim.
     /// Required to deliver XRP. Must be more than the total amount delivered by the channel
     /// so far, but not greater than the Amount of the signed claim. Must be provided except
     /// when closing the channel.
-    pub balance: Option<Cow<'a, str>>,
+    pub balance: Option<String>,
     /// The amount of XRP, in drops, authorized by the Signature. This must match the amount
     /// in the signed message. This is the cumulative amount of XRP that can be dispensed by
     /// the channel, including XRP previously redeemed.
-    pub amount: Option<Cow<'a, str>>,
+    pub amount: Option<String>,
     /// The signature of this claim, as hexadecimal. The signed message contains the channel
     /// ID and the amount of the claim. Required unless the sender of the transaction is the
     /// source address of the channel.
-    pub signature: Option<Cow<'a, str>>,
+    pub signature: Option<String>,
     /// The public key used for the signature, as hexadecimal. This must match the PublicKey
     /// stored in the ledger for the channel. Required unless the sender of the transaction
     /// is the source address of the channel and the Signature field is omitted. (The transaction
     /// includes the public key so that rippled can check the validity of the signature before
     /// trying to apply the transaction to the ledger.)
-    pub public_key: Option<Cow<'a, str>>,
+    pub public_key: Option<String>,
 }
 
-impl<'a> Model for PaymentChannelClaim<'a> {
+impl Model for PaymentChannelClaim {
     fn get_errors(&self) -> crate::models::XRPLModelResult<()> {
         self.validate_currencies()
     }
 }
 
-impl<'a> Transaction<'a, PaymentChannelClaimFlag> for PaymentChannelClaim<'a> {
+impl Transaction<PaymentChannelClaimFlag> for PaymentChannelClaim {
     fn has_flag(&self, flag: &PaymentChannelClaimFlag) -> bool {
         self.common_fields.has_flag(flag)
     }
@@ -105,19 +105,19 @@ impl<'a> Transaction<'a, PaymentChannelClaimFlag> for PaymentChannelClaim<'a> {
         self.common_fields.get_transaction_type()
     }
 
-    fn get_common_fields(&self) -> &CommonFields<'_, PaymentChannelClaimFlag> {
+    fn get_common_fields(&self) -> &CommonFields<PaymentChannelClaimFlag> {
         self.common_fields.get_common_fields()
     }
 
-    fn get_mut_common_fields(&mut self) -> &mut CommonFields<'a, PaymentChannelClaimFlag> {
+    fn get_mut_common_fields(&mut self) -> &mut CommonFields<PaymentChannelClaimFlag> {
         self.common_fields.get_mut_common_fields()
     }
 }
 
-impl<'a> PaymentChannelClaim<'a> {
+impl PaymentChannelClaim {
     pub fn new(
-        account: Cow<'a, str>,
-        account_txn_id: Option<Cow<'a, str>>,
+        account: String,
+        account_txn_id: Option<String>,
         fee: Option<XRPAmount>,
         flags: Option<FlagCollection<PaymentChannelClaimFlag>>,
         last_ledger_sequence: Option<u32>,
@@ -126,11 +126,11 @@ impl<'a> PaymentChannelClaim<'a> {
         signers: Option<Vec<Signer>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
-        channel: Cow<'a, str>,
-        amount: Option<Cow<'a, str>>,
-        balance: Option<Cow<'a, str>>,
-        public_key: Option<Cow<'a, str>>,
-        signature: Option<Cow<'a, str>>,
+        channel: String,
+        amount: Option<String>,
+        balance: Option<String>,
+        public_key: Option<String>,
+        signature: Option<String>,
     ) -> Self {
         Self {
             common_fields: CommonFields::new(

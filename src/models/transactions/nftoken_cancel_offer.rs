@@ -22,7 +22,7 @@ use super::CommonFields;
     Debug, Serialize, Deserialize, PartialEq, Eq, Clone, xrpl_rust_macros::ValidateCurrencies,
 )]
 #[serde(rename_all = "PascalCase")]
-pub struct NFTokenCancelOffer<'a> {
+pub struct NFTokenCancelOffer {
     // The base fields for all transaction models.
     //
     // See Transaction Types:
@@ -32,7 +32,7 @@ pub struct NFTokenCancelOffer<'a> {
     // `<https://xrpl.org/transaction-common-fields.html>`
     /// The type of transaction.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, NoFlags>,
+    pub common_fields: CommonFields<NoFlags>,
     // The custom fields for the NFTokenCancelOffer model.
     //
     // See NFTokenCancelOffer fields:
@@ -42,33 +42,32 @@ pub struct NFTokenCancelOffer<'a> {
     /// objects, but the IDs of the NFTokenOffer objects). Each entry must be a
     /// different object ID of an NFTokenOffer object; the transaction is invalid
     /// if the array contains duplicate entries.
-    #[serde(borrow)]
     #[serde(rename = "NFTokenOffers")]
-    pub nftoken_offers: Vec<Cow<'a, str>>,
+    pub nftoken_offers: Vec<String>,
 }
 
-impl<'a> Model for NFTokenCancelOffer<'a> {
+impl Model for NFTokenCancelOffer {
     fn get_errors(&self) -> XRPLModelResult<()> {
         self._get_nftoken_offers_error()?;
         self.validate_currencies()
     }
 }
 
-impl<'a> Transaction<'a, NoFlags> for NFTokenCancelOffer<'a> {
+impl Transaction<NoFlags> for NFTokenCancelOffer {
     fn get_transaction_type(&self) -> &TransactionType {
         self.common_fields.get_transaction_type()
     }
 
-    fn get_common_fields(&self) -> &CommonFields<'_, NoFlags> {
+    fn get_common_fields(&self) -> &CommonFields<NoFlags> {
         self.common_fields.get_common_fields()
     }
 
-    fn get_mut_common_fields(&mut self) -> &mut CommonFields<'a, NoFlags> {
+    fn get_mut_common_fields(&mut self) -> &mut CommonFields<NoFlags> {
         self.common_fields.get_mut_common_fields()
     }
 }
 
-impl<'a> NFTokenCancelOfferError for NFTokenCancelOffer<'a> {
+impl NFTokenCancelOfferError for NFTokenCancelOffer {
     fn _get_nftoken_offers_error(&self) -> XRPLModelResult<()> {
         if self.nftoken_offers.is_empty() {
             Err(XRPLNFTokenCancelOfferException::CollectionEmpty {
@@ -82,10 +81,10 @@ impl<'a> NFTokenCancelOfferError for NFTokenCancelOffer<'a> {
     }
 }
 
-impl<'a> NFTokenCancelOffer<'a> {
+impl NFTokenCancelOffer {
     pub fn new(
-        account: Cow<'a, str>,
-        account_txn_id: Option<Cow<'a, str>>,
+        account: String,
+        account_txn_id: Option<String>,
         fee: Option<XRPAmount>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
@@ -93,7 +92,7 @@ impl<'a> NFTokenCancelOffer<'a> {
         signers: Option<Vec<Signer>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
-        nftoken_offers: Vec<Cow<'a, str>>,
+        nftoken_offers: Vec<String>,
     ) -> Self {
         Self {
             common_fields: CommonFields::new(

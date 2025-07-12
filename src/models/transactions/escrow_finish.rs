@@ -21,7 +21,7 @@ use super::CommonFields;
     Debug, Serialize, Deserialize, PartialEq, Eq, Clone, xrpl_rust_macros::ValidateCurrencies,
 )]
 #[serde(rename_all = "PascalCase")]
-pub struct EscrowFinish<'a> {
+pub struct EscrowFinish {
     // The base fields for all transaction models.
     //
     // See Transaction Types:
@@ -31,43 +31,43 @@ pub struct EscrowFinish<'a> {
     // `<https://xrpl.org/transaction-common-fields.html>`
     /// The type of transaction.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, NoFlags>,
+    pub common_fields: CommonFields<NoFlags>,
     // The custom fields for the EscrowFinish model.
     //
     // See EscrowFinish fields:
     // `<https://xrpl.org/escrowfinish.html#escrowfinish-fields>`
     /// Address of the source account that funded the held payment.
-    pub owner: Cow<'a, str>,
+    pub owner: String,
     /// Transaction sequence of EscrowCreate transaction that created the held payment to finish.
     pub offer_sequence: u32,
     /// Hex value matching the previously-supplied PREIMAGE-SHA-256 crypto-condition  of the held payment.
-    pub condition: Option<Cow<'a, str>>,
+    pub condition: Option<String>,
     /// Hex value of the PREIMAGE-SHA-256 crypto-condition fulfillment  matching the held payment's Condition.
-    pub fulfillment: Option<Cow<'a, str>>,
+    pub fulfillment: Option<String>,
 }
 
-impl<'a> Model for EscrowFinish<'a> {
+impl Model for EscrowFinish {
     fn get_errors(&self) -> XRPLModelResult<()> {
         self._get_condition_and_fulfillment_error()?;
         self.validate_currencies()
     }
 }
 
-impl<'a> Transaction<'a, NoFlags> for EscrowFinish<'a> {
+impl Transaction<NoFlags> for EscrowFinish {
     fn get_transaction_type(&self) -> &TransactionType {
         self.common_fields.get_transaction_type()
     }
 
-    fn get_common_fields(&self) -> &CommonFields<'_, NoFlags> {
+    fn get_common_fields(&self) -> &CommonFields<NoFlags> {
         self.common_fields.get_common_fields()
     }
 
-    fn get_mut_common_fields(&mut self) -> &mut CommonFields<'a, NoFlags> {
+    fn get_mut_common_fields(&mut self) -> &mut CommonFields<NoFlags> {
         self.common_fields.get_mut_common_fields()
     }
 }
 
-impl<'a> EscrowFinishError for EscrowFinish<'a> {
+impl EscrowFinishError for EscrowFinish {
     fn _get_condition_and_fulfillment_error(&self) -> XRPLModelResult<()> {
         if (self.condition.is_some() && self.fulfillment.is_none())
             || (self.condition.is_none() && self.condition.is_some())
@@ -82,10 +82,10 @@ impl<'a> EscrowFinishError for EscrowFinish<'a> {
     }
 }
 
-impl<'a> EscrowFinish<'a> {
+impl EscrowFinish {
     pub fn new(
-        account: Cow<'a, str>,
-        account_txn_id: Option<Cow<'a, str>>,
+        account: String,
+        account_txn_id: Option<String>,
         fee: Option<XRPAmount>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
@@ -93,10 +93,10 @@ impl<'a> EscrowFinish<'a> {
         signers: Option<Vec<Signer>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
-        owner: Cow<'a, str>,
+        owner: String,
         offer_sequence: u32,
-        condition: Option<Cow<'a, str>>,
-        fulfillment: Option<Cow<'a, str>>,
+        condition: Option<String>,
+        fulfillment: Option<String>,
     ) -> Self {
         Self {
             common_fields: CommonFields::new(

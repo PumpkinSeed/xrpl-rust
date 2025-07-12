@@ -43,7 +43,7 @@ pub enum NFTokenCreateOfferFlag {
     Debug, Serialize, Deserialize, PartialEq, Eq, Clone, xrpl_rust_macros::ValidateCurrencies,
 )]
 #[serde(rename_all = "PascalCase")]
-pub struct NFTokenCreateOffer<'a> {
+pub struct NFTokenCreateOffer {
     // The base fields for all transaction models.
     //
     // See Transaction Types:
@@ -53,14 +53,14 @@ pub struct NFTokenCreateOffer<'a> {
     // `<https://xrpl.org/transaction-common-fields.html>`
     /// The type of transaction.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, NFTokenCreateOfferFlag>,
+    pub common_fields: CommonFields<NFTokenCreateOfferFlag>,
     // The custom fields for the NFTokenCreateOffer model.
     //
     // See NFTokenCreateOffer fields:
     // `<https://xrpl.org/nftokencreateoffer.html#nftokencreateoffer-fields>`
     /// Identifies the NFToken object that the offer references.
     #[serde(rename = "NFTokenID")]
-    pub nftoken_id: Cow<'a, str>,
+    pub nftoken_id: String,
     /// Indicates the amount expected or offered for the corresponding NFToken.
     /// The amount must be non-zero, except where this is an offer to sell and the
     /// asset is XRP; then, it is legal to specify an amount of zero, which means
@@ -72,15 +72,15 @@ pub struct NFTokenCreateOffer<'a> {
     /// to buy a token one already holds is meaningless). If the offer is to sell a token,
     /// this field must not be present, as the owner is, implicitly, the same as the
     /// Account (since an offer to sell a token one doesn't already hold is meaningless)
-    pub owner: Option<Cow<'a, str>>,
+    pub owner: Option<String>,
     /// Time after which the offer is no longer active, in seconds since the Ripple Epoch.
     pub expiration: Option<u32>,
     /// If present, indicates that this offer may only be accepted by the specified account.
     /// Attempts by other accounts to accept this offer MUST fail.
-    pub destination: Option<Cow<'a, str>>,
+    pub destination: Option<String>,
 }
 
-impl<'a> Model for NFTokenCreateOffer<'a> {
+impl Model for NFTokenCreateOffer {
     fn get_errors(&self) -> XRPLModelResult<()> {
         self._get_amount_error()?;
         self._get_destination_error()?;
@@ -89,7 +89,7 @@ impl<'a> Model for NFTokenCreateOffer<'a> {
     }
 }
 
-impl<'a> Transaction<'a, NFTokenCreateOfferFlag> for NFTokenCreateOffer<'a> {
+impl Transaction<NFTokenCreateOfferFlag> for NFTokenCreateOffer {
     fn has_flag(&self, flag: &NFTokenCreateOfferFlag) -> bool {
         self.common_fields.has_flag(flag)
     }
@@ -98,16 +98,16 @@ impl<'a> Transaction<'a, NFTokenCreateOfferFlag> for NFTokenCreateOffer<'a> {
         self.common_fields.get_transaction_type()
     }
 
-    fn get_common_fields(&self) -> &CommonFields<'_, NFTokenCreateOfferFlag> {
+    fn get_common_fields(&self) -> &CommonFields<NFTokenCreateOfferFlag> {
         self.common_fields.get_common_fields()
     }
 
-    fn get_mut_common_fields(&mut self) -> &mut CommonFields<'a, NFTokenCreateOfferFlag> {
+    fn get_mut_common_fields(&mut self) -> &mut CommonFields<NFTokenCreateOfferFlag> {
         self.common_fields.get_mut_common_fields()
     }
 }
 
-impl<'a> NFTokenCreateOfferError for NFTokenCreateOffer<'a> {
+impl NFTokenCreateOfferError for NFTokenCreateOffer {
     fn _get_amount_error(&self) -> XRPLModelResult<()> {
         let amount_into_decimal: BigDecimal = self.amount.clone().try_into()?;
         if !self.has_flag(&NFTokenCreateOfferFlag::TfSellOffer) && amount_into_decimal.is_zero() {
@@ -160,10 +160,10 @@ impl<'a> NFTokenCreateOfferError for NFTokenCreateOffer<'a> {
     }
 }
 
-impl<'a> NFTokenCreateOffer<'a> {
+impl NFTokenCreateOffer {
     pub fn new(
-        account: Cow<'a, str>,
-        account_txn_id: Option<Cow<'a, str>>,
+        account: String,
+        account_txn_id: Option<String>,
         fee: Option<XRPAmount>,
         flags: Option<FlagCollection<NFTokenCreateOfferFlag>>,
         last_ledger_sequence: Option<u32>,
@@ -173,10 +173,10 @@ impl<'a> NFTokenCreateOffer<'a> {
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
         amount: Amount,
-        nftoken_id: Cow<'a, str>,
-        destination: Option<Cow<'a, str>>,
+        nftoken_id: String,
+        destination: Option<String>,
         expiration: Option<u32>,
-        owner: Option<Cow<'a, str>>,
+        owner: Option<String>,
     ) -> Self {
         Self {
             common_fields: CommonFields::new(

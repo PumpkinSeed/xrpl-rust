@@ -76,13 +76,13 @@ pub enum AccountSetFlag {
     Debug, Serialize, Deserialize, PartialEq, Eq, Clone, xrpl_rust_macros::ValidateCurrencies,
 )]
 #[serde(rename_all = "PascalCase")]
-pub struct AccountSet<'a> {
+pub struct AccountSet {
     /// The base fields for all transaction models.
     ///
     /// See Transaction Common Fields:
     /// `<https://xrpl.org/transaction-common-fields.html>`
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, AccountSetFlag>,
+    pub common_fields: CommonFields<AccountSetFlag>,
     // The custom fields for the AccountSet model.
     //
     // See AccountSet fields:
@@ -92,22 +92,22 @@ pub struct AccountSet<'a> {
     /// The domain that owns this account, as a string of hex
     /// representing the ASCII for the domain in lowercase.
     /// Cannot be more than 256 bytes in length.
-    pub domain: Option<Cow<'a, str>>,
+    pub domain: Option<String>,
     /// Hash of an email address to be used for generating an
     /// avatar image. Conventionally, clients use Gravatar
     /// to display this image.
-    pub email_hash: Option<Cow<'a, str>>,
+    pub email_hash: Option<String>,
     /// Public key for sending encrypted messages to this account.
     /// To set the key, it must be exactly 33 bytes, with the
     /// first byte indicating the key type: 0x02 or 0x03 for
     /// secp256k1 keys, 0xED for Ed25519 keys. To remove the
     /// key, use an empty value.
-    pub message_key: Option<Cow<'a, str>>,
+    pub message_key: Option<String>,
     /// Sets an alternate account that is allowed to mint NFTokens
     /// on this account's behalf using NFTokenMint's Issuer field.
     /// This field is part of the experimental XLS-20 standard
     /// for non-fungible tokens.
-    pub nftoken_minter: Option<Cow<'a, str>>,
+    pub nftoken_minter: Option<String>,
     /// Flag to enable for this account.
     pub set_flag: Option<AccountSetFlag>,
     /// The fee to charge when users transfer this account's tokens,
@@ -122,7 +122,7 @@ pub struct AccountSet<'a> {
     pub tick_size: Option<u32>,
 }
 
-impl<'a> Model for AccountSet<'a> {
+impl Model for AccountSet {
     fn get_errors(&self) -> XRPLModelResult<()> {
         self.validate_currencies()?;
         self._get_tick_size_error()?;
@@ -135,7 +135,7 @@ impl<'a> Model for AccountSet<'a> {
     }
 }
 
-impl<'a> Transaction<'a, AccountSetFlag> for AccountSet<'a> {
+impl Transaction<AccountSetFlag> for AccountSet {
     fn has_flag(&self, flag: &AccountSetFlag) -> bool {
         self.common_fields.has_flag(flag)
     }
@@ -144,16 +144,16 @@ impl<'a> Transaction<'a, AccountSetFlag> for AccountSet<'a> {
         self.common_fields.get_transaction_type()
     }
 
-    fn get_common_fields(&self) -> &CommonFields<'_, AccountSetFlag> {
+    fn get_common_fields(&self) -> &CommonFields<AccountSetFlag> {
         self.common_fields.get_common_fields()
     }
 
-    fn get_mut_common_fields(&mut self) -> &mut CommonFields<'a, AccountSetFlag> {
+    fn get_mut_common_fields(&mut self) -> &mut CommonFields<AccountSetFlag> {
         self.common_fields.get_mut_common_fields()
     }
 }
 
-impl<'a> AccountSetError for AccountSet<'a> {
+impl<'a> AccountSetError for AccountSet {
     fn _get_tick_size_error(&self) -> Result<(), XRPLModelException> {
         if let Some(tick_size) = self.tick_size {
             if tick_size > MAX_TICK_SIZE {
@@ -275,10 +275,10 @@ impl<'a> AccountSetError for AccountSet<'a> {
     }
 }
 
-impl<'a> AccountSet<'a> {
+impl AccountSet {
     pub fn new(
-        account: Cow<'a, str>,
-        account_txn_id: Option<Cow<'a, str>>,
+        account: String,
+        account_txn_id: Option<String>,
         fee: Option<XRPAmount>,
         flags: Option<FlagCollection<AccountSetFlag>>,
         last_ledger_sequence: Option<u32>,
@@ -288,13 +288,13 @@ impl<'a> AccountSet<'a> {
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
         clear_flag: Option<AccountSetFlag>,
-        domain: Option<Cow<'a, str>>,
-        email_hash: Option<Cow<'a, str>>,
-        message_key: Option<Cow<'a, str>>,
+        domain: Option<String>,
+        email_hash: Option<String>,
+        message_key: Option<String>,
         set_flag: Option<AccountSetFlag>,
         transfer_rate: Option<u32>,
         tick_size: Option<u32>,
-        nftoken_minter: Option<Cow<'a, str>>,
+        nftoken_minter: Option<String>,
     ) -> Self {
         Self {
             common_fields: CommonFields::new(

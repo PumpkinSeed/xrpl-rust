@@ -37,9 +37,9 @@ pub enum AMMDepositFlag {
     Debug, Serialize, Deserialize, PartialEq, Eq, Clone, xrpl_rust_macros::ValidateCurrencies,
 )]
 #[serde(rename_all = "PascalCase")]
-pub struct AMMDeposit<'a> {
+pub struct AMMDeposit {
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, AMMDepositFlag>,
+    pub common_fields: CommonFields<AMMDepositFlag>,
     /// The definition for one of the assets in the AMM's pool.
     pub asset: Currency,
     /// The definition for the other asset in the AMM's pool.
@@ -61,7 +61,7 @@ pub struct AMMDeposit<'a> {
     pub lp_token_out: Option<IssuedCurrencyAmount>,
 }
 
-impl Model for AMMDeposit<'_> {
+impl Model for AMMDeposit {
     fn get_errors(&self) -> XRPLModelResult<()> {
         self.validate_currencies()?;
         if self.amount2.is_some() && self.amount.is_none() {
@@ -84,12 +84,12 @@ impl Model for AMMDeposit<'_> {
     }
 }
 
-impl<'a> Transaction<'a, AMMDepositFlag> for AMMDeposit<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'_, AMMDepositFlag> {
+impl Transaction<AMMDepositFlag> for AMMDeposit {
+    fn get_common_fields(&self) -> &CommonFields<AMMDepositFlag> {
         &self.common_fields
     }
 
-    fn get_mut_common_fields(&mut self) -> &mut CommonFields<'a, AMMDepositFlag> {
+    fn get_mut_common_fields(&mut self) -> &mut CommonFields<AMMDepositFlag> {
         self.common_fields.get_mut_common_fields()
     }
 
@@ -98,10 +98,10 @@ impl<'a> Transaction<'a, AMMDepositFlag> for AMMDeposit<'a> {
     }
 }
 
-impl<'a> AMMDeposit<'a> {
+impl AMMDeposit {
     pub fn new(
-        account: Cow<'a, str>,
-        account_txn_id: Option<Cow<'a, str>>,
+        account: String,
+        account_txn_id: Option<String>,
         fee: Option<XRPAmount>,
         flags: Option<FlagCollection<AMMDepositFlag>>,
         last_ledger_sequence: Option<u32>,
@@ -116,7 +116,7 @@ impl<'a> AMMDeposit<'a> {
         amount2: Option<Amount>,
         e_price: Option<Amount>,
         lp_token_out: Option<IssuedCurrencyAmount>,
-    ) -> AMMDeposit<'a> {
+    ) -> AMMDeposit {
         AMMDeposit {
             common_fields: CommonFields::new(
                 account,
@@ -153,7 +153,7 @@ mod test_errors {
     #[test]
     fn test_no_amount() {
         let deposit = AMMDeposit::new(
-            Cow::Borrowed("rPEPPER7kfTD9w2To4CQk6UCfuHM9c6GDY"),
+            "rPEPPER7kfTD9w2To4CQk6UCfuHM9c6GDY".to_string(),
             None,
             Some("10".into()),
             None,
@@ -177,7 +177,7 @@ mod test_errors {
     #[test]
     fn test_no_lp_token_out_or_amount() {
         let deposit = AMMDeposit::new(
-            Cow::Borrowed("rPEPPER7kfTD9w2To4CQk6UCfuHM9c6GDY"),
+            "rPEPPER7kfTD9w2To4CQk6UCfuHM9c6GDY".to_string(),
             None,
             Some("10".into()),
             None,
@@ -201,7 +201,7 @@ mod test_errors {
     #[test]
     fn test_amount2_no_amount() {
         let deposit = AMMDeposit::new(
-            Cow::Borrowed("rPEPPER7kfTD9w2To4CQk6UCfuHM9c6GDY"),
+            "rPEPPER7kfTD9w2To4CQk6UCfuHM9c6GDY".to_string(),
             None,
             Some("10".into()),
             None,

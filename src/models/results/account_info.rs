@@ -282,8 +282,8 @@ mod tests {
         );
         assert_eq!(account_info.base.account_data.owner_count, 0);
         assert_eq!(
-            account_info.base.account_data.previous_txn_id.as_ref(),
-            "4294BEBE5B569A18C0A2702387C9B1E7146DC3A5850C1E87204951C6FDAA4C42"
+            account_info.base.account_data.previous_txn_id,
+            "4294BEBE5B569A18C0A2702387C9B1E7146DC3A5850C1E87204951C6FDAA4C42".to_string()
         );
         assert_eq!(account_info.base.account_data.previous_txn_lgr_seq, 3);
         assert_eq!(account_info.base.account_data.sequence, 6);

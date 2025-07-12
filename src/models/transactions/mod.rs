@@ -116,23 +116,23 @@ impl Default for TransactionType {
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone, new)]
 #[serde(rename_all = "PascalCase")]
-pub struct PreparedTransaction<'a, T> {
+pub struct PreparedTransaction<T> {
     #[serde(flatten)]
     pub transaction: T,
     /// Hex representation of the public key that corresponds to the
     /// private key used to sign this transaction. If an empty string,
     /// indicates a multi-signature is present in the Signers field instead.
-    pub signing_pub_key: Cow<'a, str>,
+    pub signing_pub_key: String,
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone, new)]
 #[serde(rename_all = "PascalCase")]
-pub struct SignedTransaction<'a, T> {
+pub struct SignedTransaction<T> {
     #[serde(flatten)]
-    pub prepared_transaction: PreparedTransaction<'a, T>,
+    pub prepared_transaction: PreparedTransaction<T>,
     /// The signature that verifies this transaction as originating
     /// from the account it says it is from.
-    pub txn_signature: Cow<'a, str>,
+    pub txn_signature: String,
 }
 
 /// The base fields for all transaction models.
@@ -142,12 +142,12 @@ pub struct SignedTransaction<'a, T> {
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone, Default)]
 #[serde(rename_all = "PascalCase")]
-pub struct CommonFields<'a, F>
+pub struct CommonFields<F>
 where
     F: IntoEnumIterator + Serialize + core::fmt::Debug,
 {
     /// The unique address of the account that initiated the transaction.
-    pub account: Cow<'a, str>,
+    pub account: String,
     /// The type of transaction.
     ///
     /// See Transaction Types:
@@ -157,7 +157,7 @@ where
     /// transaction is only valid if the sending account's
     /// previously-sent transaction matches the provided hash.
     #[serde(rename = "AccountTxnID")]
-    pub account_txn_id: Option<Cow<'a, str>>,
+    pub account_txn_id: Option<String>,
     /// Integer amount of XRP, in drops, to be destroyed as a cost
     /// for distributing this transaction to the network. Some
     /// transaction types have different minimum requirements.
@@ -191,7 +191,7 @@ where
     /// Hex representation of the public key that corresponds to the
     /// private key used to sign this transaction. If an empty string,
     /// indicates a multi-signature is present in the Signers field instead.
-    pub signing_pub_key: Option<Cow<'a, str>>,
+    pub signing_pub_key: Option<String>,
     /// Arbitrary integer used to identify the reason for this
     /// payment, or a sender on whose behalf this transaction
     /// is made. Conventionally, a refund should specify the initial
@@ -203,17 +203,17 @@ where
     pub ticket_sequence: Option<u32>,
     /// The signature that verifies this transaction as originating
     /// from the account it says it is from.
-    pub txn_signature: Option<Cow<'a, str>>,
+    pub txn_signature: Option<String>,
 }
 
-impl<'a, T> CommonFields<'a, T>
+impl<T> CommonFields<T>
 where
     T: IntoEnumIterator + Serialize + core::fmt::Debug,
 {
     pub fn new(
-        account: Cow<'a, str>,
+        account: String,
         transaction_type: TransactionType,
-        account_txn_id: Option<Cow<'a, str>>,
+        account_txn_id: Option<String>,
         fee: Option<XRPAmount>,
         flags: Option<FlagCollection<T>>,
         last_ledger_sequence: Option<u32>,
@@ -221,10 +221,10 @@ where
         network_id: Option<u32>,
         sequence: Option<u32>,
         signers: Option<Vec<Signer>>,
-        signing_pub_key: Option<Cow<'a, str>>,
+        signing_pub_key: Option<String>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
-        txn_signature: Option<Cow<'a, str>>,
+        txn_signature: Option<String>,
     ) -> Self {
         CommonFields {
             account,
@@ -245,7 +245,7 @@ where
     }
 }
 
-impl<T> CommonFields<'_, T>
+impl<T> CommonFields<T>
 where
     T: IntoEnumIterator + Serialize + Debug + PartialEq + Clone,
 {
@@ -260,7 +260,7 @@ where
     }
 }
 
-impl<'a, T> Transaction<'a, T> for CommonFields<'a, T>
+impl<T> Transaction<T> for CommonFields<T>
 where
     T: IntoEnumIterator + Serialize + PartialEq + core::fmt::Debug,
 {
@@ -272,11 +272,11 @@ where
         &self.transaction_type
     }
 
-    fn get_common_fields(&self) -> &CommonFields<'_, T> {
+    fn get_common_fields(&self) -> &CommonFields<T> {
         self
     }
 
-    fn get_mut_common_fields(&mut self) -> &mut CommonFields<'a, T> {
+    fn get_mut_common_fields(&mut self) -> &mut CommonFields<T> {
         self
     }
 }
@@ -331,7 +331,7 @@ pub struct Signer {
 }
 
 /// Standard functions for transactions.
-pub trait Transaction<'a, T>
+pub trait Transaction<T>
 where
     Self: Serialize,
     T: IntoEnumIterator + Serialize + Debug + PartialEq,
@@ -343,9 +343,9 @@ where
 
     fn get_transaction_type(&self) -> &TransactionType;
 
-    fn get_common_fields(&self) -> &CommonFields<'_, T>;
+    fn get_common_fields(&self) -> &CommonFields<T>;
 
-    fn get_mut_common_fields(&mut self) -> &mut CommonFields<'a, T>;
+    fn get_mut_common_fields(&mut self) -> &mut CommonFields<T>;
 
     fn get_field_value(&self, field: &str) -> XRPLModelResult<Option<String>> {
         let value = serde_json::to_value(self)?;

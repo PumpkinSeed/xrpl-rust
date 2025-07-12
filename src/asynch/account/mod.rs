@@ -15,9 +15,9 @@ use alloc::string::ToString;
 use crate::models::results::XRPLResponse;
 
 pub async fn does_account_exist<C>(
-    address: Cow<'_, str>,
+    address: String,
     client: &C,
-    ledger_index: Option<Cow<'_, str>>,
+    ledger_index: Option<String>,
 ) -> XRPLHelperResult<bool>
 where
     C: XRPLAsyncClient,
@@ -29,9 +29,9 @@ where
 }
 
 pub async fn get_next_valid_seq_number(
-    address: Cow<'_, str>,
+    address: String,
     client: &impl XRPLAsyncClient,
-    ledger_index: Option<Cow<'_, str>>,
+    ledger_index: Option<String>,
 ) -> XRPLHelperResult<u32> {
     let account_info =
         get_account_root(address, client, ledger_index.unwrap_or("current".into())).await?;
@@ -39,9 +39,9 @@ pub async fn get_next_valid_seq_number(
 }
 
 pub async fn get_xrp_balance<'a: 'b, 'b, C>(
-    address: Cow<'a, str>,
+    address: String,
     client: &'a C,
-    ledger_index: Option<Cow<'a, str>>,
+    ledger_index: Option<String>,
 ) -> XRPLHelperResult<XRPAmount>
 where
     C: XRPLAsyncClient,
@@ -55,9 +55,9 @@ where
 }
 
 pub async fn get_account_root<'a: 'b, 'b, C>(
-    address: Cow<'a, str>,
+    address: String,
     client: &'a C,
-    ledger_index: Cow<'a, str>,
+    ledger_index: String,
 ) -> XRPLHelperResult<AccountRoot>
 where
     C: XRPLAsyncClient,
@@ -93,7 +93,7 @@ where
 }
 
 pub async fn get_latest_transaction<'a: 'b, 'b, C>(
-    mut address: Cow<'a, str>,
+    mut address: String,
     client: &C,
 ) -> XRPLHelperResult<crate::models::results::account_tx::AccountTxVersionMap<'b>>
 where

@@ -49,7 +49,7 @@ pub enum PaymentFlag {
     Debug, Serialize, Deserialize, PartialEq, Eq, Clone, xrpl_rust_macros::ValidateCurrencies,
 )]
 #[serde(rename_all = "PascalCase")]
-pub struct Payment<'a> {
+pub struct Payment {
     // The base fields for all transaction models.
     //
     // See Transaction Types:
@@ -59,7 +59,7 @@ pub struct Payment<'a> {
     // `<https://xrpl.org/transaction-common-fields.html>`
     /// The type of transaction.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, PaymentFlag>,
+    pub common_fields: CommonFields<PaymentFlag>,
     // The custom fields for the Payment model.
     //
     // See Payment fields:
@@ -69,7 +69,7 @@ pub struct Payment<'a> {
     /// amount instead.
     pub amount: Amount,
     /// The unique address of the account receiving the payment.
-    pub destination: Cow<'a, str>,
+    pub destination: String,
     /// Arbitrary tag that identifies the reason for the payment to the destination,
     /// or a hosted recipient to pay.
     pub destination_tag: Option<u32>,
@@ -89,7 +89,7 @@ pub struct Payment<'a> {
     pub deliver_min: Option<Amount>,
 }
 
-impl<'a> Model for Payment<'a> {
+impl Model for Payment {
     fn get_errors(&self) -> XRPLModelResult<()> {
         self._get_xrp_transaction_error()?;
         self._get_partial_payment_error()?;
@@ -98,7 +98,7 @@ impl<'a> Model for Payment<'a> {
     }
 }
 
-impl<'a> Transaction<'a, PaymentFlag> for Payment<'a> {
+impl Transaction<PaymentFlag> for Payment {
     fn has_flag(&self, flag: &PaymentFlag) -> bool {
         self.common_fields.has_flag(flag)
     }
@@ -107,16 +107,16 @@ impl<'a> Transaction<'a, PaymentFlag> for Payment<'a> {
         self.common_fields.get_transaction_type()
     }
 
-    fn get_common_fields(&self) -> &CommonFields<'_, PaymentFlag> {
+    fn get_common_fields(&self) -> &CommonFields<PaymentFlag> {
         self.common_fields.get_common_fields()
     }
 
-    fn get_mut_common_fields(&mut self) -> &mut CommonFields<'a, PaymentFlag> {
+    fn get_mut_common_fields(&mut self) -> &mut CommonFields<PaymentFlag> {
         &mut self.common_fields
     }
 }
 
-impl<'a> PaymentError for Payment<'a> {
+impl PaymentError for Payment {
     fn _get_xrp_transaction_error(&self) -> XRPLModelResult<()> {
         if self.amount.is_xrp() && self.send_max.is_none() {
             if self.paths.is_some() {
@@ -188,10 +188,10 @@ impl<'a> PaymentError for Payment<'a> {
     }
 }
 
-impl<'a> Payment<'a> {
+impl Payment {
     pub fn new(
-        account: Cow<'a, str>,
-        account_txn_id: Option<Cow<'a, str>>,
+        account: String,
+        account_txn_id: Option<String>,
         fee: Option<XRPAmount>,
         flags: Option<FlagCollection<PaymentFlag>>,
         last_ledger_sequence: Option<u32>,
@@ -201,7 +201,7 @@ impl<'a> Payment<'a> {
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
         amount: Amount,
-        destination: Cow<'a, str>,
+        destination: String,
         deliver_min: Option<Amount>,
         destination_tag: Option<u32>,
         invoice_id: Option<u32>,

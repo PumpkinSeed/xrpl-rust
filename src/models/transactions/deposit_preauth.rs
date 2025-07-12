@@ -23,45 +23,45 @@ use crate::models::{
     Debug, Serialize, Deserialize, PartialEq, Eq, Clone, xrpl_rust_macros::ValidateCurrencies,
 )]
 #[serde(rename_all = "PascalCase")]
-pub struct DepositPreauth<'a> {
+pub struct DepositPreauth {
     /// The base fields for all transaction models.
     ///
     /// See Transaction Common Fields:
     /// `<https://xrpl.org/transaction-common-fields.html>`
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, NoFlags>,
+    pub common_fields: CommonFields<NoFlags>,
     // The custom fields for the DepositPreauth model.
     //
     // See DepositPreauth fields:
     // `<https://xrpl.org/depositpreauth.html#depositpreauth-fields>`
     /// The XRP Ledger address of the sender to preauthorize.
-    pub authorize: Option<Cow<'a, str>>,
+    pub authorize: Option<String>,
     /// The XRP Ledger address of a sender whose preauthorization should be revoked.
-    pub unauthorize: Option<Cow<'a, str>>,
+    pub unauthorize: Option<String>,
 }
 
-impl<'a> Model for DepositPreauth<'a> {
+impl Model for DepositPreauth {
     fn get_errors(&self) -> XRPLModelResult<()> {
         self._get_authorize_and_unauthorize_error()?;
         self.validate_currencies()
     }
 }
 
-impl<'a> Transaction<'a, NoFlags> for DepositPreauth<'a> {
+impl Transaction<NoFlags> for DepositPreauth {
     fn get_transaction_type(&self) -> &TransactionType {
         self.common_fields.get_transaction_type()
     }
 
-    fn get_common_fields(&self) -> &CommonFields<'_, NoFlags> {
+    fn get_common_fields(&self) -> &CommonFields<NoFlags> {
         self.common_fields.get_common_fields()
     }
 
-    fn get_mut_common_fields(&mut self) -> &mut CommonFields<'a, NoFlags> {
+    fn get_mut_common_fields(&mut self) -> &mut CommonFields<NoFlags> {
         self.common_fields.get_mut_common_fields()
     }
 }
 
-impl<'a> DepositPreauthError for DepositPreauth<'a> {
+impl DepositPreauthError for DepositPreauth {
     fn _get_authorize_and_unauthorize_error(&self) -> XRPLModelResult<()> {
         if (self.authorize.is_none() && self.unauthorize.is_none())
             || (self.authorize.is_some() && self.unauthorize.is_some())
@@ -76,10 +76,10 @@ impl<'a> DepositPreauthError for DepositPreauth<'a> {
     }
 }
 
-impl<'a> DepositPreauth<'a> {
+impl DepositPreauth {
     pub fn new(
-        account: Cow<'a, str>,
-        account_txn_id: Option<Cow<'a, str>>,
+        account: String,
+        account_txn_id: Option<String>,
         fee: Option<XRPAmount>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
@@ -87,8 +87,8 @@ impl<'a> DepositPreauth<'a> {
         signers: Option<Vec<Signer>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
-        authorize: Option<Cow<'a, str>>,
-        unauthorize: Option<Cow<'a, str>>,
+        authorize: Option<String>,
+        unauthorize: Option<String>,
     ) -> Self {
         Self {
             common_fields: CommonFields::new(

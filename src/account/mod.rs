@@ -20,9 +20,9 @@ use crate::{
 };
 
 pub fn does_account_exist<C>(
-    address: Cow<'_, str>,
+    address: String,
     client: &C,
-    ledger_index: Option<Cow<'_, str>>,
+    ledger_index: Option<String>,
 ) -> XRPLHelperResult<bool>
 where
     C: XRPLClient,
@@ -31,9 +31,9 @@ where
 }
 
 pub fn get_next_valid_seq_number<C>(
-    address: Cow<'_, str>,
+    address: String,
     client: &C,
-    ledger_index: Option<Cow<'_, str>>,
+    ledger_index: Option<String>,
 ) -> XRPLHelperResult<u32>
 where
     C: XRPLClient,
@@ -46,9 +46,9 @@ where
 }
 
 pub fn get_xrp_balance<'a: 'b, 'b, C>(
-    address: Cow<'a, str>,
+    address: String,
     client: &'a C,
-    ledger_index: Option<Cow<'a, str>>,
+    ledger_index: Option<String>,
 ) -> XRPLHelperResult<XRPAmount>
 where
     C: XRPLClient,
@@ -57,9 +57,9 @@ where
 }
 
 pub fn get_account_root<'a: 'b, 'b, C>(
-    address: Cow<'a, str>,
+    address: String,
     client: &'a C,
-    ledger_index: Cow<'a, str>,
+    ledger_index: String,
 ) -> XRPLHelperResult<AccountRoot>
 where
     C: XRPLClient,
@@ -68,7 +68,7 @@ where
 }
 
 pub fn get_latest_transaction<'a: 'b, 'b, C>(
-    address: Cow<'a, str>,
+    address: String,
     client: &C,
 ) -> XRPLHelperResult<AccountTxVersionMap<'b>>
 where

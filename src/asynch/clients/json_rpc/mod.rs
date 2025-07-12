@@ -88,7 +88,7 @@ mod _std {
         async fn request_funding(
             &self,
             url: Option<Url>,
-            request: FundFaucet<'_>,
+            request: FundFaucet,
         ) -> XRPLClientResult<()> {
             let faucet_url = self.get_faucet_url(url)?;
             let client = HttpClient::new();

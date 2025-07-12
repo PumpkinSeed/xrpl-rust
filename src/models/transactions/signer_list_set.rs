@@ -41,7 +41,7 @@ serde_with_tag! {
     Debug, Serialize, Deserialize, PartialEq, Eq, Clone, xrpl_rust_macros::ValidateCurrencies,
 )]
 #[serde(rename_all = "PascalCase")]
-pub struct SignerListSet<'a> {
+pub struct SignerListSet {
     // The base fields for all transaction models.
     //
     // See Transaction Types:
@@ -51,7 +51,7 @@ pub struct SignerListSet<'a> {
     // `<https://xrpl.org/transaction-common-fields.html>`
     /// The type of transaction.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, NoFlags>,
+    pub common_fields: CommonFields<NoFlags>,
     // The custom fields for the TicketCreate model.
     //
     // See TicketCreate fields:
@@ -66,7 +66,7 @@ pub struct SignerListSet<'a> {
     pub signer_entries: Option<Vec<SignerEntry>>,
 }
 
-impl<'a> Model for SignerListSet<'a> {
+impl Model for SignerListSet {
     fn get_errors(&self) -> XRPLModelResult<()> {
         self._get_signer_entries_error()?;
         self._get_signer_quorum_error()?;
@@ -74,21 +74,21 @@ impl<'a> Model for SignerListSet<'a> {
     }
 }
 
-impl<'a> Transaction<'a, NoFlags> for SignerListSet<'a> {
+impl Transaction<NoFlags> for SignerListSet {
     fn get_transaction_type(&self) -> &TransactionType {
         self.common_fields.get_transaction_type()
     }
 
-    fn get_common_fields(&self) -> &CommonFields<'_, NoFlags> {
+    fn get_common_fields(&self) -> &CommonFields<NoFlags> {
         self.common_fields.get_common_fields()
     }
 
-    fn get_mut_common_fields(&mut self) -> &mut CommonFields<'a, NoFlags> {
+    fn get_mut_common_fields(&mut self) -> &mut CommonFields<NoFlags> {
         self.common_fields.get_mut_common_fields()
     }
 }
 
-impl<'a> SignerListSetError for SignerListSet<'a> {
+impl SignerListSetError for SignerListSet {
     fn _get_signer_entries_error(&self) -> XRPLModelResult<()> {
         if let Some(signer_entries) = &self.signer_entries {
             if self.signer_quorum == 0 {
@@ -173,10 +173,10 @@ impl<'a> SignerListSetError for SignerListSet<'a> {
     }
 }
 
-impl<'a> SignerListSet<'a> {
+impl SignerListSet {
     pub fn new(
-        account: Cow<'a, str>,
-        account_txn_id: Option<Cow<'a, str>>,
+        account: String,
+        account_txn_id: Option<String>,
         fee: Option<XRPAmount>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,

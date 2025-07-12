@@ -34,7 +34,7 @@ pub async fn submit_and_wait<'a: 'b, 'b, T, F, C>(
     autofill: Option<bool>,
 ) -> XRPLHelperResult<TxVersionMap<'b>>
 where
-    T: Transaction<'a, F> + Model + Clone + DeserializeOwned + Debug,
+    T: Transaction<F> + Model + Clone + DeserializeOwned + Debug,
     F: IntoEnumIterator + Serialize + Debug + PartialEq + Debug + Clone + 'a,
     C: XRPLAsyncClient,
 {
@@ -47,7 +47,7 @@ async fn send_reliable_submission<'a: 'b, 'b, T, F, C>(
     client: &C,
 ) -> XRPLHelperResult<TxVersionMap<'b>>
 where
-    T: Transaction<'a, F> + Model + Clone + DeserializeOwned + Debug,
+    T: Transaction<F> + Model + Clone + DeserializeOwned + Debug,
     F: IntoEnumIterator + Serialize + Debug + PartialEq + Debug + Clone + 'a,
     C: XRPLAsyncClient,
 {
@@ -152,7 +152,7 @@ async fn get_signed_transaction<'a, T, F, C>(
     do_autofill: Option<bool>,
 ) -> XRPLHelperResult<()>
 where
-    T: Transaction<'a, F> + Model + Clone + DeserializeOwned + Debug,
+    T: Transaction<F> + Model + Clone + DeserializeOwned + Debug,
     F: IntoEnumIterator + Serialize + Debug + PartialEq + Debug + Clone,
     C: XRPLAsyncClient,
 {
@@ -202,7 +202,7 @@ mod test_submit_and_wait {
             .await
             .unwrap();
         let mut tx = AccountSet::new(
-            Cow::from(wallet.classic_address.clone()),
+            wallet.classic_address.clone(),
             None,
             None,
             None,

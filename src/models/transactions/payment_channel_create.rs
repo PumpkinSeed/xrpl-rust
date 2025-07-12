@@ -22,7 +22,7 @@ use super::CommonFields;
     Debug, Serialize, Deserialize, PartialEq, Eq, Clone, xrpl_rust_macros::ValidateCurrencies,
 )]
 #[serde(rename_all = "PascalCase")]
-pub struct PaymentChannelCreate<'a> {
+pub struct PaymentChannelCreate {
     // The base fields for all transaction models.
     //
     // See Transaction Types:
@@ -32,7 +32,7 @@ pub struct PaymentChannelCreate<'a> {
     // `<https://xrpl.org/transaction-common-fields.html>`
     /// The type of transaction.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, NoFlags>,
+    pub common_fields: CommonFields<NoFlags>,
     // The custom fields for the PaymentChannelCreate model.
     //
     // See PaymentChannelCreate fields:
@@ -43,13 +43,13 @@ pub struct PaymentChannelCreate<'a> {
     pub amount: XRPAmount,
     /// Address to receive XRP claims against this channel. This is also known as the
     /// "destination address" for the channel. Cannot be the same as the sender (Account).
-    pub destination: Cow<'a, str>,
+    pub destination: String,
     /// Amount of time the source address must wait before closing the channel if it has unclaimed XRP.
     pub settle_delay: u32,
     /// The 33-byte public key of the key pair the source will use to sign claims against this channel,
     /// in hexadecimal. This can be any secp256k1 or Ed25519 public key. For more information on key
     /// pairs, see Key Derivation
-    pub public_key: Cow<'a, str>,
+    pub public_key: String,
     /// The time, in seconds since the Ripple Epoch, when this channel expires. Any transaction that
     /// would modify the channel after this time closes the channel without otherwise affecting it.
     /// This value is immutable; the channel can be closed earlier than this time but cannot remain
@@ -60,30 +60,30 @@ pub struct PaymentChannelCreate<'a> {
     pub destination_tag: Option<u32>,
 }
 
-impl<'a> Model for PaymentChannelCreate<'a> {
+impl Model for PaymentChannelCreate {
     fn get_errors(&self) -> crate::models::XRPLModelResult<()> {
         self.validate_currencies()
     }
 }
 
-impl<'a> Transaction<'a, NoFlags> for PaymentChannelCreate<'a> {
+impl Transaction<NoFlags> for PaymentChannelCreate {
     fn get_transaction_type(&self) -> &TransactionType {
         self.common_fields.get_transaction_type()
     }
 
-    fn get_common_fields(&self) -> &CommonFields<'_, NoFlags> {
+    fn get_common_fields(&self) -> &CommonFields<NoFlags> {
         self.common_fields.get_common_fields()
     }
 
-    fn get_mut_common_fields(&mut self) -> &mut CommonFields<'a, NoFlags> {
+    fn get_mut_common_fields(&mut self) -> &mut CommonFields<NoFlags> {
         self.common_fields.get_mut_common_fields()
     }
 }
 
-impl<'a> PaymentChannelCreate<'a> {
+impl PaymentChannelCreate {
     pub fn new(
-        account: Cow<'a, str>,
-        account_txn_id: Option<Cow<'a, str>>,
+        account: String,
+        account_txn_id: Option<String>,
         fee: Option<XRPAmount>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
@@ -92,8 +92,8 @@ impl<'a> PaymentChannelCreate<'a> {
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
         amount: XRPAmount,
-        destination: Cow<'a, str>,
-        public_key: Cow<'a, str>,
+        destination: String,
+        public_key: String,
         settle_delay: u32,
         cancel_after: Option<u32>,
         destination_tag: Option<u32>,

@@ -27,20 +27,20 @@ use super::CommonFields;
     Debug, Serialize, Deserialize, PartialEq, Eq, Clone, xrpl_rust_macros::ValidateCurrencies,
 )]
 #[serde(rename_all = "PascalCase")]
-pub struct CheckCash<'a> {
+pub struct CheckCash {
     /// The base fields for all transaction models.
     ///
     /// See Transaction Common Fields:
     /// `<https://xrpl.org/transaction-common-fields.html>`
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, NoFlags>,
+    pub common_fields: CommonFields<NoFlags>,
     // The custom fields for the CheckCash model.
     //
     // See CheckCash fields:
     // `<https://xrpl.org/checkcash.html#checkcash-fields>`
     /// The ID of the Check ledger object to cash, as a 64-character hexadecimal string.
     #[serde(rename = "CheckID")]
-    pub check_id: Cow<'a, str>,
+    pub check_id: String,
     /// Redeem the Check for exactly this amount, if possible. The currency must match that of the
     /// SendMax of the corresponding CheckCreate transaction. You must provide either this field or DeliverMin.
     pub amount: Option<Amount>,
@@ -50,28 +50,28 @@ pub struct CheckCash<'a> {
     pub deliver_min: Option<Amount>,
 }
 
-impl<'a> Model for CheckCash<'a> {
+impl Model for CheckCash {
     fn get_errors(&self) -> XRPLModelResult<()> {
         //self._get_amount_and_deliver_min_error()?;
         self.validate_currencies()
     }
 }
 
-impl<'a> Transaction<'a, NoFlags> for CheckCash<'a> {
+impl Transaction<NoFlags> for CheckCash {
     fn get_transaction_type(&self) -> &TransactionType {
         self.common_fields.get_transaction_type()
     }
 
-    fn get_common_fields(&self) -> &CommonFields<'_, NoFlags> {
+    fn get_common_fields(&self) -> &CommonFields<NoFlags> {
         self.common_fields.get_common_fields()
     }
 
-    fn get_mut_common_fields(&mut self) -> &mut CommonFields<'a, NoFlags> {
+    fn get_mut_common_fields(&mut self) -> &mut CommonFields<NoFlags> {
         self.common_fields.get_mut_common_fields()
     }
 }
 
-impl<'a> CheckCashError for CheckCash<'a> {
+impl CheckCashError for CheckCash {
     fn _get_amount_and_deliver_min_error(&self) -> XRPLModelResult<()> {
         if (self.amount.is_none() && self.deliver_min.is_none())
             || (self.amount.is_some() && self.deliver_min.is_some())
@@ -86,10 +86,10 @@ impl<'a> CheckCashError for CheckCash<'a> {
     }
 }
 
-impl<'a> CheckCash<'a> {
+impl CheckCash {
     pub fn new(
-        account: Cow<'a, str>,
-        account_txn_id: Option<Cow<'a, str>>,
+        account: String,
+        account_txn_id: Option<String>,
         fee: Option<XRPAmount>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
@@ -97,7 +97,7 @@ impl<'a> CheckCash<'a> {
         signers: Option<Vec<Signer>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
-        check_id: Cow<'a, str>,
+        check_id: String,
         amount: Option<Amount>,
         deliver_min: Option<Amount>,
     ) -> Self {

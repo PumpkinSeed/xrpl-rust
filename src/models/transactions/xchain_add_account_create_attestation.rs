@@ -11,48 +11,48 @@ use super::{CommonFields, Memo, Signer, Transaction, TransactionType};
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, xrpl_rust_macros::ValidateCurrencies)]
 #[serde(rename_all = "PascalCase")]
-pub struct XChainAddAccountCreateAttestation<'a> {
+pub struct XChainAddAccountCreateAttestation {
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, NoFlags>,
+    pub common_fields: CommonFields<NoFlags>,
     pub amount: Amount,
-    pub attestation_reward_account: Cow<'a, str>,
-    pub attestation_signer_account: Cow<'a, str>,
-    pub destination: Cow<'a, str>,
-    pub other_chain_source: Cow<'a, str>,
-    pub public_key: Cow<'a, str>,
-    pub signature: Cow<'a, str>,
+    pub attestation_reward_account: String,
+    pub attestation_signer_account: String,
+    pub destination: String,
+    pub other_chain_source: String,
+    pub public_key: String,
+    pub signature: String,
     pub signature_reward: Amount,
     pub was_locking_chain_send: u8,
     #[serde(rename = "XChainAccountCreateCount")]
-    pub xchain_account_create_count: Cow<'a, str>,
+    pub xchain_account_create_count: String,
     #[serde(rename = "XChainBridge")]
     pub xchain_bridge: XChainBridge,
 }
 
-impl Model for XChainAddAccountCreateAttestation<'_> {
+impl Model for XChainAddAccountCreateAttestation {
     fn get_errors(&self) -> crate::models::XRPLModelResult<()> {
         self.validate_currencies()
     }
 }
 
-impl<'a> Transaction<'a, NoFlags> for XChainAddAccountCreateAttestation<'a> {
+impl Transaction<NoFlags> for XChainAddAccountCreateAttestation {
     fn get_transaction_type(&self) -> &super::TransactionType {
         self.common_fields.get_transaction_type()
     }
 
-    fn get_common_fields(&self) -> &super::CommonFields<'_, NoFlags> {
+    fn get_common_fields(&self) -> &super::CommonFields<NoFlags> {
         &self.common_fields
     }
 
-    fn get_mut_common_fields(&mut self) -> &mut super::CommonFields<'a, NoFlags> {
+    fn get_mut_common_fields(&mut self) -> &mut super::CommonFields<NoFlags> {
         &mut self.common_fields
     }
 }
 
-impl<'a> XChainAddAccountCreateAttestation<'a> {
+impl XChainAddAccountCreateAttestation {
     pub fn new(
-        account: Cow<'a, str>,
-        account_txn_id: Option<Cow<'a, str>>,
+        account: String,
+        account_txn_id: Option<String>,
         fee: Option<XRPAmount>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
@@ -61,17 +61,17 @@ impl<'a> XChainAddAccountCreateAttestation<'a> {
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
         amount: Amount,
-        attestation_reward_account: Cow<'a, str>,
-        attestation_signer_account: Cow<'a, str>,
-        destination: Cow<'a, str>,
-        other_chain_source: Cow<'a, str>,
-        public_key: Cow<'a, str>,
-        signature: Cow<'a, str>,
+        attestation_reward_account: String,
+        attestation_signer_account: String,
+        destination: String,
+        other_chain_source: String,
+        public_key: String,
+        signature: String,
         signature_reward: Amount,
         was_locking_chain_send: u8,
-        xchain_account_create_count: Cow<'a, str>,
+        xchain_account_create_count: String,
         xchain_bridge: XChainBridge,
-    ) -> XChainAddAccountCreateAttestation<'a> {
+    ) -> XChainAddAccountCreateAttestation {
         XChainAddAccountCreateAttestation {
             common_fields: CommonFields::new(
                 account,
@@ -145,7 +145,7 @@ mod test_serde {
 
     #[test]
     fn test_serialize() {
-        let attestation: XChainAddAccountCreateAttestation<'_> =
+        let attestation: XChainAddAccountCreateAttestation =
             serde_json::from_str(EXAMPLE_JSON).unwrap();
         let actual = serde_json::to_value(&attestation).unwrap();
         let expected: Value = serde_json::from_str(EXAMPLE_JSON).unwrap();
@@ -172,37 +172,37 @@ mod test_xchain_claim {
     const CLAIM_ID: u64 = 3;
     const XRP_AMOUNT: &str = "123456789";
 
-    fn xrp_bridge<'a>() -> XChainBridge {
+    fn xrp_bridge() -> XChainBridge {
         XChainBridge {
-            locking_chain_door: Cow::Borrowed(ACCOUNT),
+            locking_chain_door: ACCOUNT.to_string(),
             locking_chain_issue: XRP::new().into(),
-            issuing_chain_door: Cow::Borrowed(GENESIS),
+            issuing_chain_door: GENESIS.to_string(),
             issuing_chain_issue: XRP::new().into(),
         }
     }
 
-    fn iou_bridge<'a>() -> XChainBridge {
+    fn iou_bridge() -> XChainBridge {
         XChainBridge {
-            locking_chain_door: Cow::Borrowed(ACCOUNT),
+            locking_chain_door: ACCOUNT.to_string(),
             locking_chain_issue: IssuedCurrency {
-                currency: Cow::Borrowed("USD"),
-                issuer: Cow::Borrowed(ISSUER),
+                currency: "USD".to_string(),
+                issuer: ISSUER.to_string(),
             }
             .into(),
-            issuing_chain_door: Cow::Borrowed(ACCOUNT2),
+            issuing_chain_door: ACCOUNT2.to_string(),
             issuing_chain_issue: IssuedCurrency {
-                currency: Cow::Borrowed("USD"),
-                issuer: Cow::Borrowed(ACCOUNT2),
+                currency: "USD".to_string(),
+                issuer: ACCOUNT2.to_string(),
             }
             .into(),
         }
     }
 
-    fn iou_amount<'a>() -> Amount {
+    fn iou_amount() -> Amount {
         IssuedCurrencyAmount {
-            currency: Cow::Borrowed("USD"),
-            issuer: Cow::Borrowed(ISSUER),
-            value: Cow::Borrowed("123"),
+            currency: "USD".to_string(),
+            issuer: ISSUER.to_string(),
+            value: "123".to_string(),
         }
         .into()
     }
@@ -210,7 +210,7 @@ mod test_xchain_claim {
     #[test]
     fn test_successful_claim_xrp() {
         let claim = XChainClaim::new(
-            Cow::Borrowed(ACCOUNT),
+            ACCOUNT.to_string(),
             None,
             Some(XRPAmount::from(FEE)),
             None,
@@ -220,7 +220,7 @@ mod test_xchain_claim {
             None,
             None,
             XRPAmount::from(XRP_AMOUNT).into(),
-            Cow::Borrowed(DESTINATION),
+            DESTINATION.to_string(),
             xrp_bridge(),
             CLAIM_ID.to_string().into(),
             None,
@@ -231,7 +231,7 @@ mod test_xchain_claim {
     #[test]
     fn test_successful_claim_iou() {
         let claim = XChainClaim::new(
-            Cow::Borrowed(ACCOUNT),
+            ACCOUNT.to_string(),
             None,
             Some(XRPAmount::from(FEE)),
             None,
@@ -241,7 +241,7 @@ mod test_xchain_claim {
             None,
             None,
             iou_amount(),
-            Cow::Borrowed(DESTINATION),
+            DESTINATION.to_string(),
             iou_bridge(),
             CLAIM_ID.to_string().into(),
             None,
@@ -252,7 +252,7 @@ mod test_xchain_claim {
     #[test]
     fn test_successful_claim_destination_tag() {
         let claim = XChainClaim::new(
-            Cow::Borrowed(ACCOUNT),
+            ACCOUNT.to_string(),
             None,
             Some(XRPAmount::from(FEE)),
             None,
@@ -262,7 +262,7 @@ mod test_xchain_claim {
             Some(12345),
             None,
             XRPAmount::from(XRP_AMOUNT).into(),
-            Cow::Borrowed(DESTINATION),
+            DESTINATION.to_string(),
             xrp_bridge(),
             CLAIM_ID.to_string().into(),
             None,
@@ -274,7 +274,7 @@ mod test_xchain_claim {
     fn test_successful_claim_str_claim_id() {
         let claim_id_str = CLAIM_ID.to_string();
         let claim = XChainClaim::new(
-            Cow::Borrowed(ACCOUNT),
+            ACCOUNT.to_string(),
             None,
             Some(XRPAmount::from(FEE)),
             None,
@@ -284,7 +284,7 @@ mod test_xchain_claim {
             None,
             None,
             XRPAmount::from(XRP_AMOUNT).into(),
-            Cow::Borrowed(DESTINATION),
+            DESTINATION.to_string(),
             xrp_bridge(),
             claim_id_str.as_str().into(),
             None,
@@ -296,7 +296,7 @@ mod test_xchain_claim {
     #[should_panic]
     fn test_xrp_bridge_iou_amount() {
         let claim = XChainClaim::new(
-            Cow::Borrowed(ACCOUNT),
+            ACCOUNT.to_string(),
             None,
             Some(XRPAmount::from(FEE)),
             None,
@@ -306,7 +306,7 @@ mod test_xchain_claim {
             None,
             None,
             iou_amount(),
-            Cow::Borrowed(DESTINATION),
+            DESTINATION.to_string(),
             xrp_bridge(),
             CLAIM_ID.to_string().into(),
             None,
@@ -318,7 +318,7 @@ mod test_xchain_claim {
     #[should_panic]
     fn test_iou_bridge_xrp_amount() {
         let claim = XChainClaim::new(
-            Cow::Borrowed(ACCOUNT),
+            ACCOUNT.to_string(),
             None,
             Some(XRPAmount::from(FEE)),
             None,
@@ -328,7 +328,7 @@ mod test_xchain_claim {
             None,
             None,
             XRPAmount::from(XRP_AMOUNT).into(),
-            Cow::Borrowed(DESTINATION),
+            DESTINATION.to_string(),
             iou_bridge(),
             CLAIM_ID.to_string().into(),
             None,

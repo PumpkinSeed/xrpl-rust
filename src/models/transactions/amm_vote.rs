@@ -22,8 +22,8 @@ pub const AMM_VOTE_MAX_TRADING_FEE: u16 = 1000;
     Debug, Serialize, Deserialize, PartialEq, Eq, Clone, xrpl_rust_macros::ValidateCurrencies,
 )]
 #[serde(rename_all = "PascalCase")]
-pub struct AMMVote<'a> {
-    pub common_fields: CommonFields<'a, NoFlags>,
+pub struct AMMVote {
+    pub common_fields: CommonFields<NoFlags>,
     /// The definition for one of the assets in the AMM's pool.
     pub asset: Currency,
     /// The definition for the other asset in the AMM's pool.
@@ -35,7 +35,7 @@ pub struct AMMVote<'a> {
     pub trading_fee: Option<u16>,
 }
 
-impl Model for AMMVote<'_> {
+impl Model for AMMVote {
     fn get_errors(&self) -> XRPLModelResult<()> {
         self.validate_currencies()?;
         if let Some(trading_fee) = self.trading_fee {
@@ -52,24 +52,24 @@ impl Model for AMMVote<'_> {
     }
 }
 
-impl<'a> Transaction<'a, NoFlags> for AMMVote<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'_, NoFlags> {
+impl Transaction<NoFlags> for AMMVote {
+    fn get_transaction_type(&self) -> &TransactionType {
+        self.common_fields.get_transaction_type()
+    }
+
+    fn get_common_fields(&self) -> &CommonFields<NoFlags> {
         &self.common_fields
     }
 
-    fn get_mut_common_fields(&mut self) -> &mut CommonFields<'a, NoFlags> {
+    fn get_mut_common_fields(&mut self) -> &mut CommonFields<NoFlags> {
         self.common_fields.get_mut_common_fields()
-    }
-
-    fn get_transaction_type(&self) -> &super::TransactionType {
-        self.common_fields.get_transaction_type()
     }
 }
 
-impl<'a> AMMVote<'a> {
+impl<'a> AMMVote {
     pub fn new(
-        account: Cow<'a, str>,
-        account_txn_id: Option<Cow<'a, str>>,
+        account: String,
+        account_txn_id: Option<String>,
         fee: Option<XRPAmount>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
@@ -80,7 +80,7 @@ impl<'a> AMMVote<'a> {
         asset: Currency,
         asset2: Currency,
         trading_fee: Option<u16>,
-    ) -> AMMVote<'a> {
+    ) -> AMMVote {
         AMMVote {
             common_fields: CommonFields::new(
                 account,

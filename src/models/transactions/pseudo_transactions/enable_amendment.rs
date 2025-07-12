@@ -31,7 +31,7 @@ pub enum EnableAmendmentFlag {
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 #[serde(rename_all = "PascalCase")]
-pub struct EnableAmendment<'a> {
+pub struct EnableAmendment {
     // The base fields for all transaction models.
     //
     // See Transaction Types:
@@ -41,18 +41,18 @@ pub struct EnableAmendment<'a> {
     // `<https://xrpl.org/transaction-common-fields.html>`
     /// The type of transaction.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, EnableAmendmentFlag>,
+    pub common_fields: CommonFields<EnableAmendmentFlag>,
     /// The custom fields for the EnableAmendment model.
     ///
     /// See EnableAmendment fields:
     /// `<https://xrpl.org/enableamendment.html#enableamendment-fields>`
-    pub amendment: Cow<'a, str>,
+    pub amendment: String,
     pub ledger_sequence: u32,
 }
 
-impl<'a> Model for EnableAmendment<'a> {}
+impl Model for EnableAmendment {}
 
-impl<'a> Transaction<'a, EnableAmendmentFlag> for EnableAmendment<'a> {
+impl Transaction<EnableAmendmentFlag> for EnableAmendment {
     fn has_flag(&self, flag: &EnableAmendmentFlag) -> bool {
         self.common_fields.has_flag(flag)
     }
@@ -61,19 +61,19 @@ impl<'a> Transaction<'a, EnableAmendmentFlag> for EnableAmendment<'a> {
         self.common_fields.get_transaction_type()
     }
 
-    fn get_common_fields(&self) -> &CommonFields<'_, EnableAmendmentFlag> {
+    fn get_common_fields(&self) -> &CommonFields<EnableAmendmentFlag> {
         self.common_fields.get_common_fields()
     }
 
-    fn get_mut_common_fields(&mut self) -> &mut CommonFields<'a, EnableAmendmentFlag> {
+    fn get_mut_common_fields(&mut self) -> &mut CommonFields<EnableAmendmentFlag> {
         self.common_fields.get_mut_common_fields()
     }
 }
 
-impl<'a> EnableAmendment<'a> {
+impl EnableAmendment {
     pub fn new(
-        account: Cow<'a, str>,
-        account_txn_id: Option<Cow<'a, str>>,
+        account: String,
+        account_txn_id: Option<String>,
         fee: Option<XRPAmount>,
         flags: Option<FlagCollection<EnableAmendmentFlag>>,
         last_ledger_sequence: Option<u32>,
@@ -82,7 +82,7 @@ impl<'a> EnableAmendment<'a> {
         signers: Option<Vec<Signer>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
-        amendment: Cow<'a, str>,
+        amendment: String,
         ledger_sequence: u32,
     ) -> Self {
         Self {

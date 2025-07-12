@@ -25,19 +25,19 @@ use super::{Memo, Signer};
     Debug, Serialize, Deserialize, PartialEq, Eq, Clone, xrpl_rust_macros::ValidateCurrencies,
 )]
 #[serde(rename_all = "PascalCase")]
-pub struct CheckCreate<'a> {
+pub struct CheckCreate {
     /// The base fields for all transaction models.
     ///
     /// See Transaction Common Fields:
     /// `<https://xrpl.org/transaction-common-fields.html>`
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, NoFlags>,
+    pub common_fields: CommonFields<NoFlags>,
     // The custom fields for the CheckCreate model.
     //
     // See CheckCreate fields:
     // `<https://xrpl.org/checkcreate.html#checkcreate-fields>`
     /// The unique address of the account that can cash the Check.
-    pub destination: Cow<'a, str>,
+    pub destination: String,
     /// Maximum amount of source currency the Check is allowed to debit the sender,
     /// including transfer fees on non-XRP currencies. The Check can only credit
     /// the destination with the same currency (from the same issuer, for non-XRP
@@ -49,33 +49,33 @@ pub struct CheckCreate<'a> {
     pub expiration: Option<u32>,
     /// Arbitrary 256-bit hash representing a specific reason or identifier for this Check.
     #[serde(rename = "InvoiceID")]
-    pub invoice_id: Option<Cow<'a, str>>,
+    pub invoice_id: Option<String>,
 }
 
-impl<'a> Model for CheckCreate<'a> {
+impl Model for CheckCreate {
     fn get_errors(&self) -> crate::models::XRPLModelResult<()> {
         self.validate_currencies()
     }
 }
 
-impl<'a> Transaction<'a, NoFlags> for CheckCreate<'a> {
+impl Transaction<NoFlags> for CheckCreate {
     fn get_transaction_type(&self) -> &TransactionType {
         self.common_fields.get_transaction_type()
     }
 
-    fn get_common_fields(&self) -> &CommonFields<'_, NoFlags> {
+    fn get_common_fields(&self) -> &CommonFields<NoFlags> {
         self.common_fields.get_common_fields()
     }
 
-    fn get_mut_common_fields(&mut self) -> &mut CommonFields<'a, NoFlags> {
+    fn get_mut_common_fields(&mut self) -> &mut CommonFields<NoFlags> {
         self.common_fields.get_mut_common_fields()
     }
 }
 
-impl<'a> CheckCreate<'a> {
+impl CheckCreate {
     pub fn new(
-        account: Cow<'a, str>,
-        account_txn_id: Option<Cow<'a, str>>,
+        account: String,
+        account_txn_id: Option<String>,
         fee: Option<XRPAmount>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
@@ -83,11 +83,11 @@ impl<'a> CheckCreate<'a> {
         signers: Option<Vec<Signer>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
-        destination: Cow<'a, str>,
+        destination: String,
         send_max: Amount,
         destination_tag: Option<u32>,
         expiration: Option<u32>,
-        invoice_id: Option<Cow<'a, str>>,
+        invoice_id: Option<String>,
     ) -> Self {
         Self {
             common_fields: CommonFields::new(

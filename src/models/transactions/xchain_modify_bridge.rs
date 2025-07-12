@@ -23,16 +23,16 @@ pub enum XChainModifyBridgeFlags {
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, xrpl_rust_macros::ValidateCurrencies)]
 #[serde(rename_all = "PascalCase")]
-pub struct XChainModifyBridge<'a> {
+pub struct XChainModifyBridge {
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, XChainModifyBridgeFlags>,
+    pub common_fields: CommonFields<XChainModifyBridgeFlags>,
     #[serde(rename = "XChainBridge")]
     pub xchain_bridge: XChainBridge,
     pub min_account_create_amount: Option<Amount>,
     pub signature_reward: Option<Amount>,
 }
 
-impl Model for XChainModifyBridge<'_> {
+impl Model for XChainModifyBridge {
     fn get_errors(&self) -> XRPLModelResult<()> {
         self.validate_currencies()?;
         self.get_must_change_or_clear_error()?;
@@ -42,12 +42,12 @@ impl Model for XChainModifyBridge<'_> {
     }
 }
 
-impl<'a> Transaction<'a, XChainModifyBridgeFlags> for XChainModifyBridge<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'_, XChainModifyBridgeFlags> {
+impl Transaction<XChainModifyBridgeFlags> for XChainModifyBridge {
+    fn get_common_fields(&self) -> &CommonFields<XChainModifyBridgeFlags> {
         &self.common_fields
     }
 
-    fn get_mut_common_fields(&mut self) -> &mut CommonFields<'a, XChainModifyBridgeFlags> {
+    fn get_mut_common_fields(&mut self) -> &mut CommonFields<XChainModifyBridgeFlags> {
         &mut self.common_fields
     }
 
@@ -56,10 +56,10 @@ impl<'a> Transaction<'a, XChainModifyBridgeFlags> for XChainModifyBridge<'a> {
     }
 }
 
-impl<'a> XChainModifyBridge<'a> {
+impl XChainModifyBridge {
     pub fn new(
-        account: Cow<'a, str>,
-        account_txn_id: Option<Cow<'a, str>>,
+        account: String,
+        account_txn_id: Option<String>,
         fee: Option<XRPAmount>,
         flags: Option<FlagCollection<XChainModifyBridgeFlags>>,
         last_ledger_sequence: Option<u32>,
@@ -71,7 +71,7 @@ impl<'a> XChainModifyBridge<'a> {
         xchain_bridge: XChainBridge,
         min_account_create_amount: Option<Amount>,
         signature_reward: Option<Amount>,
-    ) -> XChainModifyBridge<'a> {
+    ) -> XChainModifyBridge {
         XChainModifyBridge {
             common_fields: CommonFields::new(
                 account,
@@ -142,7 +142,7 @@ mod test_xchain_modify_bridge {
     const ISSUER: &str = "rGWrZyQqhTp9Xu7G5Pkayo7bXjH4k4QYpf";
     const GENESIS: &str = "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh";
 
-    fn xrp_bridge<'a>() -> XChainBridge {
+    fn xrp_bridge() -> XChainBridge {
         XChainBridge {
             locking_chain_door: ACCOUNT.to_string(),
             locking_chain_issue: XRP::new().into(),
@@ -151,7 +151,7 @@ mod test_xchain_modify_bridge {
         }
     }
 
-    fn iou_bridge<'a>() -> XChainBridge {
+    fn iou_bridge() -> XChainBridge {
         XChainBridge {
             locking_chain_door: ACCOUNT.to_string(),
             locking_chain_issue: IssuedCurrency {
@@ -171,7 +171,7 @@ mod test_xchain_modify_bridge {
     #[test]
     fn test_successful_modify_bridge() {
         let txn = XChainModifyBridge::new(
-            Cow::Borrowed(ACCOUNT),
+            ACCOUNT.to_string(),
             None,
             Some(XRPAmount::from(FEE)),
             None,
@@ -191,7 +191,7 @@ mod test_xchain_modify_bridge {
     #[test]
     fn test_successful_modify_bridge_only_signature_reward() {
         let txn = XChainModifyBridge::new(
-            Cow::Borrowed(ACCOUNT),
+            ACCOUNT.to_string(),
             None,
             Some(XRPAmount::from(FEE)),
             None,
@@ -211,7 +211,7 @@ mod test_xchain_modify_bridge {
     #[test]
     fn test_successful_modify_bridge_only_min_account_create_amount() {
         let txn = XChainModifyBridge::new(
-            Cow::Borrowed(ACCOUNT),
+            ACCOUNT.to_string(),
             None,
             Some(XRPAmount::from(FEE)),
             None,
@@ -232,7 +232,7 @@ mod test_xchain_modify_bridge {
     #[should_panic]
     fn test_modify_bridge_empty() {
         let txn = XChainModifyBridge::new(
-            Cow::Borrowed(ACCOUNT),
+            ACCOUNT.to_string(),
             None,
             Some(XRPAmount::from(FEE)),
             None,
@@ -253,7 +253,7 @@ mod test_xchain_modify_bridge {
     #[should_panic]
     fn test_account_not_in_bridge() {
         let txn = XChainModifyBridge::new(
-            Cow::Borrowed(ACCOUNT2),
+            ACCOUNT2.to_string(),
             None,
             Some(XRPAmount::from(FEE)),
             None,
@@ -274,7 +274,7 @@ mod test_xchain_modify_bridge {
     #[should_panic]
     fn test_iou_iou_min_account_create_amount() {
         let txn = XChainModifyBridge::new(
-            Cow::Borrowed(ACCOUNT),
+            ACCOUNT.to_string(),
             None,
             Some(XRPAmount::from(FEE)),
             None,
@@ -295,7 +295,7 @@ mod test_xchain_modify_bridge {
     #[should_panic]
     fn test_invalid_signature_reward() {
         let txn = XChainModifyBridge::new(
-            Cow::Borrowed(ACCOUNT),
+            ACCOUNT.to_string(),
             None,
             Some(XRPAmount::from(FEE)),
             None,
@@ -316,7 +316,7 @@ mod test_xchain_modify_bridge {
     #[should_panic]
     fn test_invalid_min_account_create_amount() {
         let txn = XChainModifyBridge::new(
-            Cow::Borrowed(ACCOUNT),
+            ACCOUNT.to_string(),
             None,
             Some(XRPAmount::from(FEE)),
             None,
