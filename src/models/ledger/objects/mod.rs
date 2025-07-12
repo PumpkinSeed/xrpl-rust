@@ -76,14 +76,14 @@ pub enum LedgerEntryType {
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub enum LedgerEntry<'a> {
-    AccountRoot(AccountRoot<'a>),
-    Amendments(Amendments<'a>),
-    AMM(AMM<'a>),
-    Bridge(Bridge<'a>),
+    AccountRoot(AccountRoot),
+    Amendments(Amendments),
+    AMM(AMM),
+    Bridge(Bridge),
     Check(Check<'a>),
     DepositPreauth(DepositPreauth<'a>),
     DirectoryNode(DirectoryNode<'a>),
-    Escrow(Escrow<'a>),
+    Escrow(Escrow),
     FeeSettings(FeeSettings<'a>),
     LedgerHashes(LedgerHashes<'a>),
     NegativeUNL(NegativeUNL<'a>),

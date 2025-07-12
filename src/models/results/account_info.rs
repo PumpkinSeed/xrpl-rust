@@ -105,7 +105,7 @@ pub struct QueueData<'a> {
 pub struct AccountInfoBase<'a> {
     /// The AccountRoot ledger object with this account's information, as
     /// stored in the ledger.
-    pub account_data: AccountRoot<'a>,
+    pub account_data: AccountRoot,
     /// The account's flag statuses (see below), based on the Flags field
     /// of the account.
     pub account_flags: Option<AccountFlags>,
@@ -158,7 +158,7 @@ pub struct AccountInfo<'a> {
 }
 
 impl<'a> AccountInfoVersionMap<'a> {
-    pub fn get_account_root(&self) -> &AccountRoot<'a> {
+    pub fn get_account_root(&self) -> &AccountRoot {
         match self {
             AccountInfoVersionMap::Default(account_info) => &account_info.base.account_data,
             AccountInfoVersionMap::V1(account_info) => &account_info.base.account_data,

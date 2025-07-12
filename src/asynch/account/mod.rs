@@ -58,7 +58,7 @@ pub async fn get_account_root<'a: 'b, 'b, C>(
     address: Cow<'a, str>,
     client: &'a C,
     ledger_index: Cow<'a, str>,
-) -> XRPLHelperResult<AccountRoot<'b>>
+) -> XRPLHelperResult<AccountRoot>
 where
     C: XRPLAsyncClient,
 {
