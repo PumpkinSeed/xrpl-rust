@@ -37,7 +37,7 @@ pub struct Offer<'a> {
     /// See Ledger Object Common Fields:
     /// `<https://xrpl.org/ledger-entry-common-fields.html>`
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, OfferFlag>,
+    pub common_fields: CommonFields<OfferFlag>,
     // The custom fields for the Offer model.
     //
     // See Offer fields:
@@ -94,12 +94,12 @@ impl<'a> Offer<'a> {
         expiration: Option<u32>,
     ) -> Self {
         Self {
-            common_fields: CommonFields {
+            common_fields: CommonFields::new(
                 flags,
-                ledger_entry_type: LedgerEntryType::Offer,
-                index,
-                ledger_index,
-            },
+                LedgerEntryType::Offer,
+                index.map(|x| x.to_string()),
+                ledger_index.map(|x| x.to_string()),
+            ),
             account,
             book_directory,
             book_node,

@@ -22,7 +22,7 @@ pub struct FeeSettings<'a> {
     /// See Ledger Object Common Fields:
     /// `<https://xrpl.org/ledger-entry-common-fields.html>`
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, NoFlags>,
+    pub common_fields: CommonFields<NoFlags>,
     // The custom fields for the FeeSettings model.
     //
     // See FeeSettings fields:
@@ -55,12 +55,12 @@ impl<'a> FeeSettings<'a> {
         reserve_increment: u32,
     ) -> Self {
         Self {
-            common_fields: CommonFields {
-                flags: FlagCollection::default(),
-                ledger_entry_type: LedgerEntryType::FeeSettings,
-                index,
-                ledger_index,
-            },
+            common_fields: CommonFields::new(
+                FlagCollection::default(),
+                LedgerEntryType::FeeSettings,
+                index.map(|x| x.to_string()),
+                ledger_index.map(|x| x.to_string()),
+            ),
             base_fee,
             reference_fee_units,
             reserve_base,

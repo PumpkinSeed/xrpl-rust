@@ -36,7 +36,7 @@ pub struct NegativeUNL<'a> {
     /// See Ledger Object Common Fields:
     /// `<https://xrpl.org/ledger-entry-common-fields.html>`
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, NoFlags>,
+    pub common_fields: CommonFields<NoFlags>,
     // The custom fields for the NegativeUNL model.
     //
     // See NegativeUNL fields:
@@ -69,12 +69,12 @@ impl<'a> NegativeUNL<'a> {
         validator_to_re_enable: Option<Cow<'a, str>>,
     ) -> Self {
         Self {
-            common_fields: CommonFields {
-                flags: FlagCollection::default(),
-                ledger_entry_type: LedgerEntryType::NegativeUNL,
-                index,
-                ledger_index,
-            },
+            common_fields: CommonFields::new(
+                FlagCollection::default(),
+                LedgerEntryType::NegativeUNL,
+                index.map(|x| x.to_string()),
+                ledger_index.map(|x| x.to_string()),
+            ),
             disabled_validators,
             validator_to_disable,
             validator_to_re_enable,

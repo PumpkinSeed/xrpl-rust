@@ -11,7 +11,7 @@ use super::{CommonFields, LedgerEntryType, LedgerObject};
 #[serde(rename_all = "PascalCase")]
 pub struct Bridge<'a> {
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, NoFlags>,
+    pub common_fields: CommonFields<NoFlags>,
     pub account: Cow<'a, str>,
     pub signature_reward: XRPAmount,
     #[serde(rename = "XChainAccountClaimCount")]
@@ -45,12 +45,12 @@ impl<'a> Bridge<'a> {
         min_account_create_amount: Option<XRPAmount>,
     ) -> Bridge<'a> {
         Bridge {
-            common_fields: CommonFields {
-                flags: Default::default(),
-                ledger_entry_type: LedgerEntryType::Bridge,
-                index,
-                ledger_index,
-            },
+            common_fields: CommonFields::new(
+                Default::default(),
+                LedgerEntryType::Bridge,
+                index.map(|x| x.to_string()),
+                ledger_index.map(|x| x.to_string()),
+            ),
             account,
             signature_reward,
             xchain_account_claim_count,

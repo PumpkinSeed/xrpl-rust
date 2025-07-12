@@ -49,7 +49,7 @@ pub struct RippleState<'a> {
     /// See Ledger Object Common Fields:
     /// `<https://xrpl.org/ledger-entry-common-fields.html>`
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, RippleStateFlag>,
+    pub common_fields: CommonFields<RippleStateFlag>,
     // The custom fields for the RippleState model.
     //
     // See RippleState fields:
@@ -115,12 +115,12 @@ impl<'a> RippleState<'a> {
         low_quality_out: Option<u32>,
     ) -> Self {
         Self {
-            common_fields: CommonFields {
+            common_fields: CommonFields::new(
                 flags,
-                ledger_entry_type: LedgerEntryType::RippleState,
-                index,
-                ledger_index,
-            },
+                LedgerEntryType::RippleState,
+                index.map(|x| x.to_string()),
+                ledger_index.map(|x| x.to_string()),
+            ),
             balance,
             high_limit,
             high_node,

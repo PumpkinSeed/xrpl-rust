@@ -52,7 +52,7 @@ pub struct SignerList<'a> {
     /// See Ledger Object Common Fields:
     /// `<https://xrpl.org/ledger-entry-common-fields.html>`
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, SignerListFlag>,
+    pub common_fields: CommonFields<SignerListFlag>,
     // The custom fields for the SignerList model.
     //
     // See SignerList fields:
@@ -99,12 +99,12 @@ impl<'a> SignerList<'a> {
         signer_quorum: u32,
     ) -> Self {
         Self {
-            common_fields: CommonFields {
+            common_fields: CommonFields::new(
                 flags,
-                ledger_entry_type: LedgerEntryType::SignerList,
-                index,
-                ledger_index,
-            },
+                LedgerEntryType::SignerList,
+                index.map(|x| x.to_string()),
+                ledger_index.map(|x| x.to_string()),
+            ),
             owner_node,
             previous_txn_id,
             previous_txn_lgr_seq,

@@ -22,7 +22,7 @@ pub struct DepositPreauth<'a> {
     /// See Ledger Object Common Fields:
     /// `<https://xrpl.org/ledger-entry-common-fields.html>`
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, NoFlags>,
+    pub common_fields: CommonFields<NoFlags>,
     // The custom fields for the DepositPreauth model.
     //
     // See DepositPreauth fields:
@@ -60,12 +60,12 @@ impl<'a> DepositPreauth<'a> {
         previous_txn_lgr_seq: u32,
     ) -> Self {
         Self {
-            common_fields: CommonFields {
-                flags: FlagCollection::default(),
-                ledger_entry_type: LedgerEntryType::DepositPreauth,
-                index,
-                ledger_index,
-            },
+            common_fields: CommonFields::new(
+                FlagCollection::default(),
+                LedgerEntryType::DepositPreauth,
+                index.map(|x| x.to_string()),
+                ledger_index.map(|x| x.to_string()),
+            ),
             account,
             authorize,
             owner_node,

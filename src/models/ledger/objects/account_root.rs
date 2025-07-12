@@ -57,7 +57,7 @@ pub struct AccountRoot<'a> {
     /// See Ledger Object Common Fields:
     /// `<https://xrpl.org/ledger-entry-common-fields.html>`
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, AccountRootFlag>,
+    pub common_fields: CommonFields<AccountRootFlag>,
     // The custom fields for the AccountRoot model.
     //
     // See AccountRoot fields:
@@ -156,8 +156,8 @@ impl<'a> AccountRoot<'a> {
             common_fields: CommonFields::new(
                 flags,
                 LedgerEntryType::AccountRoot,
-                index,
-                ledger_index,
+                index.map(|x| x.to_string()),
+                ledger_index.map(|x| x.to_string()),
             ),
             account,
             owner_count,

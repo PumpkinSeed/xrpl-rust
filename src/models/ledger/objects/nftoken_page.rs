@@ -31,7 +31,7 @@ pub struct NFTokenPage<'a> {
     /// See Ledger Object Common Fields:
     /// `<https://xrpl.org/ledger-entry-common-fields.html>`
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, NoFlags>,
+    pub common_fields: CommonFields<NoFlags>,
     // The custom fields for the NFTokenPage model.
     //
     // See NFTokenPage fields:
@@ -75,12 +75,12 @@ impl<'a> NFTokenPage<'a> {
         previous_txn_lgr_seq: Option<u32>,
     ) -> Self {
         Self {
-            common_fields: CommonFields {
-                flags: FlagCollection::default(),
-                ledger_entry_type: LedgerEntryType::NFTokenPage,
-                index,
-                ledger_index,
-            },
+            common_fields: CommonFields::new(
+                FlagCollection::default(),
+                LedgerEntryType::NFTokenPage,
+                index.map(|x| x.to_string()),
+                ledger_index.map(|x| x.to_string()),
+            ),
             nftokens,
             next_page_min,
             previous_page_min,

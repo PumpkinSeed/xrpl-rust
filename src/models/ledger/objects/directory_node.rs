@@ -31,7 +31,7 @@ pub struct DirectoryNode<'a> {
     /// See Ledger Object Common Fields:
     /// `<https://xrpl.org/ledger-entry-common-fields.html>`
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, NoFlags>,
+    pub common_fields: CommonFields<NoFlags>,
     // The custom fields for the DirectoryNode model.
     //
     // See DirectoryNode fields:
@@ -88,12 +88,12 @@ impl<'a> DirectoryNode<'a> {
         taker_pays_issuer: Option<Cow<'a, str>>,
     ) -> Self {
         Self {
-            common_fields: CommonFields {
-                flags: FlagCollection::default(),
-                ledger_entry_type: LedgerEntryType::DirectoryNode,
-                index,
-                ledger_index,
-            },
+            common_fields: CommonFields::new(
+                FlagCollection::default(),
+                LedgerEntryType::DirectoryNode,
+                index.map(|x| x.to_string()),
+                ledger_index.map(|x| x.to_string()),
+            ),
             exchange_rate,
             indexes,
             root_index,

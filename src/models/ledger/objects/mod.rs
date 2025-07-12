@@ -39,7 +39,7 @@ use ripple_state::RippleState;
 use signer_list::SignerList;
 use strum::IntoEnumIterator;
 
-use alloc::borrow::Cow;
+
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 use strum_macros::Display;
@@ -94,19 +94,19 @@ pub enum LedgerEntry<'a> {
     RippleState(RippleState<'a>),
     SignerList(SignerList<'a>),
     Ticket(Ticket<'a>),
-    XChainOwnedClaimID(XChainOwnedClaimID<'a>),
-    XChainOwnedCreateAccountClaimID(XChainOwnedCreateAccountClaimID<'a>),
+    XChainOwnedClaimID(XChainOwnedClaimID),
+    XChainOwnedCreateAccountClaimID(XChainOwnedCreateAccountClaimID),
 }
 
 #[skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "PascalCase")]
-pub struct XChainClaimProofSig<'a> {
+pub struct XChainClaimProofSig {
     pub amount: Amount,
-    pub attestation_reward_account: Cow<'a, str>,
-    pub attestation_signer_account: Cow<'a, str>,
-    pub destination: Cow<'a, str>,
-    pub public_key: Cow<'a, str>,
+    pub attestation_reward_account: String,
+    pub attestation_signer_account: String,
+    pub destination: String,
+    pub public_key: String,
     pub was_locking_chain_send: u8,
 }
 
@@ -117,7 +117,7 @@ pub struct XChainClaimProofSig<'a> {
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone, new)]
 #[serde(rename_all = "PascalCase")]
-pub struct CommonFields<'a, F>
+pub struct CommonFields<F>
 where
     F: IntoEnumIterator + Serialize + core::fmt::Debug,
 {
@@ -129,13 +129,13 @@ where
     /// The object ID of a single object to retrieve from the ledger, as a
     /// 64-character (256-bit) hexadecimal string.
     #[serde(rename = "index")]
-    pub index: Option<Cow<'a, str>>,
+    pub index: Option<String>,
     /// The object ID in transaction metadata of a single object to retrieve from the ledger, as a
     /// 64-character (256-bit) hexadecimal string.
-    pub ledger_index: Option<Cow<'a, str>>,
+    pub ledger_index: Option<String>,
 }
 
-impl<'a, T> LedgerObject<T> for CommonFields<'a, T>
+impl<'a, T> LedgerObject<T> for CommonFields<T>
 where
     T: IntoEnumIterator + Serialize + PartialEq + core::fmt::Debug,
 {

@@ -33,7 +33,7 @@ pub struct NFTokenOffer<'a> {
     /// See Ledger Object Common Fields:
     /// `<https://xrpl.org/ledger-entry-common-fields.html>`
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, NFTokenOfferFlag>,
+    pub common_fields: CommonFields<NFTokenOfferFlag>,
     // The custom fields for the NFTokenOffer model.
     //
     // See NFTokenOffer fields:
@@ -95,12 +95,12 @@ impl<'a> NFTokenOffer<'a> {
         owner_node: Option<Cow<'a, str>>,
     ) -> Self {
         Self {
-            common_fields: CommonFields {
+            common_fields: CommonFields::new(
                 flags,
-                ledger_entry_type: LedgerEntryType::NFTokenOffer,
-                index,
-                ledger_index,
-            },
+                LedgerEntryType::NFTokenOffer,
+                index.map(|x| x.to_string()),
+                ledger_index.map(|x| x.to_string()),
+            ),
             amount,
             nftoken_id,
             owner,
