@@ -105,10 +105,10 @@ pub struct AccountTxTransactionV1 {
     pub tx: String,
 }
 
-impl<'a> TryFrom<XRPLResult<'a>> for AccountTxVersionMap {
+impl<'a> TryFrom<XRPLResult> for AccountTxVersionMap {
     type Error = XRPLModelException;
 
-    fn try_from(result: XRPLResult<'a>) -> XRPLModelResult<Self> {
+    fn try_from(result: XRPLResult) -> XRPLModelResult<Self> {
         match result {
             XRPLResult::AccountTx(account_tx) => Ok(account_tx),
             res => Err(XRPLResultException::UnexpectedResultType(

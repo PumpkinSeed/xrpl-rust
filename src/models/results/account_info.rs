@@ -165,10 +165,10 @@ impl AccountInfoVersionMap {
     }
 }
 
-impl<'a> TryFrom<XRPLResult<'a>> for AccountInfoVersionMap {
+impl<'a> TryFrom<XRPLResult> for AccountInfoVersionMap {
     type Error = XRPLModelException;
 
-    fn try_from(result: XRPLResult<'a>) -> XRPLModelResult<Self> {
+    fn try_from(result: XRPLResult) -> XRPLModelResult<Self> {
         match result {
             XRPLResult::AccountInfo(account_info) => Ok(account_info),
             res => Err(XRPLResultException::UnexpectedResultType(

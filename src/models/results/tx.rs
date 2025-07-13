@@ -100,10 +100,10 @@ pub enum Transaction {
     },
 }
 
-impl<'a> TryFrom<XRPLResult<'a>> for TxVersionMap {
+impl<'a> TryFrom<XRPLResult> for TxVersionMap {
     type Error = XRPLModelException;
 
-    fn try_from(result: XRPLResult<'a>) -> XRPLModelResult<Self> {
+    fn try_from(result: XRPLResult) -> XRPLModelResult<Self> {
         match result {
             XRPLResult::Tx(tx) => Ok(tx),
             res => Err(

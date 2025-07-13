@@ -60,7 +60,7 @@ pub struct NftOffer {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct XRPLOtherResult(Value);
 
-impl TryFrom<XRPLResult<'_>> for XRPLOtherResult {
+impl TryFrom<XRPLResult> for XRPLOtherResult {
     type Error = XRPLModelException;
 
     fn try_from(result: XRPLResult) -> XRPLModelResult<Self> {
@@ -108,7 +108,7 @@ impl XRPLOtherResult {
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(untagged)]
-pub enum XRPLResult<'a> {
+pub enum XRPLResult {
     AccountChannels(account_channels::AccountChannels),
     AccountInfo(account_info::AccountInfoVersionMap),
     AccountCurrencies(account_currencies::AccountCurrencies),
@@ -126,7 +126,7 @@ pub enum XRPLResult<'a> {
     GatewayBalances(gateway_balances::GatewayBalances),
     Ledger(ledger::Ledger),
     LedgerClosed(ledger_closed::LedgerClosed),
-    LedgerCurrent(ledger_current::LedgerCurrent<'a>),
+    LedgerCurrent(ledger_current::LedgerCurrent),
     LedgerData(ledger_data::LedgerData),
     LedgerEntry(ledger_entry::LedgerEntry),
     Manifest(manifest::Manifest),
@@ -144,25 +144,15 @@ pub enum XRPLResult<'a> {
     SubmitMultisigned(submit_multisigned::SubmitMultisigned),
     TransactionEntry(transaction_entry::TransactionEntry),
     Tx(tx::TxVersionMap),
-    Subscribe(subscribe::Subscribe<'a>),
-    Unsubscribe(unsubscribe::Unsubscribe<'a>),
-    Ping(ping::Ping<'a>),
+    Subscribe(subscribe::Subscribe),
+    Unsubscribe(unsubscribe::Unsubscribe),
+    Ping(ping::Ping),
     Other(XRPLOtherResult),
-}
-
-macro_rules! impl_from_result {
-    ($module_name:ident, $variant:ident) => {
-        impl<'a> From<$module_name::$variant<'a>> for XRPLResult<'a> {
-            fn from(value: $module_name::$variant<'a>) -> Self {
-                XRPLResult::$variant(value)
-            }
-        }
-    };
 }
 
 macro_rules! impl_from_result_no_lt {
     ($module_name:ident, $variant:ident) => {
-        impl<'a> From<$module_name::$variant> for XRPLResult<'a> {
+        impl From<$module_name::$variant> for XRPLResult {
             fn from(value: $module_name::$variant) -> Self {
                 XRPLResult::$variant(value)
             }
@@ -185,7 +175,7 @@ impl_from_result_no_lt!(fee, Fee);
 impl_from_result_no_lt!(gateway_balances, GatewayBalances);
 impl_from_result_no_lt!(ledger, Ledger);
 impl_from_result_no_lt!(ledger_closed, LedgerClosed);
-impl_from_result!(ledger_current, LedgerCurrent);
+impl_from_result_no_lt!(ledger_current, LedgerCurrent);
 impl_from_result_no_lt!(ledger_data, LedgerData);
 impl_from_result_no_lt!(ledger_entry, LedgerEntry);
 impl_from_result_no_lt!(manifest, Manifest);
@@ -202,47 +192,28 @@ impl_from_result_no_lt!(server_state, ServerState);
 impl_from_result_no_lt!(submit, Submit);
 impl_from_result_no_lt!(submit_multisigned, SubmitMultisigned);
 impl_from_result_no_lt!(transaction_entry, TransactionEntry);
-impl_from_result!(ping, Ping);
-impl_from_result!(subscribe, Subscribe);
-impl_from_result!(unsubscribe, Unsubscribe);
+impl_from_result_no_lt!(ping, Ping);
+impl_from_result_no_lt!(subscribe, Subscribe);
+impl_from_result_no_lt!(unsubscribe, Unsubscribe);
 
-impl From<Value> for XRPLResult<'_> {
+impl From<Value> for XRPLResult {
     fn from(value: Value) -> Self {
         XRPLResult::Other(XRPLOtherResult(value))
     }
 }
 
-impl From<XRPLOtherResult> for XRPLResult<'_> {
+impl From<XRPLOtherResult> for XRPLResult {
     fn from(other: XRPLOtherResult) -> Self {
         XRPLResult::Other(other)
     }
 }
 
-macro_rules! impl_try_from_result {
-    ($module_name:ident, $type:ident, $variant:ident) => {
-        impl<'a> TryFrom<XRPLResult<'a>> for $module_name::$type<'a> {
-            type Error = XRPLModelException;
-
-            fn try_from(result: XRPLResult<'a>) -> XRPLModelResult<Self> {
-                match result {
-                    XRPLResult::$variant(value) => Ok(value),
-                    res => Err(XRPLResultException::UnexpectedResultType(
-                        stringify!($variant).to_string(),
-                        res.get_name(),
-                    )
-                    .into()),
-                }
-            }
-        }
-    };
-}
-
 macro_rules! impl_try_from_result_no_lt {
     ($module_name:ident, $type:ident, $variant:ident) => {
-        impl<'a> TryFrom<XRPLResult<'a>> for $module_name::$type {
+        impl TryFrom<XRPLResult> for $module_name::$type {
             type Error = XRPLModelException;
 
-            fn try_from(result: XRPLResult<'a>) -> XRPLModelResult<Self> {
+            fn try_from(result: XRPLResult) -> XRPLModelResult<Self> {
                 match result {
                     XRPLResult::$variant(value) => Ok(value),
                     res => Err(XRPLResultException::UnexpectedResultType(
@@ -271,7 +242,7 @@ impl_try_from_result_no_lt!(fee, Fee, Fee);
 impl_try_from_result_no_lt!(gateway_balances, GatewayBalances, GatewayBalances);
 impl_try_from_result_no_lt!(ledger, Ledger, Ledger);
 impl_try_from_result_no_lt!(ledger_closed, LedgerClosed, LedgerClosed);
-impl_try_from_result!(ledger_current, LedgerCurrent, LedgerCurrent);
+impl_try_from_result_no_lt!(ledger_current, LedgerCurrent, LedgerCurrent);
 impl_try_from_result_no_lt!(ledger_data, LedgerData, LedgerData);
 impl_try_from_result_no_lt!(ledger_entry, LedgerEntry, LedgerEntry);
 impl_try_from_result_no_lt!(manifest, Manifest, Manifest);
@@ -287,11 +258,11 @@ impl_try_from_result_no_lt!(server_state, ServerState, ServerState);
 impl_try_from_result_no_lt!(submit, Submit, Submit);
 impl_try_from_result_no_lt!(submit_multisigned, SubmitMultisigned, SubmitMultisigned);
 impl_try_from_result_no_lt!(transaction_entry, TransactionEntry, TransactionEntry);
-impl_try_from_result!(ping, Ping, Ping);
-impl_try_from_result!(subscribe, Subscribe, Subscribe);
-impl_try_from_result!(unsubscribe, Unsubscribe, Unsubscribe);
+impl_try_from_result_no_lt!(ping, Ping, Ping);
+impl_try_from_result_no_lt!(subscribe, Subscribe, Subscribe);
+impl_try_from_result_no_lt!(unsubscribe, Unsubscribe, Unsubscribe);
 
-impl TryInto<Value> for XRPLResult<'_> {
+impl TryInto<Value> for XRPLResult {
     type Error = XRPLModelException;
 
     fn try_into(self) -> XRPLModelResult<Value> {
@@ -302,7 +273,7 @@ impl TryInto<Value> for XRPLResult<'_> {
     }
 }
 
-impl XRPLResult<'_> {
+impl XRPLResult {
     pub(crate) fn get_name(&self) -> String {
         match self {
             XRPLResult::AccountChannels(_) => "AccountChannels".to_string(),
