@@ -6,7 +6,6 @@ mod json_rpc;
 #[cfg(feature = "websocket")]
 mod websocket;
 
-use alloc::borrow::Cow;
 use embassy_sync::blocking_mutex::raw::{NoopRawMutex, RawMutex};
 use serde::{Deserialize, Serialize};
 
@@ -78,7 +77,7 @@ pub trait XRPLFaucet: XRPLClient {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct CommonFields<'a> {
-    pub build_version: Option<Cow<'a, str>>,
+pub struct CommonFields {
+    pub build_version: Option<String>,
     pub network_id: Option<u32>,
 }

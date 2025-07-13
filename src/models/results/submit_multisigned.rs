@@ -1,5 +1,3 @@
-use alloc::borrow::Cow;
-
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 
@@ -11,17 +9,17 @@ use serde_with::skip_serializing_none;
 /// `<https://xrpl.org/submit_multisigned.html>`
 #[skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct SubmitMultisigned<'a> {
+pub struct SubmitMultisigned {
     /// Code indicating the preliminary result of the transaction,
     /// for example tesSUCCESS
-    pub engine_result: Cow<'a, str>,
+    pub engine_result: String,
     /// Numeric code indicating the preliminary result of the transaction,
     /// directly correlated to engine_result
     pub engine_result_code: i32,
     /// Human-readable explanation of the preliminary transaction result
-    pub engine_result_message: Cow<'a, str>,
+    pub engine_result_message: String,
     /// The complete transaction in hex string format
-    pub tx_blob: Cow<'a, str>,
+    pub tx_blob: String,
     /// The complete transaction in JSON format
     pub tx_json: serde_json::Value,
 }

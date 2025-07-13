@@ -1,5 +1,3 @@
-use alloc::borrow::Cow;
-
 use serde::{Deserialize, Serialize};
 
 use crate::models::Amount;
@@ -11,12 +9,12 @@ use crate::models::Amount;
 /// `<https://xrpl.org/book_offers.html>`
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct BookOffers<'a> {
+pub struct BookOffers {
     /// Array of offer objects, each of which has the fields of an Offer object
-    pub offers: Cow<'a, [BookOffer<'a>]>,
+    pub offers: Vec<BookOffer>,
     /// The identifying hash of the ledger version that was used when
     /// retrieving this data, as requested.
-    pub ledger_hash: Option<Cow<'a, str>>,
+    pub ledger_hash: Option<String>,
     /// The ledger index of the ledger version that was used when retrieving
     /// this data, as requested. Omitted if ledger_current_index is provided.
     pub ledger_index: Option<u32>,
@@ -30,17 +28,17 @@ pub struct BookOffers<'a> {
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
 #[serde(rename_all = "PascalCase")]
-pub struct BookOffer<'a> {
+pub struct BookOffer {
     /// Bit-map of boolean flags enabled for this offer.
     pub flags: u32,
     /// The exchange rate, as the ratio taker_pays divided by taker_gets.
     /// For fairness, offers that have the same quality are automatically
     /// taken first-in, first-out.
     #[serde(rename = "quality")]
-    pub quality: Cow<'a, str>,
+    pub quality: String,
     /// The unique ID of this offer.
     #[serde(rename = "index")]
-    pub index: Cow<'a, str>,
+    pub index: String,
     /// The amount and type of currency being sold.
     pub taker_gets: Amount,
     /// The maximum amount of currency that the taker can get, given the
@@ -52,18 +50,18 @@ pub struct BookOffer<'a> {
     /// funding status of the offer. Only included in partially-funded offers.
     pub taker_pays_funded: Option<Amount>,
     /// The account that placed this offer.
-    pub account: Cow<'a, str>,
+    pub account: String,
     /// Amount of the TakerGets currency the side placing the offer has
     /// available to be traded. (XRP is represented as drops; any other
     /// currency is represented as a decimal value.) If a trader has
     /// multiple offers in the same book, only the highest-ranked offer
     /// includes this field.
-    pub owner_funds: Option<Cow<'a, str>>,
+    pub owner_funds: Option<String>,
     /// The ID of the Offer Directory that links to this offer.
-    pub book_directory: Cow<'a, str>,
+    pub book_directory: String,
     /// A hint indicating which page of the Offer Directory links to this
     /// object.
-    pub book_node: Option<Cow<'a, str>>,
+    pub book_node: Option<String>,
     /// Time after which this offer is considered expired.
     pub expiration: Option<u32>,
 }
@@ -142,7 +140,7 @@ mod tests {
             first_offer.book_directory,
             "7E5F614417C2D0A7CEFEB73C4AA773ED5B078DE2B5771F6D55055E4C405218EB"
         );
-        assert_eq!(first_offer.book_node, Some(Cow::from("0000000000000000")));
+        assert_eq!(first_offer.book_node, Some("0000000000000000".to_string()));
         assert_eq!(first_offer.account, "rM3X3QSr8icjTGpaF52dozhbT2BZSXJQYM");
 
         if let Amount::IssuedCurrencyAmount(amount) = &first_offer.taker_gets {
@@ -169,7 +167,7 @@ mod tests {
             second_offer.book_directory,
             "7E5F614417C2D0A7CEFEB73C4AA773ED5B078DE2B5771F6D5505DCAA8FE12000"
         );
-        assert_eq!(second_offer.book_node, Some(Cow::from("0000000000000000")));
+        assert_eq!(second_offer.book_node, Some("0000000000000000".to_string()));
         assert_eq!(second_offer.account, "rhsxKNyN99q6vyYCTHNTC1TqWCeHr7PNgp");
 
         if let Amount::IssuedCurrencyAmount(amount) = &second_offer.taker_gets {

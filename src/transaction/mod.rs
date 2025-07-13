@@ -34,7 +34,7 @@ pub fn sign_and_submit<'a, 'b, T, F, C>(
     wallet: &Wallet,
     autofill: bool,
     check_fee: bool,
-) -> XRPLHelperResult<Submit<'a>>
+) -> XRPLHelperResult<Submit>
 where
     F: IntoEnumIterator + Serialize + Debug + PartialEq,
     T: Transaction<F> + Model + Serialize + DeserializeOwned + Clone + Debug,
@@ -81,7 +81,7 @@ where
     ))
 }
 
-pub fn submit<'a, T, F, C>(transaction: &T, client: &C) -> XRPLHelperResult<Submit<'a>>
+pub fn submit<T, F, C>(transaction: &T, client: &C) -> XRPLHelperResult<Submit>
 where
     F: IntoEnumIterator + Serialize + Debug + PartialEq,
     T: Transaction<F> + Model + Serialize + DeserializeOwned + Clone + Debug,

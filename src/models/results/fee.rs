@@ -1,5 +1,3 @@
-use alloc::borrow::Cow;
-
 use serde::{Deserialize, Serialize};
 
 use crate::models::amount::XRPAmount;
@@ -10,25 +8,25 @@ use crate::models::amount::XRPAmount;
 /// See Fee:
 /// `<https://xrpl.org/fee.html>`
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct Fee<'a> {
+pub struct Fee {
     /// Number of transactions provisionally included in the in-progress
     /// ledger.
-    pub current_ledger_size: Cow<'a, str>,
+    pub current_ledger_size: String,
     /// Number of transactions currently queued for the next ledger.
-    pub current_queue_size: Cow<'a, str>,
+    pub current_queue_size: String,
     /// Various information about the transaction cost (the Fee field of a
     /// transaction), in drops of XRP.
     pub drops: Drops,
     /// The approximate number of transactions expected to be included in the
     /// current ledger.
-    pub expected_ledger_size: Cow<'a, str>,
+    pub expected_ledger_size: String,
     /// The Ledger Index of the current open ledger these stats describe.
     pub ledger_current_index: u32,
     /// Various information about the transaction cost, in fee levels.
-    pub levels: Levels<'a>,
+    pub levels: Levels,
     /// The maximum number of transactions that the transaction queue can
     /// currently hold.
-    pub max_queue_size: Option<Cow<'a, str>>,
+    pub max_queue_size: Option<String>,
 }
 
 /// Information about transaction costs in drops of XRP
@@ -50,19 +48,19 @@ pub struct Drops {
 
 /// Information about transaction costs in fee levels
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct Levels<'a> {
+pub struct Levels {
     /// The median transaction cost among transactions in the previous
     /// validated ledger, represented in fee levels.
-    pub median_level: Cow<'a, str>,
+    pub median_level: String,
     /// The minimum transaction cost required to be queued for a future
     /// ledger, represented in fee levels.
-    pub minimum_level: Cow<'a, str>,
+    pub minimum_level: String,
     /// The minimum transaction cost required to be included in the current
     /// open ledger, represented in fee levels.
-    pub open_ledger_level: Cow<'a, str>,
+    pub open_ledger_level: String,
     /// The equivalent of the minimum transaction cost, represented in fee
     /// levels.
-    pub reference_level: Cow<'a, str>,
+    pub reference_level: String,
 }
 
 #[cfg(test)]

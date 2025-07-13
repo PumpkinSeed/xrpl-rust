@@ -9,7 +9,7 @@ pub use crate::asynch::clients::SingleExecutorMutex;
 pub trait XRPLSyncClient: XRPLClient {
     fn request<'a: 'b, 'b>(&self, request: XRPLRequest) -> XRPLClientResult<String>;
 
-    fn get_common_fields(&self) -> XRPLClientResult<CommonFields<'_>>;
+    fn get_common_fields(&self) -> XRPLClientResult<CommonFields>;
 }
 
 #[cfg(all(feature = "json-rpc", feature = "std"))]
@@ -62,7 +62,7 @@ pub mod json_rpc {
             }
         }
 
-        fn get_common_fields(&self) -> XRPLClientResult<CommonFields<'_>> {
+        fn get_common_fields(&self) -> XRPLClientResult<CommonFields> {
             match Runtime::new() {
                 Ok(rt) => rt.block_on(self.0.get_common_fields()),
                 Err(e) => Err(e.into()),
@@ -219,7 +219,7 @@ pub mod websocket {
             self.rt.block_on(self.inner.request_impl(request))
         }
 
-        fn get_common_fields(&self) -> XRPLClientResult<CommonFields<'_>> {
+        fn get_common_fields(&self) -> XRPLClientResult<CommonFields> {
             self.rt.block_on(self.inner.get_common_fields())
         }
     }

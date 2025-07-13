@@ -1,5 +1,3 @@
-use alloc::borrow::Cow;
-
 use serde::{Deserialize, Serialize};
 
 /// Response from a ledger request, containing information about a specific
@@ -9,11 +7,11 @@ use serde::{Deserialize, Serialize};
 /// `<https://xrpl.org/ledger.html>`
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-pub struct Ledger<'a> {
+pub struct Ledger {
     /// The complete ledger header data of this ledger.
-    pub ledger: LedgerInner<'a>,
+    pub ledger: LedgerInner,
     /// The unique identifying hash of the entire ledger, as hexadecimal.
-    pub ledger_hash: Cow<'a, str>,
+    pub ledger_hash: String,
     /// The Ledger Index of this ledger.
     pub ledger_index: u32,
     /// If true, this is a validated ledger version. If omitted or set to
@@ -21,83 +19,83 @@ pub struct Ledger<'a> {
     pub validated: Option<bool>,
     /// Array of objects describing queued transactions, in the same order as
     /// the queue.
-    pub queue_data: Option<Cow<'a, [QueuedTransaction<'a>]>>,
+    pub queue_data: Option<Vec<QueuedTransaction>>,
 }
 
 /// The complete ledger header data.
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-pub struct LedgerInner<'a> {
+pub struct LedgerInner {
     /// Hash of all account state information in this ledger, as hexadecimal.
-    pub account_hash: Cow<'a, str>,
+    pub account_hash: String,
     /// A bit-map of flags relating to the closing of this ledger.
     pub close_flags: u32,
     /// The time this ledger was closed, in seconds since the Ripple Epoch.
     pub close_time: u64,
     /// The time this ledger was closed, in human-readable format.
     /// Always uses UTC.
-    pub close_time_human: Option<Cow<'a, str>>,
+    pub close_time_human: Option<String>,
     /// Ledger close times are rounded to within this many seconds.
     pub close_time_resolution: u32,
     /// Whether or not this ledger has been closed.
     pub closed: bool,
     /// Unique identifying hash of the entire ledger.
-    pub ledger_hash: Cow<'a, str>,
+    pub ledger_hash: String,
     /// The Ledger Index of this ledger.
-    pub ledger_index: Cow<'a, str>,
+    pub ledger_index: String,
     /// The time at which the previous ledger was closed.
     pub parent_close_time: u64,
     /// The unique identifying hash of the previous ledger, as hexadecimal.
-    pub parent_hash: Cow<'a, str>,
+    pub parent_hash: String,
     /// Total number of XRP drops in the network, as a quoted integer.
-    pub total_coins: Cow<'a, str>,
+    pub total_coins: String,
     /// Hash of the transaction information included in this ledger.
-    pub transaction_hash: Cow<'a, str>,
+    pub transaction_hash: String,
     /// Transactions applied in this ledger version.
-    pub transactions: Option<Cow<'a, [Cow<'a, str>]>>,
+    pub transactions: Option<Vec<String>>,
 }
 
 /// Represents a queued transaction in the ledger.
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-pub struct QueuedTransaction<'a> {
+pub struct QueuedTransaction {
     /// The Address of the sender for this queued transaction.
-    pub account: Cow<'a, str>,
+    pub account: String,
     /// Transaction information, either as hash string or expanded object.
-    pub tx: TransactionInfo<'a>,
+    pub tx: TransactionInfo,
     /// How many times this transaction can be retried before being dropped.
     pub retries_remaining: u32,
     /// The tentative result from preliminary transaction checking.
-    pub preflight_result: Cow<'a, str>,
+    pub preflight_result: String,
     /// If this transaction was left in queue after getting a retriable result.
-    pub last_result: Option<Cow<'a, str>>,
+    pub last_result: Option<String>,
     /// Whether this transaction changes this address's ways of authorizing
     /// transactions.
     pub auth_change: Option<bool>,
     /// The Transaction Cost of this transaction, in drops of XRP.
-    pub fee: Option<Cow<'a, str>>,
+    pub fee: Option<String>,
     /// The transaction cost relative to the minimum cost, in fee levels.
-    pub fee_level: Option<Cow<'a, str>>,
+    pub fee_level: Option<String>,
     /// The maximum amount of XRP, in drops, this transaction could send or
     /// destroy.
-    pub max_spend_drops: Option<Cow<'a, str>>,
+    pub max_spend_drops: Option<String>,
 }
 
 /// Transaction information that can be either a hash string or expanded object.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(untagged)]
-pub enum TransactionInfo<'a> {
-    Hash(Cow<'a, str>),
-    Binary { tx_blob: Cow<'a, str> },
-    Json(TransactionObject<'a>),
+pub enum TransactionInfo {
+    Hash(String),
+    Binary { tx_blob: String },
+    Json(TransactionObject),
 }
 
 /// Expanded transaction object when requested in JSON format.
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct TransactionObject<'a> {
+pub struct TransactionObject {
     /// The identifying hash of the transaction.
-    pub hash: Cow<'a, str>,
+    pub hash: String,
     // Add other transaction fields as needed
     #[serde(flatten)]
     pub other: serde_json::Value,

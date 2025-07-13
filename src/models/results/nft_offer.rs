@@ -1,5 +1,3 @@
-use alloc::borrow::Cow;
-
 use serde::{Deserialize, Serialize};
 
 use crate::_serde::lgr_obj_flags;
@@ -9,21 +7,21 @@ use crate::models::{Amount, FlagCollection};
 /// Represents a single buy offer for an NFToken.
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct NFTOffer<'a> {
+pub struct NFTOffer {
     /// The amount offered to buy the NFToken.
     pub amount: Amount,
     /// Bit-map of boolean flags enabled for this offer.
     #[serde(with = "lgr_obj_flags")]
     pub flags: FlagCollection<NFTokenOfferFlag>,
     /// The unique identifier of this offer in the ledger.
-    pub nft_offer_index: Cow<'a, str>,
+    pub nft_offer_index: String,
     /// The account that placed this offer.
-    pub owner: Cow<'a, str>,
+    pub owner: String,
     /// The time after which this offer is no longer valid, in seconds since
     /// the Ripple Epoch.
     pub expiration: Option<u64>,
     /// If present, this offer can only be accepted by this account.
-    pub destination: Option<Cow<'a, str>>,
+    pub destination: Option<String>,
 }
 
 #[cfg(test)]

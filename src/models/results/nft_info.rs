@@ -1,26 +1,24 @@
-use alloc::borrow::Cow;
-
 use serde::{Deserialize, Serialize};
 
 /// See NFT Info:
 /// `<https://xrpl.org/nft-info.html>`
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
-pub struct NFTInfo<'a> {
+pub struct NFTInfo {
     #[serde(flatten)]
-    pub base: NFToken<'a>,
+    pub base: NFToken,
     /// Whether this data is from a validated ledger version
     pub validated: Option<bool>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
-pub struct NFToken<'a> {
+pub struct NFToken {
     /// The unique identifier of the NFToken
-    pub nft_id: Cow<'a, str>,
+    pub nft_id: String,
     /// The ledger index of the ledger that was current when this data was
     /// retrieved
     pub ledger_index: u32,
     /// The account that currently owns this NFToken
-    pub owner: Cow<'a, str>,
+    pub owner: String,
     /// Whether this NFToken has been burned
     pub is_burned: bool,
     /// Bit-map of boolean flags enabled for this NFToken
@@ -29,13 +27,13 @@ pub struct NFToken<'a> {
     /// 1/10000 of 1%
     pub transfer_fee: u32,
     /// The account that issued this NFToken
-    pub issuer: Cow<'a, str>,
+    pub issuer: String,
     /// The taxon associated with this NFToken
     pub nft_taxon: u32,
     /// The serial number of this NFToken within its taxon
     pub nft_serial: u32,
     /// The URI data associated with this NFToken
-    pub uri: Cow<'a, str>,
+    pub uri: String,
 }
 
 #[cfg(test)]

@@ -90,7 +90,7 @@ pub async fn sign_and_submit<'a, 'b, T, F, C>(
     wallet: &Wallet,
     autofill: bool,
     check_fee: bool,
-) -> XRPLHelperResult<SubmitResult<'a>>
+) -> XRPLHelperResult<SubmitResult>
 where
     F: IntoEnumIterator + Serialize + Debug + PartialEq,
     T: Transaction<F> + Model + Serialize + DeserializeOwned + Clone + Debug,
@@ -159,7 +159,7 @@ where
     Ok(())
 }
 
-pub async fn submit<'a, T, F, C>(transaction: &T, client: &C) -> XRPLHelperResult<SubmitResult<'a>>
+pub async fn submit<'a, T, F, C>(transaction: &T, client: &C) -> XRPLHelperResult<SubmitResult>
 where
     F: IntoEnumIterator + Serialize + Debug + PartialEq,
     T: Transaction<F> + Model + Serialize + DeserializeOwned + Clone + Debug,
@@ -169,7 +169,7 @@ where
     let txn_blob = encode(transaction)?;
     let req = Submit::new(None, txn_blob.into(), None);
     let response_raw = client.request(req.into()).await?;
-    let response: XRPLResponse<'a, SubmitResult<'a>> = serde_json::from_str(&response_raw)?;
+    let response: XRPLResponse<'a, SubmitResult> = serde_json::from_str(&response_raw)?;
     
     match response.result {
         Some(result) => Ok(result),
@@ -273,7 +273,7 @@ fn calculate_based_on_fulfillment(
         .into())
 }
 
-fn txn_needs_network_id(common_fields: CommonFields<'_>) -> XRPLHelperResult<bool> {
+fn txn_needs_network_id(common_fields: CommonFields) -> XRPLHelperResult<bool> {
     let is_higher_restricted_networks = if let Some(network_id) = common_fields.network_id {
         network_id > RESTRICTED_NETWORKS as u32
     } else {

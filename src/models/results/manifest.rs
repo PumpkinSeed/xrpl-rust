@@ -1,5 +1,3 @@
-use alloc::borrow::Cow;
-
 use serde::{Deserialize, Serialize};
 
 /// Response from a manifest request, containing validator manifest information.
@@ -8,28 +6,28 @@ use serde::{Deserialize, Serialize};
 /// `<https://xrpl.org/manifest.html>`
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct Manifest<'a> {
+pub struct Manifest {
     /// The data contained in this manifest. Omitted if the server does not
     /// have a manifest for the public_key from the request.
-    pub details: Option<ManifestDetails<'a>>,
+    pub details: Option<ManifestDetails>,
     /// The full manifest data in base64 format. This data is serialized to
     /// binary before being base64-encoded. Omitted if the server does not
     /// have a manifest for the public_key from the request.
-    pub manifest: Option<Cow<'a, str>>,
+    pub manifest: Option<String>,
     /// The public_key from the request.
-    pub requested: Cow<'a, str>,
+    pub requested: String,
 }
 
 /// Details object containing the parsed contents of a validator manifest.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct ManifestDetails<'a> {
+pub struct ManifestDetails {
     /// The domain name this validator claims to be associated with.
     /// If the manifest does not contain a domain, this is an empty string.
-    pub domain: Cow<'a, str>,
+    pub domain: String,
     /// The ephemeral public key for this validator, in base58.
-    pub ephemeral_key: Cow<'a, str>,
+    pub ephemeral_key: String,
     /// The master public key for this validator, in base58.
-    pub master_key: Cow<'a, str>,
+    pub master_key: String,
     /// The sequence number of this manifest. This number increases whenever
     /// the validator operator updates the validator's token to rotate
     /// ephemeral keys or change settings.

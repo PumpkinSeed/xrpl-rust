@@ -1,4 +1,4 @@
-use alloc::{borrow::Cow, collections::BTreeMap};
+use alloc::collections::BTreeMap;
 
 use serde::{Deserialize, Serialize};
 
@@ -9,22 +9,22 @@ use serde::{Deserialize, Serialize};
 /// `<https://xrpl.org/gateway_balances.html>`
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct GatewayBalances<'a> {
+pub struct GatewayBalances {
     /// The address of the account that issued the balances.
-    pub account: Cow<'a, str>,
+    pub account: String,
     /// (Omitted if empty) Total amounts held that are issued by others.
     /// In the recommended configuration, the issuing address should have none.
-    pub assets: Option<BTreeMap<Cow<'a, str>, Cow<'a, [AssetBalance<'a>]>>>,
+    pub assets: Option<BTreeMap<String, Vec<AssetBalance>>>,
     /// (Omitted if empty) Amounts issued to the hotwallet addresses from the
     /// request. The keys are addresses and the values are arrays of currency
     /// amounts they hold.
-    pub balances: Option<BTreeMap<Cow<'a, str>, Cow<'a, [AssetBalance<'a>]>>>,
+    pub balances: Option<BTreeMap<String, Vec<AssetBalance>>>,
     /// (Omitted if empty) Total amounts issued to addresses not excluded,
     /// as a map of currencies to the total value issued.
-    pub obligations: Option<BTreeMap<Cow<'a, str>, Cow<'a, str>>>,
+    pub obligations: Option<BTreeMap<String, String>>,
     /// (May be omitted) The identifying hash of the ledger version that was
     /// used to generate this response.
-    pub ledger_hash: Option<Cow<'a, str>>,
+    pub ledger_hash: Option<String>,
     /// (May be omitted) The ledger index of the ledger version that was used
     /// to generate this response.
     pub ledger_index: Option<u32>,
@@ -36,18 +36,18 @@ pub struct GatewayBalances<'a> {
 
 /// Represents a balance for a specific currency in the assets field.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-pub struct AssetBalance<'a> {
+pub struct AssetBalance {
     /// The currency code of the balance.
-    pub currency: Cow<'a, str>,
+    pub currency: String,
     /// The amount of the currency.
-    pub value: Cow<'a, str>,
+    pub value: String,
 }
 
-impl<'a> Default for AssetBalance<'a> {
+impl Default for AssetBalance {
     fn default() -> Self {
         Self {
-            currency: Cow::Borrowed("XRP"),
-            value: Cow::Borrowed("0"),
+            currency: "XRP".to_string(),
+            value: "0".to_string(),
         }
     }
 }
