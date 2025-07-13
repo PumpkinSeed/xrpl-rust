@@ -1,8 +1,5 @@
 use crate::models::{Model, XRPLModelException, XRPLModelResult};
-use alloc::{
-    borrow::Cow,
-    string::{String, ToString},
-};
+use alloc::string::{String, ToString};
 use bigdecimal::BigDecimal;
 use core::str::FromStr;
 use core::{
@@ -44,12 +41,6 @@ impl<'de, 'a> Deserialize<'de> for XRPAmount {
     {
         let amount_string = Value::deserialize(deserializer)?;
         XRPAmount::try_from(amount_string).map_err(serde::de::Error::custom)
-    }
-}
-
-impl<'a> From<Cow<'a, str>> for XRPAmount {
-    fn from(value: Cow<'a, str>) -> Self {
-        Self(value.to_string())
     }
 }
 
@@ -118,14 +109,6 @@ impl TryInto<BigDecimal> for XRPAmount {
 
     fn try_into(self) -> XRPLModelResult<BigDecimal, Self::Error> {
         Ok(BigDecimal::from_str(&self.0)?)
-    }
-}
-
-impl<'a> TryInto<Cow<'a, str>> for XRPAmount {
-    type Error = XRPLModelException;
-
-    fn try_into(self) -> XRPLModelResult<Cow<'a, str>, Self::Error> {
-        Ok(self.0.to_string().into())
     }
 }
 

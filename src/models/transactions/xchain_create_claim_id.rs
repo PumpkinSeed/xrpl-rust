@@ -96,7 +96,6 @@ impl XChainCreateClaimID {
 mod test_xchain_create_claim_id {
     use super::XChainCreateClaimID;
     use crate::models::{Model, XChainBridge, XRP};
-    use alloc::borrow::Cow;
 
     const ACCOUNT: &str = "r9LqNeG6qHxjeUocjvVki2XR35weJ9mZgQ";
     const ACCOUNT2: &str = "rpZc4mVfWUif9CRoHRKKcmhu1nx2xktxBo";
@@ -127,7 +126,7 @@ mod test_xchain_create_claim_id {
             None,
             None,
             SOURCE.to_string(),
-            Cow::Borrowed(SIGNATURE_REWARD).into(),
+            SIGNATURE_REWARD.into(),
             xrp_bridge(),
         );
         assert!(txn.validate().is_ok());
@@ -147,7 +146,7 @@ mod test_xchain_create_claim_id {
             None,
             None,
             SOURCE.to_string(),
-            Cow::Borrowed("hello").into(),
+            "hello".into(),
             xrp_bridge(),
         );
         txn.validate().unwrap();
@@ -166,8 +165,8 @@ mod test_xchain_create_claim_id {
             None,
             None,
             None,
-            Cow::Borrowed("hello").into(),
-            Cow::Borrowed(SIGNATURE_REWARD).into(),
+            "hello".into(),
+            SIGNATURE_REWARD.into(),
             xrp_bridge(),
         );
         txn.validate().unwrap();
