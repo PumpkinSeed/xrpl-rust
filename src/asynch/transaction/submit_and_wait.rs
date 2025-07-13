@@ -26,8 +26,8 @@ use crate::{
 };
 use crate::models::results::XRPLResponse;
 
-pub async fn submit_and_wait<'a: 'b, 'b, T, F, C>(
-    transaction: &'b mut T,
+pub async fn submit_and_wait<T, F, C>(
+    transaction: &mut T,
     client: &C,
     wallet: Option<&Wallet>,
     check_fee: Option<bool>,
@@ -35,20 +35,20 @@ pub async fn submit_and_wait<'a: 'b, 'b, T, F, C>(
 ) -> XRPLHelperResult<TxVersionMap>
 where
     T: Transaction<F> + Model + Clone + DeserializeOwned + Debug,
-    F: IntoEnumIterator + Serialize + Debug + PartialEq + Debug + Clone + 'a,
+    F: IntoEnumIterator + Serialize + Debug + PartialEq + Debug + Clone,
     C: XRPLAsyncClient,
 {
     get_signed_transaction(transaction, client, wallet, check_fee, autofill).await?;
     send_reliable_submission(transaction, client).await
 }
 
-async fn send_reliable_submission<'a: 'b, 'b, T, F, C>(
-    transaction: &'b mut T,
+async fn send_reliable_submission<T, F, C>(
+    transaction: &mut T,
     client: &C,
 ) -> XRPLHelperResult<TxVersionMap>
 where
     T: Transaction<F> + Model + Clone + DeserializeOwned + Debug,
-    F: IntoEnumIterator + Serialize + Debug + PartialEq + Debug + Clone + 'a,
+    F: IntoEnumIterator + Serialize + Debug + PartialEq + Debug + Clone,
     C: XRPLAsyncClient,
 {
     let tx_hash = transaction.get_hash()?;
@@ -73,7 +73,7 @@ where
     }
 }
 
-async fn wait_for_final_transaction_result<'a: 'b, 'b, C>(
+async fn wait_for_final_transaction_result<C>(
     tx_hash: String,
     client: &C,
     last_ledger_sequence: u32,
@@ -144,7 +144,7 @@ where
     )
 }
 
-async fn get_signed_transaction<'a, T, F, C>(
+async fn get_signed_transaction<T, F, C>(
     transaction: &mut T,
     client: &C,
     wallet: Option<&Wallet>,

@@ -38,9 +38,9 @@ pub async fn get_next_valid_seq_number(
     Ok(account_info.sequence)
 }
 
-pub async fn get_xrp_balance<'a: 'b, 'b, C>(
+pub async fn get_xrp_balance<C>(
     address: String,
-    client: &'a C,
+    client: &C,
     ledger_index: Option<String>,
 ) -> XRPLHelperResult<XRPAmount>
 where
@@ -54,9 +54,9 @@ where
     }
 }
 
-pub async fn get_account_root<'a: 'b, 'b, C>(
+pub async fn get_account_root<C>(
     address: String,
-    client: &'a C,
+    client: &C,
     ledger_index: String,
 ) -> XRPLHelperResult<AccountRoot>
 where
@@ -92,7 +92,7 @@ where
     Ok(account_root)
 }
 
-pub async fn get_latest_transaction<'a: 'b, 'b, C>(
+pub async fn get_latest_transaction<C>(
     mut address: String,
     client: &C,
 ) -> XRPLHelperResult<results::account_tx::AccountTxVersionMap>
@@ -116,7 +116,7 @@ where
     );
     let response_raw = client.request(account_tx.into()).await?;
     let response: results::account_tx::AccountTxVersionMap =
-        serde_json::from_str(&response_raw)?; // TODO probably it is XRPLResponse<'a, results::account_tx::AccountTxVersionMap>
+        serde_json::from_str(&response_raw)?; // TODO probably it is XRPLResponse<results::account_tx::AccountTxVersionMap>
 
     Ok(response)
 }
