@@ -80,6 +80,6 @@ impl_try_from_tx_version_map!(NFTokenCreateOfferResult, offer_id, String);
 impl_try_from_tx_version_map!(
     NFTokenCancelOfferResult,
     nftoken_ids,
-    Cow<'a, [String]>
+    Vec<String>
 );
 impl_try_from_tx_version_map!(NFTokenAcceptOfferResult, nftoken_id, String);

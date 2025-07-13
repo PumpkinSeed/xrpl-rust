@@ -6,7 +6,7 @@ pub mod types;
 
 use types::{AccountId, STObject};
 
-use alloc::{borrow::Cow, string::String, vec::Vec};
+use alloc::{string::String, vec::Vec};
 use core::convert::TryFrom;
 use hex::ToHex;
 use serde::Serialize;
@@ -46,7 +46,7 @@ where
 
 pub fn encode_for_multisigning<T>(
     prepared_transaction: &T,
-    signing_account: Cow<'_, str>,
+    signing_account: String,
 ) -> XRPLCoreResult<String>
 where
     T: Serialize,

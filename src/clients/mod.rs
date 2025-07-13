@@ -49,7 +49,7 @@ pub mod json_rpc {
             self.0.get_host()
         }
 
-        fn get_random_id<'a>(&self) -> alloc::borrow::Cow<'a, str> {
+        fn get_random_id(&self) -> String {
             self.0.get_random_id()
         }
     }

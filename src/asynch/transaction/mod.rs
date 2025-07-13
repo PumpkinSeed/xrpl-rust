@@ -30,10 +30,13 @@ use crate::{
     wallet::Wallet,
 };
 
+use super::exceptions::XRPLHelperResult;
+use crate::asynch::transaction::exceptions::XRPLSubmitAndWaitException;
+use crate::models::results::XRPLResponse;
 use alloc::string::String;
 use alloc::string::ToString;
+use alloc::vec;
 use alloc::vec::Vec;
-use alloc::{borrow::Cow, vec};
 use core::convert::TryInto;
 use core::fmt::Debug;
 use exceptions::XRPLTransactionHelperException;
@@ -41,9 +44,6 @@ use serde::Serialize;
 use serde::{de::DeserializeOwned, Deserialize};
 use serde_json::Value;
 use strum::IntoEnumIterator;
-use crate::asynch::transaction::exceptions::XRPLSubmitAndWaitException;
-use crate::models::results::XRPLResponse;
-use super::exceptions::XRPLHelperResult;
 
 const OWNER_RESERVE: &str = "2000000"; // 2 XRP
 const RESTRICTED_NETWORKS: u16 = 1024;
@@ -170,7 +170,7 @@ where
     let req = Submit::new(None, txn_blob.into(), None);
     let response_raw = client.request(req.into()).await?;
     let response: XRPLResponse<SubmitResult> = serde_json::from_str(&response_raw)?;
-    
+
     match response.result {
         Some(result) => Ok(result),
         None => {
@@ -248,7 +248,7 @@ async fn get_owner_reserve_from_response(
 
 fn calculate_base_fee_for_escrow_finish(
     net_fee: XRPAmount,
-    fulfillment: Option<Cow<str>>,
+    fulfillment: Option<String>,
 ) -> XRPLHelperResult<XRPAmount> {
     if let Some(fulfillment) = fulfillment {
         calculate_based_on_fulfillment(fulfillment, net_fee)
@@ -258,7 +258,7 @@ fn calculate_base_fee_for_escrow_finish(
 }
 
 fn calculate_based_on_fulfillment(
-    fulfillment: Cow<str>,
+    fulfillment: String,
     net_fee: XRPAmount,
 ) -> XRPLHelperResult<XRPAmount> {
     let fulfillment_bytes: Vec<u8> = fulfillment.chars().map(|c| c as u8).collect();
@@ -495,10 +495,8 @@ where
     }
 }
 
-fn examine_submit_error(response : XRPLResponse<Value>) -> XRPLHelperResult<()> {
-    let default_error = XRPLModelException::MissingField(
-        "result".to_string(),
-    ).into();
+fn examine_submit_error(response: XRPLResponse<Value>) -> XRPLHelperResult<()> {
+    let default_error = XRPLModelException::MissingField("result".to_string()).into();
     let result = match response.result {
         Some(result) => result,
         None => return Err(default_error),
@@ -514,7 +512,11 @@ fn examine_submit_error(response : XRPLResponse<Value>) -> XRPLHelperResult<()> 
             };
             if status_str == "error" {
                 let error = result.get("error").unwrap().as_str().unwrap_or_default();
-                let error_exception = result.get("error_exception").unwrap().as_str().unwrap_or_default();
+                let error_exception = result
+                    .get("error_exception")
+                    .unwrap()
+                    .as_str()
+                    .unwrap_or_default();
                 let mut error_response = String::new();
                 error_response.push_str("Error: ");
                 error_response.push_str(error);
@@ -587,8 +589,6 @@ mod test_autofill {
 #[cfg(all(feature = "json-rpc", feature = "std"))]
 #[cfg(test)]
 mod test_sign {
-    use alloc::borrow::Cow;
-
     use crate::{
         asynch::{
             clients::AsyncJsonRpcClient,
@@ -623,7 +623,7 @@ mod test_sign {
             None,
         );
         sign(&mut tx, &wallet, false).unwrap();
-        let expected_signature: Cow<str> =
+        let expected_signature: String =
             "C3F435CFBFAE996FE297F3A71BEAB68FF5322CBF039E41A9615BC48A59FB4EC\
             5A55F8D4EC0225D47056E02ECCCDF7E8FF5F8B7FAA1EBBCBF7D0491FCB2D98807"
                 .into();

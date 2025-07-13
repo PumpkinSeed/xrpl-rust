@@ -44,7 +44,6 @@ use super::{FlagCollection, XRPLModelResult};
 use crate::core::binarycodec::encode;
 use crate::models::amount::XRPAmount;
 use crate::{_serde::txn_flags, serde_with_tag};
-use alloc::borrow::Cow;
 use alloc::format;
 use alloc::string::{String, ToString};
 use alloc::vec::Vec;
@@ -360,7 +359,7 @@ where
 
     /// Hashes the Transaction object as the ledger does. Only valid for signed
     /// Transaction objects.
-    fn get_hash(&self) -> XRPLModelResult<Cow<str>>
+    fn get_hash(&self) -> XRPLModelResult<String>
     where
         Self: Serialize + DeserializeOwned + Debug + Clone,
     {
@@ -379,7 +378,7 @@ where
         let hex_string = hex::encode_upper(hash);
         let result = hex_string[..64].to_string();
 
-        Ok(result.into())
+        Ok(result)
     }
 }
 

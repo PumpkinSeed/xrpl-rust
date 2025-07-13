@@ -15,7 +15,7 @@ pub trait XRPLClient {
         if common_fields.id.is_none() {
             #[cfg(feature = "std")]
             {
-                common_fields.id = Some(self.get_random_id().to_string());
+                common_fields.id = Some(self.get_random_id());
             }
             #[cfg(not(feature = "std"))]
             unimplemented!(
@@ -26,11 +26,9 @@ pub trait XRPLClient {
 
     /// Generate a random id.
     #[cfg(feature = "std")]
-    fn get_random_id<'a>(&self) -> alloc::borrow::Cow<'a, str> {
+    fn get_random_id(&self) -> String {
         use alloc::string::ToString;
 
-        let random_id = rand::random::<u32>().to_string();
-
-        alloc::borrow::Cow::Owned(random_id)
+        rand::random::<u32>().to_string()
     }
 }

@@ -33,7 +33,7 @@ impl Display for XRPAmount {
     }
 }
 
-// implement Deserializing from Cow<str>, &str, String, Decimal, f64, u32, and Value
+// implement Deserializing from &str, String, Decimal, f64, u32, and Value
 impl<'de, 'a> Deserialize<'de> for XRPAmount {
     fn deserialize<D>(deserializer: D) -> XRPLModelResult<XRPAmount, D::Error>
     where

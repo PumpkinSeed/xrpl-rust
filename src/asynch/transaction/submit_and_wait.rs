@@ -1,6 +1,6 @@
 use core::fmt::Debug;
 
-use alloc::{borrow::Cow, format};
+use alloc::format;
 use serde::{de::DeserializeOwned, Serialize};
 use strum::IntoEnumIterator;
 
@@ -74,7 +74,7 @@ where
 }
 
 async fn wait_for_final_transaction_result<'a: 'b, 'b, C>(
-    tx_hash: Cow<'a, str>,
+    tx_hash: String,
     client: &C,
     last_ledger_sequence: u32,
 ) -> XRPLHelperResult<TxVersionMap>

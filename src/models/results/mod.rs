@@ -22,10 +22,12 @@ pub mod ledger_entry;
 pub mod manifest;
 pub mod metadata;
 pub mod nft_buy_offers;
+pub mod nft_history;
 pub mod nft_info;
 pub mod nft_offer;
 pub mod nft_sell_offers;
 pub mod nftoken;
+pub mod nfts_by_issuer;
 pub mod no_ripple_check;
 pub mod path_find;
 pub mod ping;
@@ -41,7 +43,10 @@ pub mod tx;
 pub mod unsubscribe;
 
 use super::{requests::XRPLRequest, Amount, XRPLModelException, XRPLModelResult};
-use alloc::{format, string::{String, ToString}};
+use alloc::{
+    format,
+    string::{String, ToString},
+};
 use core::convert::{TryFrom, TryInto};
 use exceptions::XRPLResultException;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
