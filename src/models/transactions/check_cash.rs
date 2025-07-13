@@ -51,7 +51,7 @@ pub struct CheckCash {
 
 impl Model for CheckCash {
     fn get_errors(&self) -> XRPLModelResult<()> {
-        //self._get_amount_and_deliver_min_error()?;
+        self._get_amount_and_deliver_min_error()?;
         self.validate_currencies()
     }
 }
