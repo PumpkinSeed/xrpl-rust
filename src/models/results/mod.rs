@@ -138,7 +138,7 @@ pub enum XRPLResult<'a> {
     PathFind(path_find::PathFind<'a>),
     Random(random::Random<'a>),
     RipplePathFind(ripple_path_find::RipplePathFind<'a>),
-    ServerInfo(server_info::ServerInfo<'a>),
+    ServerInfo(server_info::ServerInfo),
     ServerState(server_state::ServerState<'a>),
     Submit(submit::Submit<'a>),
     SubmitMultisigned(submit_multisigned::SubmitMultisigned<'a>),
@@ -154,6 +154,16 @@ macro_rules! impl_from_result {
     ($module_name:ident, $variant:ident) => {
         impl<'a> From<$module_name::$variant<'a>> for XRPLResult<'a> {
             fn from(value: $module_name::$variant<'a>) -> Self {
+                XRPLResult::$variant(value)
+            }
+        }
+    };
+}
+
+macro_rules! impl_from_result_no_lt {
+    ($module_name:ident, $variant:ident) => {
+        impl<'a> From<$module_name::$variant> for XRPLResult<'a> {
+            fn from(value: $module_name::$variant) -> Self {
                 XRPLResult::$variant(value)
             }
         }
@@ -187,7 +197,7 @@ impl_from_result!(no_ripple_check, NoRippleCheck);
 impl_from_result!(path_find, PathFind);
 impl_from_result!(random, Random);
 impl_from_result!(ripple_path_find, RipplePathFind);
-impl_from_result!(server_info, ServerInfo);
+impl_from_result_no_lt!(server_info, ServerInfo);
 impl_from_result!(server_state, ServerState);
 impl_from_result!(submit, Submit);
 impl_from_result!(submit_multisigned, SubmitMultisigned);
@@ -211,6 +221,25 @@ impl From<XRPLOtherResult> for XRPLResult<'_> {
 macro_rules! impl_try_from_result {
     ($module_name:ident, $type:ident, $variant:ident) => {
         impl<'a> TryFrom<XRPLResult<'a>> for $module_name::$type<'a> {
+            type Error = XRPLModelException;
+
+            fn try_from(result: XRPLResult<'a>) -> XRPLModelResult<Self> {
+                match result {
+                    XRPLResult::$variant(value) => Ok(value),
+                    res => Err(XRPLResultException::UnexpectedResultType(
+                        stringify!($variant).to_string(),
+                        res.get_name(),
+                    )
+                    .into()),
+                }
+            }
+        }
+    };
+}
+
+macro_rules! impl_try_from_result_no_lt {
+    ($module_name:ident, $type:ident, $variant:ident) => {
+        impl<'a> TryFrom<XRPLResult<'a>> for $module_name::$type {
             type Error = XRPLModelException;
 
             fn try_from(result: XRPLResult<'a>) -> XRPLModelResult<Self> {
@@ -253,7 +282,7 @@ impl_try_from_result!(no_ripple_check, NoRippleCheck, NoRippleCheck);
 impl_try_from_result!(path_find, PathFind, PathFind);
 impl_try_from_result!(random, Random, Random);
 impl_try_from_result!(ripple_path_find, RipplePathFind, RipplePathFind);
-impl_try_from_result!(server_info, ServerInfo, ServerInfo);
+impl_try_from_result_no_lt!(server_info, ServerInfo, ServerInfo);
 impl_try_from_result!(server_state, ServerState, ServerState);
 impl_try_from_result!(submit, Submit, Submit);
 impl_try_from_result!(submit_multisigned, SubmitMultisigned, SubmitMultisigned);
