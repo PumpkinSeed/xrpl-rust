@@ -77,7 +77,7 @@ where
     )
     .into();
     let response = client.request(request).await?;
-    let response: XRPLResponse<'a, results::account_info::AccountInfoVersionMap> = serde_json::from_str(&response)?;
+    let response: XRPLResponse<results::account_info::AccountInfoVersionMap> = serde_json::from_str(&response)?;
 
     let account_info = match response.result {
         Some(result) => result,

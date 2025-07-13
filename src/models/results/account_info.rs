@@ -217,7 +217,7 @@ mod tests {
             }
         }"#;
 
-        let account_info: XRPLResponse<'a, AccountInfo> = serde_json::from_str(json).unwrap();
+        let account_info: XRPLResponse<AccountInfo> = serde_json::from_str(json).unwrap();
         assert!(account_info.result.is_some());
     }
 

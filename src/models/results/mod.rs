@@ -41,19 +41,19 @@ pub mod tx;
 pub mod unsubscribe;
 
 use super::{requests::XRPLRequest, Amount, XRPLModelException, XRPLModelResult};
-use alloc::{borrow::Cow, format, string::{String, ToString}};
+use alloc::{format, string::{String, ToString}};
 use core::convert::{TryFrom, TryInto};
 use exceptions::XRPLResultException;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use serde_json::{value::Index, Map, Value};
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
-pub struct NftOffer<'a> {
+pub struct NftOffer {
     pub amount: Amount,
     pub flags: u32,
-    pub nft_offer_index: Cow<'a, str>,
-    pub owner: Cow<'a, str>,
-    pub destination: Option<Cow<'a, str>>,
+    pub nft_offer_index: String,
+    pub owner: String,
+    pub destination: Option<String>,
     pub expiration: Option<u32>,
 }
 
@@ -364,26 +364,26 @@ pub enum ResponseType {
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub struct XRPLResponse<'a, T: Clone + DeserializeOwned + Serialize> {
-    pub id: Option<Cow<'a, str>>,
-    pub error: Option<Cow<'a, str>>,
+pub struct XRPLResponse<T: Clone + DeserializeOwned + Serialize> {
+    pub id: Option<String>,
+    pub error: Option<String>,
     pub error_code: Option<i32>,
-    pub error_message: Option<Cow<'a, str>>,
+    pub error_message: Option<String>,
     pub forwarded: Option<bool>,
     pub request: Option<XRPLRequest>,
     pub result: Option<T>,
     pub status: Option<ResponseStatus>,
     pub r#type: Option<ResponseType>,
-    pub warning: Option<Cow<'a, str>>,
-    pub warnings: Option<Cow<'a, [XRPLWarning<'a>]>>,
+    pub warning: Option<String>,
+    pub warnings: Option<Vec<XRPLWarning>>,
 }
 
 fn is_subscription_stream_item(item: &Map<String, Value>) -> bool {
     item.get("result").is_none() && item.get("error_code").is_none()
 }
 
-impl<'a, 'de, T: Clone + DeserializeOwned + Serialize> Deserialize<'de> for XRPLResponse<'a, T> {
-    fn deserialize<D>(deserializer: D) -> XRPLModelResult<XRPLResponse<'a, T>, D::Error>
+impl<'de, T: Clone + DeserializeOwned + Serialize> Deserialize<'de> for XRPLResponse<T> {
+    fn deserialize<D>(deserializer: D) -> XRPLModelResult<XRPLResponse<T>, D::Error>
     where
         D: serde::Deserializer<'de>,
     {
@@ -459,7 +459,7 @@ impl<'a, 'de, T: Clone + DeserializeOwned + Serialize> Deserialize<'de> for XRPL
     }
 }
 
-impl<'a, T: Clone + DeserializeOwned + Serialize> XRPLResponse<'a, T> {
+impl<T: Clone + DeserializeOwned + Serialize> XRPLResponse<T> {
     pub fn is_success(&self) -> bool {
         if let Some(status) = &self.status {
             status == &ResponseStatus::Success
@@ -478,8 +478,8 @@ impl<'a, T: Clone + DeserializeOwned + Serialize> XRPLResponse<'a, T> {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct XRPLWarning<'a> {
-    pub id: Cow<'a, str>,
-    pub message: Cow<'a, str>,
+pub struct XRPLWarning {
+    pub id: String,
+    pub message: String,
     pub forwarded: Option<bool>,
 }

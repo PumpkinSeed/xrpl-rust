@@ -169,12 +169,12 @@ where
     let txn_blob = encode(transaction)?;
     let req = Submit::new(None, txn_blob.into(), None);
     let response_raw = client.request(req.into()).await?;
-    let response: XRPLResponse<'a, SubmitResult> = serde_json::from_str(&response_raw)?;
+    let response: XRPLResponse<SubmitResult> = serde_json::from_str(&response_raw)?;
     
     match response.result {
         Some(result) => Ok(result),
         None => {
-            let response_unknown: XRPLResponse<'a, Value> = serde_json::from_str(&response_raw)?;
+            let response_unknown: XRPLResponse<Value> = serde_json::from_str(&response_raw)?;
             match examine_submit_error(response_unknown).err() {
                 Some(e) => Err(e),
                 None => Err(XRPLModelException::MissingField("result".to_string()).into()),
@@ -237,7 +237,7 @@ async fn get_owner_reserve_from_response(
     client: &impl XRPLAsyncClient,
 ) -> XRPLHelperResult<XRPAmount> {
     let owner_reserve_response = client.request(ServerState::new(None).into()).await?;
-    let owner_reserve_response: XRPLResponse<'_, ServerStateResult> =
+    let owner_reserve_response: XRPLResponse<ServerStateResult> =
         serde_json::from_str(&owner_reserve_response)?;
     let result = owner_reserve_response.result.unwrap();
     match result.state.validated_ledger {
@@ -495,7 +495,7 @@ where
     }
 }
 
-fn examine_submit_error(response : XRPLResponse<'_, Value>) -> XRPLHelperResult<()> {
+fn examine_submit_error(response : XRPLResponse<Value>) -> XRPLHelperResult<()> {
     let default_error = XRPLModelException::MissingField(
         "result".to_string(),
     ).into();
