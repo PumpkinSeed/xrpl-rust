@@ -1,4 +1,4 @@
-use alloc::{borrow::Cow, vec::Vec};
+use alloc::vec::Vec;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 
@@ -11,12 +11,12 @@ use crate::models::{Amount, IssuedCurrencyAmount, Model, ValidateCurrencies};
     Debug, Clone, Serialize, Deserialize, PartialEq, Eq, xrpl_rust_macros::ValidateCurrencies,
 )]
 #[serde(rename_all = "PascalCase")]
-pub struct NFTokenMetadata<'a> {
+pub struct NFTokenMetadata {
     #[serde(rename = "NFToken")]
-    pub nftoken: NFTokenMetadataFields<'a>,
+    pub nftoken: NFTokenMetadataFields,
 }
 
-impl Model for NFTokenMetadata<'_> {
+impl Model for NFTokenMetadata {
     fn get_errors(&self) -> crate::models::XRPLModelResult<()> {
         self.validate_currencies()?;
         Ok(())
@@ -28,14 +28,14 @@ impl Model for NFTokenMetadata<'_> {
     Debug, Clone, Serialize, Deserialize, PartialEq, Eq, xrpl_rust_macros::ValidateCurrencies,
 )]
 #[serde(rename_all = "PascalCase")]
-pub struct NFTokenMetadataFields<'a> {
+pub struct NFTokenMetadataFields {
     #[serde(rename = "NFTokenID")]
-    pub nftoken_id: Cow<'a, str>,
+    pub nftoken_id: String,
     #[serde(rename = "URI")]
-    pub uri: Cow<'a, str>,
+    pub uri: String,
 }
 
-impl Model for NFTokenMetadataFields<'_> {
+impl Model for NFTokenMetadataFields {
     fn get_errors(&self) -> crate::models::XRPLModelResult<()> {
         self.validate_currencies()?;
         Ok(())
@@ -47,27 +47,27 @@ impl Model for NFTokenMetadataFields<'_> {
     Debug, Clone, Serialize, Deserialize, PartialEq, Eq, xrpl_rust_macros::ValidateCurrencies,
 )]
 #[serde(rename_all = "PascalCase")]
-pub struct Fields<'a> {
-    pub account: Option<Cow<'a, str>>,
+pub struct Fields {
+    pub account: Option<String>,
     pub balance: Option<Amount>,
-    pub book_directory: Option<Cow<'a, str>>,
+    pub book_directory: Option<String>,
     pub expiration: Option<u32>,
     #[serde(default)]
     pub flags: u32,
     pub low_limit: Option<IssuedCurrencyAmount>,
     pub high_limit: Option<IssuedCurrencyAmount>,
-    pub next_page_min: Option<Cow<'a, str>>,
+    pub next_page_min: Option<String>,
     #[serde(rename = "NFTokens")]
-    pub nftokens: Option<Vec<NFTokenMetadata<'a>>>,
-    pub previous_page_min: Option<Cow<'a, str>>,
+    pub nftokens: Option<Vec<NFTokenMetadata>>,
+    pub previous_page_min: Option<String>,
     #[serde(default)]
     pub sequence: u32,
     pub taker_gets: Option<Amount>,
     pub taker_pays: Option<Amount>,
-    pub xchain_claim_id: Option<Cow<'a, str>>,
+    pub xchain_claim_id: Option<String>,
 }
 
-impl Model for Fields<'_> {
+impl Model for Fields {
     fn get_errors(&self) -> crate::models::XRPLModelResult<()> {
         self.validate_currencies()?;
         Ok(())
@@ -77,28 +77,28 @@ impl Model for Fields<'_> {
 #[skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "PascalCase")]
-pub enum AffectedNode<'a> {
+pub enum AffectedNode {
     #[serde(rename_all = "PascalCase")]
     CreatedNode {
         ledger_entry_type: LedgerEntryType,
         ledger_index: LedgerIndex,
-        new_fields: Fields<'a>,
+        new_fields: Fields,
     },
     #[serde(rename_all = "PascalCase")]
     ModifiedNode {
         ledger_entry_type: LedgerEntryType,
         ledger_index: LedgerIndex,
-        final_fields: Option<Fields<'a>>,
-        previous_fields: Option<Fields<'a>>,
-        previous_txn_id: Option<Cow<'a, str>>,
+        final_fields: Option<Fields>,
+        previous_fields: Option<Fields>,
+        previous_txn_id: Option<String>,
         previous_txn_lgr_seq: Option<u32>,
     },
     #[serde(rename_all = "PascalCase")]
     DeletedNode {
         ledger_entry_type: LedgerEntryType,
         ledger_index: LedgerIndex,
-        final_fields: Fields<'a>,
-        previous_fields: Option<Fields<'a>>,
+        final_fields: Fields,
+        previous_fields: Option<Fields>,
     },
 }
 
@@ -114,15 +114,15 @@ pub enum NodeType {
     Debug, Clone, Serialize, Deserialize, PartialEq, Eq, xrpl_rust_macros::ValidateCurrencies,
 )]
 #[serde(rename_all = "PascalCase")]
-pub struct TransactionMetadata<'a> {
-    pub affected_nodes: Vec<AffectedNode<'a>>,
+pub struct TransactionMetadata {
+    pub affected_nodes: Vec<AffectedNode>,
     pub transaction_index: u32,
     pub transaction_result: Amount,
     #[serde(rename = "delivered_amount")]
     pub delivered_amount: Option<Amount>,
 }
 
-impl Model for TransactionMetadata<'_> {
+impl Model for TransactionMetadata {
     fn get_errors(&self) -> crate::models::XRPLModelResult<()> {
         self.validate_currencies()?;
         Ok(())
