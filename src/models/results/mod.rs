@@ -109,9 +109,9 @@ impl XRPLOtherResult {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(untagged)]
 pub enum XRPLResult<'a> {
-    AccountChannels(account_channels::AccountChannels<'a>),
-    AccountInfo(account_info::AccountInfoVersionMap<'a>),
-    AccountCurrencies(account_currencies::AccountCurrencies<'a>),
+    AccountChannels(account_channels::AccountChannels),
+    AccountInfo(account_info::AccountInfoVersionMap),
+    AccountCurrencies(account_currencies::AccountCurrencies),
     AccountLines(account_lines::AccountLines<'a>),
     AccountObjects(account_objects::AccountObjects<'a>),
     AccountNfts(account_nfts::AccountNfts<'a>),
@@ -170,8 +170,8 @@ macro_rules! impl_from_result_no_lt {
     };
 }
 
-impl_from_result!(account_channels, AccountChannels);
-impl_from_result!(account_currencies, AccountCurrencies);
+impl_from_result_no_lt!(account_channels, AccountChannels);
+impl_from_result_no_lt!(account_currencies, AccountCurrencies);
 impl_from_result!(account_lines, AccountLines);
 impl_from_result!(account_objects, AccountObjects);
 impl_from_result!(account_nfts, AccountNfts);
@@ -256,8 +256,8 @@ macro_rules! impl_try_from_result_no_lt {
     };
 }
 
-impl_try_from_result!(account_channels, AccountChannels, AccountChannels);
-impl_try_from_result!(account_currencies, AccountCurrencies, AccountCurrencies);
+impl_try_from_result_no_lt!(account_channels, AccountChannels, AccountChannels);
+impl_try_from_result_no_lt!(account_currencies, AccountCurrencies, AccountCurrencies);
 impl_try_from_result!(account_lines, AccountLines, AccountLines);
 impl_try_from_result!(account_objects, AccountObjects, AccountObjects);
 impl_try_from_result!(account_nfts, AccountNfts, AccountNfts);

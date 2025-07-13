@@ -1,4 +1,3 @@
-use alloc::borrow::Cow;
 use alloc::string::ToString;
 
 use serde::{Deserialize, Serialize};
@@ -12,9 +11,9 @@ use super::XRPLResult;
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(untagged)]
-pub enum AccountInfoVersionMap<'a> {
-    Default(AccountInfo<'a>),
-    V1(AccountInfoV1<'a>),
+pub enum AccountInfoVersionMap {
+    Default(AccountInfo),
+    V1(AccountInfoV1),
 }
 
 /// Account flags status information
@@ -62,19 +61,19 @@ pub struct AccountFlags {
 
 /// Information about a queued transaction
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct QueuedTransaction<'a> {
+pub struct QueuedTransaction {
     /// Whether this transaction changes this address's ways of authorizing
     /// transactions.
     pub auth_change: bool,
     /// The Transaction Cost of this transaction, in drops of XRP.
-    pub fee: Cow<'a, str>,
+    pub fee: String,
     /// The transaction cost of this transaction, relative to the minimum
     /// cost for this type
     /// of transaction, in fee levels.
-    pub fee_level: Cow<'a, str>,
+    pub fee_level: String,
     /// The maximum amount of XRP, in drops, this transaction could send or
     /// destroy.
-    pub max_spend_drops: Cow<'a, str>,
+    pub max_spend_drops: String,
     /// The Sequence Number of this transaction.
     pub seq: u32,
 }
@@ -82,7 +81,7 @@ pub struct QueuedTransaction<'a> {
 /// Queue data for pending transactions
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct QueueData<'a> {
+pub struct QueueData {
     /// Number of queued transactions from this address.
     pub txn_count: u32,
     /// Whether a transaction in the queue changes this address's ways of
@@ -95,14 +94,14 @@ pub struct QueueData<'a> {
     /// Integer amount of drops of XRP that could be debited from this address
     /// if every transaction in the queue consumes the maximum amount of XRP
     /// possible.
-    pub max_spend_drops_total: Option<Cow<'a, str>>,
+    pub max_spend_drops_total: Option<String>,
     /// Information about each queued transaction from this address.
-    pub transactions: Option<Cow<'a, [QueuedTransaction<'a>]>>,
+    pub transactions: Option<Vec<QueuedTransaction>>,
 }
 
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-pub struct AccountInfoBase<'a> {
+pub struct AccountInfoBase {
     /// The AccountRoot ledger object with this account's information, as
     /// stored in the ledger.
     pub account_data: AccountRoot,
@@ -124,7 +123,7 @@ pub struct AccountInfoBase<'a> {
     /// which may be different from other servers in the peer-to-peer XRP
     /// Ledger network. Some fields may be omitted because the values are
     /// calculated "lazily" by the queuing mechanism.
-    pub queue_data: Option<QueueData<'a>>,
+    pub queue_data: Option<QueueData>,
     /// True if this data is from a validated ledger version; if omitted or
     /// set to false, this data is not final.
     pub validated: bool,
@@ -132,13 +131,13 @@ pub struct AccountInfoBase<'a> {
 
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-pub struct AccountInfoV1<'a> {
+pub struct AccountInfoV1 {
     #[serde(flatten)]
-    pub base: AccountInfoBase<'a>,
+    pub base: AccountInfoBase,
     /// If requested, array of SignerList ledger objects associated with this
     /// account for Multi-Signing. Since an account can own at most one
     /// SignerList, this array must have exactly one member if it is present.
-    pub signer_lists: Option<Cow<'a, [SignerList]>>,
+    pub signer_lists: Option<Vec<SignerList>>,
 }
 
 /// Response from an account_info request, containing information about an
@@ -148,16 +147,16 @@ pub struct AccountInfoV1<'a> {
 /// `<https://xrpl.org/account_info.html>`
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-pub struct AccountInfo<'a> {
+pub struct AccountInfo {
     #[serde(flatten)]
-    pub base: AccountInfoBase<'a>,
+    pub base: AccountInfoBase,
     /// If requested, array of SignerList ledger objects associated with this
     /// account for Multi-Signing. Since an account can own at most one
     /// SignerList, this array must have exactly one member if it is present.
-    pub signer_lists: Option<Cow<'a, [SignerList]>>,
+    pub signer_lists: Option<Vec<SignerList>>,
 }
 
-impl<'a> AccountInfoVersionMap<'a> {
+impl AccountInfoVersionMap {
     pub fn get_account_root(&self) -> &AccountRoot {
         match self {
             AccountInfoVersionMap::Default(account_info) => &account_info.base.account_data,
@@ -166,7 +165,7 @@ impl<'a> AccountInfoVersionMap<'a> {
     }
 }
 
-impl<'a> TryFrom<XRPLResult<'a>> for AccountInfoVersionMap<'a> {
+impl<'a> TryFrom<XRPLResult<'a>> for AccountInfoVersionMap {
     type Error = XRPLModelException;
 
     fn try_from(result: XRPLResult<'a>) -> XRPLModelResult<Self> {
