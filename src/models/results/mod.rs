@@ -112,11 +112,11 @@ pub enum XRPLResult<'a> {
     AccountChannels(account_channels::AccountChannels),
     AccountInfo(account_info::AccountInfoVersionMap),
     AccountCurrencies(account_currencies::AccountCurrencies),
-    AccountLines(account_lines::AccountLines<'a>),
-    AccountObjects(account_objects::AccountObjects<'a>),
-    AccountNfts(account_nfts::AccountNfts<'a>),
-    AccountOffers(account_offers::AccountOffers<'a>),
-    AccountTx(account_tx::AccountTxVersionMap<'a>),
+    AccountLines(account_lines::AccountLines),
+    AccountObjects(account_objects::AccountObjects),
+    AccountNfts(account_nfts::AccountNfts),
+    AccountOffers(account_offers::AccountOffers),
+    AccountTx(account_tx::AccountTxVersionMap),
     AMMInfo(amm_info::AMMInfo<'a>),
     BookOffers(book_offers::BookOffers<'a>),
     ChannelAuthorize(channel_authorize::ChannelAuthorize<'a>),
@@ -133,8 +133,8 @@ pub enum XRPLResult<'a> {
     NFTInfo(nft_info::NFTInfo<'a>),
     NFTBuyOffers(nft_buy_offers::NFTBuyOffers<'a>),
     NFTSellOffers(nft_sell_offers::NFTSellOffers<'a>),
-    NFTokenMintResult(nftoken::NFTokenMintResult<'a>),
-    NoRippleCheck(no_ripple_check::NoRippleCheck<'a>),
+    NFTokenMintResult(nftoken::NFTokenMintResult),
+    NoRippleCheck(no_ripple_check::NoRippleCheck),
     PathFind(path_find::PathFind<'a>),
     Random(random::Random<'a>),
     RipplePathFind(ripple_path_find::RipplePathFind<'a>),
@@ -142,8 +142,8 @@ pub enum XRPLResult<'a> {
     ServerState(server_state::ServerState<'a>),
     Submit(submit::Submit<'a>),
     SubmitMultisigned(submit_multisigned::SubmitMultisigned<'a>),
-    TransactionEntry(transaction_entry::TransactionEntry<'a>),
-    Tx(tx::TxVersionMap<'a>),
+    TransactionEntry(transaction_entry::TransactionEntry),
+    Tx(tx::TxVersionMap),
     Subscribe(subscribe::Subscribe<'a>),
     Unsubscribe(unsubscribe::Unsubscribe<'a>),
     Ping(ping::Ping<'a>),
@@ -172,10 +172,10 @@ macro_rules! impl_from_result_no_lt {
 
 impl_from_result_no_lt!(account_channels, AccountChannels);
 impl_from_result_no_lt!(account_currencies, AccountCurrencies);
-impl_from_result!(account_lines, AccountLines);
-impl_from_result!(account_objects, AccountObjects);
-impl_from_result!(account_nfts, AccountNfts);
-impl_from_result!(account_offers, AccountOffers);
+impl_from_result_no_lt!(account_lines, AccountLines);
+impl_from_result_no_lt!(account_objects, AccountObjects);
+impl_from_result_no_lt!(account_nfts, AccountNfts);
+impl_from_result_no_lt!(account_offers, AccountOffers);
 impl_from_result!(amm_info, AMMInfo);
 impl_from_result!(book_offers, BookOffers);
 impl_from_result!(channel_authorize, ChannelAuthorize);
@@ -192,8 +192,8 @@ impl_from_result!(manifest, Manifest);
 impl_from_result!(nft_info, NFTInfo);
 impl_from_result!(nft_buy_offers, NFTBuyOffers);
 impl_from_result!(nft_sell_offers, NFTSellOffers);
-impl_from_result!(nftoken, NFTokenMintResult);
-impl_from_result!(no_ripple_check, NoRippleCheck);
+impl_from_result_no_lt!(nftoken, NFTokenMintResult);
+impl_from_result_no_lt!(no_ripple_check, NoRippleCheck);
 impl_from_result!(path_find, PathFind);
 impl_from_result!(random, Random);
 impl_from_result!(ripple_path_find, RipplePathFind);
@@ -201,7 +201,7 @@ impl_from_result_no_lt!(server_info, ServerInfo);
 impl_from_result!(server_state, ServerState);
 impl_from_result!(submit, Submit);
 impl_from_result!(submit_multisigned, SubmitMultisigned);
-impl_from_result!(transaction_entry, TransactionEntry);
+impl_from_result_no_lt!(transaction_entry, TransactionEntry);
 impl_from_result!(ping, Ping);
 impl_from_result!(subscribe, Subscribe);
 impl_from_result!(unsubscribe, Unsubscribe);
@@ -258,10 +258,10 @@ macro_rules! impl_try_from_result_no_lt {
 
 impl_try_from_result_no_lt!(account_channels, AccountChannels, AccountChannels);
 impl_try_from_result_no_lt!(account_currencies, AccountCurrencies, AccountCurrencies);
-impl_try_from_result!(account_lines, AccountLines, AccountLines);
-impl_try_from_result!(account_objects, AccountObjects, AccountObjects);
-impl_try_from_result!(account_nfts, AccountNfts, AccountNfts);
-impl_try_from_result!(account_offers, AccountOffers, AccountOffers);
+impl_try_from_result_no_lt!(account_lines, AccountLines, AccountLines);
+impl_try_from_result_no_lt!(account_objects, AccountObjects, AccountObjects);
+impl_try_from_result_no_lt!(account_nfts, AccountNfts, AccountNfts);
+impl_try_from_result_no_lt!(account_offers, AccountOffers, AccountOffers);
 impl_try_from_result!(amm_info, AMMInfo, AMMInfo);
 impl_try_from_result!(book_offers, BookOffers, BookOffers);
 impl_try_from_result!(channel_authorize, ChannelAuthorize, ChannelAuthorize);
@@ -277,8 +277,8 @@ impl_try_from_result!(ledger_entry, LedgerEntry, LedgerEntry);
 impl_try_from_result!(manifest, Manifest, Manifest);
 impl_try_from_result!(nft_buy_offers, NFTBuyOffers, NFTBuyOffers);
 impl_try_from_result!(nft_sell_offers, NFTSellOffers, NFTSellOffers);
-impl_try_from_result!(nftoken, NFTokenMintResult, NFTokenMintResult);
-impl_try_from_result!(no_ripple_check, NoRippleCheck, NoRippleCheck);
+impl_try_from_result_no_lt!(nftoken, NFTokenMintResult, NFTokenMintResult);
+impl_try_from_result_no_lt!(no_ripple_check, NoRippleCheck, NoRippleCheck);
 impl_try_from_result!(path_find, PathFind, PathFind);
 impl_try_from_result!(random, Random, Random);
 impl_try_from_result!(ripple_path_find, RipplePathFind, RipplePathFind);
@@ -286,7 +286,7 @@ impl_try_from_result_no_lt!(server_info, ServerInfo, ServerInfo);
 impl_try_from_result!(server_state, ServerState, ServerState);
 impl_try_from_result!(submit, Submit, Submit);
 impl_try_from_result!(submit_multisigned, SubmitMultisigned, SubmitMultisigned);
-impl_try_from_result!(transaction_entry, TransactionEntry, TransactionEntry);
+impl_try_from_result_no_lt!(transaction_entry, TransactionEntry, TransactionEntry);
 impl_try_from_result!(ping, Ping, Ping);
 impl_try_from_result!(subscribe, Subscribe, Subscribe);
 impl_try_from_result!(unsubscribe, Unsubscribe, Unsubscribe);

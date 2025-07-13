@@ -1,5 +1,3 @@
-use alloc::borrow::Cow;
-
 use serde::{Deserialize, Serialize};
 
 use crate::models::requests::Marker;
@@ -11,13 +9,13 @@ use crate::models::requests::Marker;
 /// `<https://xrpl.org/account_lines.html>`
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct AccountLines<'a> {
+pub struct AccountLines {
     /// Unique Address of the account this request corresponds to. This is
     /// the "perspective account" for purpose of the trust lines.
-    pub account: Cow<'a, str>,
+    pub account: String,
     /// Array of trust line objects. If the number of trust lines is large,
     /// only returns up to the limit at a time.
-    pub lines: Cow<'a, [TrustLine<'a>]>,
+    pub lines: Vec<TrustLine>,
     /// (Omitted if ledger_hash or ledger_index provided) The ledger index of
     /// the current open ledger, which was used when retrieving this
     /// information.
@@ -27,7 +25,7 @@ pub struct AccountLines<'a> {
     pub ledger_index: Option<u32>,
     /// (May be omitted) The identifying hash the ledger version that was
     /// used when retrieving this data.
-    pub ledger_hash: Option<Cow<'a, str>>,
+    pub ledger_hash: Option<String>,
     /// Server-defined value indicating the response is paginated. Pass this
     /// to the next call to resume where this call left off. Omitted when
     /// there are no additional pages after this one.
@@ -37,21 +35,21 @@ pub struct AccountLines<'a> {
 /// Represents a single trust line object.
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct TrustLine<'a> {
+pub struct TrustLine {
     /// The unique Address of the counterparty to this trust line.
-    pub account: Cow<'a, str>,
+    pub account: String,
     /// Representation of the numeric balance currently held against this line.
     /// A positive balance means that the perspective account holds value; a
     /// negative balance means that the perspective account owes value.
-    pub balance: Cow<'a, str>,
+    pub balance: String,
     /// A Currency Code identifying what currency this trust line can hold.
-    pub currency: Cow<'a, str>,
+    pub currency: String,
     /// The maximum amount of the given currency that this account is willing
     /// to owe the peer account.
-    pub limit: Cow<'a, str>,
+    pub limit: String,
     /// The maximum amount of currency that the counterparty account is willing
     /// to owe the perspective account.
-    pub limit_peer: Cow<'a, str>,
+    pub limit_peer: String,
     /// Rate at which the account values incoming balances on this trust line,
     /// as a ratio of this value per 1 billion units. (For example, a value of
     /// 500 million represents a 0.5:1 ratio.) As a special case, 0 is treated

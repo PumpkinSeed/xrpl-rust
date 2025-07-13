@@ -1,5 +1,3 @@
-use alloc::borrow::Cow;
-
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
@@ -8,17 +6,17 @@ use serde_json::Value;
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
 #[serde(rename_all = "PascalCase")]
-pub struct TransactionMetadata<'a> {
+pub struct TransactionMetadata {
     /// The transaction's position within the ledger that included it.
     #[serde(rename = "TransactionIndex")]
     pub transaction_index: u64,
     /// The transaction's result code.
     #[serde(rename = "TransactionResult")]
-    pub transaction_result: Cow<'a, str>,
+    pub transaction_result: String,
     /// Array of objects describing changes to ledger entries this
     /// transaction made.
     #[serde(rename = "AffectedNodes")]
-    pub affected_nodes: Cow<'a, [AffectedNode<'a>]>,
+    pub affected_nodes: Vec<AffectedNode>,
     /// The currency amount actually delivered to the destination for Payment
     /// transactions. Contains "unavailable" for partial payments before
     /// 2014-01-20.
@@ -26,38 +24,38 @@ pub struct TransactionMetadata<'a> {
     /// (Optional) NFTokenID for NFTokenMint and NFTokenAcceptOffer
     /// transactions.
     #[serde(rename = "nftoken_id")]
-    pub nftoken_id: Option<Cow<'a, str>>,
+    pub nftoken_id: Option<String>,
     /// (Optional) Array of NFTokenIDs for NFTokenCancelOffer transactions.
     #[serde(rename = "nftoken_ids")]
-    pub nftoken_ids: Option<Cow<'a, [Cow<'a, str>]>>,
+    pub nftoken_ids: Option<Vec<String>>,
     /// (Optional) OfferID for NFTokenCreateOffer transactions.
     #[serde(rename = "offer_id")]
-    pub offer_id: Option<Cow<'a, str>>,
+    pub offer_id: Option<String>,
     /// (Optional) MPTokenIssuanceID for MPTokenIssuanceCreate transactions.
     #[serde(rename = "mpt_issuance_id")]
-    pub mpt_issuance_id: Option<Cow<'a, str>>,
+    pub mpt_issuance_id: Option<String>,
 }
 
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
 #[serde(rename_all = "PascalCase")]
-pub struct AffectedNode<'a> {
+pub struct AffectedNode {
     #[serde(rename = "CreatedNode")]
-    pub created_node: Option<LedgerNode<'a>>,
+    pub created_node: Option<LedgerNode>,
     #[serde(rename = "ModifiedNode")]
-    pub modified_node: Option<LedgerNode<'a>>,
+    pub modified_node: Option<LedgerNode>,
     #[serde(rename = "DeletedNode")]
-    pub deleted_node: Option<LedgerNode<'a>>,
+    pub deleted_node: Option<LedgerNode>,
 }
 
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
 #[serde(rename_all = "PascalCase")]
-pub struct LedgerNode<'a> {
+pub struct LedgerNode {
     /// The type of ledger object this node represents.
-    pub ledger_entry_type: Cow<'a, str>,
+    pub ledger_entry_type: String,
     /// The ID of this ledger entry in the ledger's state tree.
-    pub ledger_index: Cow<'a, str>,
+    pub ledger_index: String,
     /// The content fields of the ledger entry after changes.
     pub final_fields: Option<Value>,
     /// The previous values for changed fields.
@@ -66,18 +64,18 @@ pub struct LedgerNode<'a> {
     pub new_fields: Option<Value>,
     /// The identifying hash of the previous transaction to modify this
     /// ledger entry.
-    pub previous_txn_id: Option<Cow<'a, str>>,
+    pub previous_txn_id: Option<String>,
     /// The Ledger Index of the ledger containing the previous transaction.
     #[serde(rename = "PreviousTxnLgrSeq")]
     pub previous_txn_lgr_seq: Option<u32>,
     /// The node in the directory chain.
-    pub book_node: Option<Cow<'a, str>>,
+    pub book_node: Option<String>,
     /// The node in the owner directory chain.
-    pub owner_node: Option<Cow<'a, str>>,
+    pub owner_node: Option<String>,
     /// The exchange rate, used in offer directory nodes.
-    pub exchange_rate: Option<Cow<'a, str>>,
+    pub exchange_rate: Option<String>,
     /// The root index of the directory.
-    pub root_index: Option<Cow<'a, str>>,
+    pub root_index: Option<String>,
 }
 
 #[cfg(test)]

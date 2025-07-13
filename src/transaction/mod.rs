@@ -96,7 +96,7 @@ pub fn submit_and_wait<'a: 'b, 'b, T, F, C>(
     wallet: Option<&Wallet>,
     check_fee: Option<bool>,
     autofill: Option<bool>,
-) -> XRPLHelperResult<TxVersionMap<'b>>
+) -> XRPLHelperResult<TxVersionMap>
 where
     T: Transaction<F> + Model + Clone + DeserializeOwned + Debug,
     F: IntoEnumIterator + Serialize + Debug + PartialEq + Debug + Clone + 'a,

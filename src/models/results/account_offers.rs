@@ -1,5 +1,3 @@
-use alloc::borrow::Cow;
-
 use serde::{Deserialize, Serialize};
 
 use crate::models::{requests::Marker, Amount};
@@ -11,17 +9,17 @@ use crate::models::{requests::Marker, Amount};
 /// `<https://xrpl.org/account_offers.html>`
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct AccountOffers<'a> {
+pub struct AccountOffers {
     /// Unique Address identifying the account that made the offers
-    pub account: Cow<'a, str>,
+    pub account: String,
     /// Array of objects, where each object represents an offer made by this
     /// account that is outstanding as of the requested ledger version. If the
     /// number of offers is large, only returns up to limit at a time.
-    pub offers: Cow<'a, [OfferObject<'a>]>,
+    pub offers: Vec<OfferObject>,
     /// The identifying hash of the ledger version that was used when
     /// retrieving this data.
     /// May be omitted.
-    pub ledger_hash: Option<Cow<'a, str>>,
+    pub ledger_hash: Option<String>,
     /// The ledger index of the ledger version that was used when retrieving
     /// this data, as requested. Omitted if ledger_current_index is provided
     /// instead.
@@ -39,7 +37,7 @@ pub struct AccountOffers<'a> {
 /// Represents a single offer object in the account_offers response.
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct OfferObject<'a> {
+pub struct OfferObject {
     /// Options set for this offer entry as bit-flags.
     pub flags: u32,
     /// Sequence number of the transaction that created this entry.
@@ -47,7 +45,7 @@ pub struct OfferObject<'a> {
     pub seq: u32,
     /// The amount the account accepting the offer receives, as a String
     /// representing an amount in XRP, or a currency specification object.
-    pub taker_gets: Cow<'a, str>,
+    pub taker_gets: String,
     /// The amount the account accepting the offer provides, as a String
     /// representing an amount in XRP, or a currency specification object.
     pub taker_pays: Amount,
@@ -55,7 +53,7 @@ pub struct OfferObject<'a> {
     /// taker_pays divided by the original taker_gets. When executing offers,
     /// the offer with the most favorable (lowest) quality is consumed first;
     /// offers with the same quality are executed from oldest to newest.
-    pub quality: Option<Cow<'a, str>>,
+    pub quality: Option<String>,
     /// A time after which this offer is considered unfunded, as the number
     /// of seconds since the Ripple Epoch.
     pub expiration: Option<u32>,

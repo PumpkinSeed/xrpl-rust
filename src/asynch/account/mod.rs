@@ -95,7 +95,7 @@ where
 pub async fn get_latest_transaction<'a: 'b, 'b, C>(
     mut address: String,
     client: &C,
-) -> XRPLHelperResult<crate::models::results::account_tx::AccountTxVersionMap<'b>>
+) -> XRPLHelperResult<results::account_tx::AccountTxVersionMap>
 where
     C: XRPLAsyncClient,
 {

@@ -69,7 +69,7 @@ where
 pub fn get_latest_transaction<'a: 'b, 'b, C>(
     address: String,
     client: &C,
-) -> XRPLHelperResult<AccountTxVersionMap<'b>>
+) -> XRPLHelperResult<AccountTxVersionMap>
 where
     C: XRPLClient,
 {

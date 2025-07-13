@@ -1,5 +1,3 @@
-use alloc::borrow::Cow;
-
 use serde::{Deserialize, Serialize};
 
 use super::tx::Transaction;
@@ -15,19 +13,19 @@ use super::tx::Transaction;
 /// `<https://xrpl.org/noripple_check.html>`
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct NoRippleCheck<'a> {
+pub struct NoRippleCheck {
     /// The ledger index of the ledger used to calculate these results.
     pub ledger_current_index: Option<u32>,
     /// Array of human-readable strings describing the problems. This includes
     /// up to one entry if the account's Default Ripple setting is not as
     /// recommended, plus up to 'limit' entries for trust lines whose No Ripple
     /// setting is not as recommended.
-    pub problems: Cow<'a, [Cow<'a, str>]>,
+    pub problems: Vec<String>,
     /// If the request specified transactions as true, this contains an array of
     /// transactions that should fix the described problems. The length of this
     /// array matches the problems array, and each entry corresponds to fixing
     /// the problem at the same index.
-    pub transactions: Option<Cow<'a, [Transaction<'a>]>>,
+    pub transactions: Option<Vec<Transaction>>,
     /// Whether this response contains validated ledger information.
     pub validated: bool,
 }

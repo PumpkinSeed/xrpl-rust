@@ -1,5 +1,3 @@
-use alloc::borrow::Cow;
-
 use serde::{Deserialize, Serialize};
 
 use super::metadata::TransactionMetadata;
@@ -10,17 +8,17 @@ use super::metadata::TransactionMetadata;
 /// `<https://xrpl.org/transaction_entry.html>`
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct TransactionEntry<'a> {
+pub struct TransactionEntry {
     /// The ledger index of the ledger version the transaction was found in;
     /// this is the same as the one from the request.
     pub ledger_index: u32,
     /// The identifying hash of the ledger version the transaction was found in;
     /// this is the same as the one from the request.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub ledger_hash: Option<Cow<'a, str>>,
+    pub ledger_hash: Option<String>,
     /// The transaction metadata, which shows the exact results of the
     /// transaction in detail.
-    pub meta: TransactionMetadata<'a>,
+    pub meta: TransactionMetadata,
     /// JSON representation of the Transaction object.
     pub tx_json: serde_json::Value,
 }
@@ -83,9 +81,7 @@ mod tests {
         assert_eq!(entry.ledger_index, 56865245);
         assert_eq!(
             entry.ledger_hash,
-            Some(Cow::from(
-                "793E56131D8D4ABFB27FA383BFC44F2978B046E023FF46C588D7E0C874C2472A"
-            ))
+            Some("793E56131D8D4ABFB27FA383BFC44F2978B046E023FF46C588D7E0C874C2472A".to_string())
         );
 
         // Test metadata

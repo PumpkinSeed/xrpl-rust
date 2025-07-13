@@ -32,7 +32,7 @@ pub async fn submit_and_wait<'a: 'b, 'b, T, F, C>(
     wallet: Option<&Wallet>,
     check_fee: Option<bool>,
     autofill: Option<bool>,
-) -> XRPLHelperResult<TxVersionMap<'b>>
+) -> XRPLHelperResult<TxVersionMap>
 where
     T: Transaction<F> + Model + Clone + DeserializeOwned + Debug,
     F: IntoEnumIterator + Serialize + Debug + PartialEq + Debug + Clone + 'a,
@@ -45,7 +45,7 @@ where
 async fn send_reliable_submission<'a: 'b, 'b, T, F, C>(
     transaction: &'b mut T,
     client: &C,
-) -> XRPLHelperResult<TxVersionMap<'b>>
+) -> XRPLHelperResult<TxVersionMap>
 where
     T: Transaction<F> + Model + Clone + DeserializeOwned + Debug,
     F: IntoEnumIterator + Serialize + Debug + PartialEq + Debug + Clone + 'a,
@@ -77,7 +77,7 @@ async fn wait_for_final_transaction_result<'a: 'b, 'b, C>(
     tx_hash: Cow<'a, str>,
     client: &C,
     last_ledger_sequence: u32,
-) -> XRPLHelperResult<TxVersionMap<'b>>
+) -> XRPLHelperResult<TxVersionMap>
 where
     C: XRPLAsyncClient,
 {

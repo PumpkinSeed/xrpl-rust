@@ -1,6 +1,6 @@
 use core::convert::TryFrom;
 
-use alloc::{borrow::Cow, string::ToString};
+use alloc::string::ToString;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
@@ -13,13 +13,13 @@ use super::{metadata::TransactionMetadata, XRPLResult};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(untagged)]
-pub enum TxVersionMap<'a> {
-    Default(Tx<'a>),
-    V1(TxV1<'a>),
+pub enum TxVersionMap {
+    Default(Tx),
+    V1(TxV1),
 }
 
-impl<'a> TxVersionMap<'a> {
-    pub fn get_transaction_metadata(&self) -> Option<&TransactionMetadata<'a>> {
+impl TxVersionMap {
+    pub fn get_transaction_metadata(&self) -> Option<&TransactionMetadata> {
         match self {
             TxVersionMap::Default(tx) => tx.meta.as_ref(),
             TxVersionMap::V1(tx) => tx.meta.as_ref(),
@@ -28,13 +28,13 @@ impl<'a> TxVersionMap<'a> {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-pub struct TxBase<'a> {
+pub struct TxBase {
     /// The unique identifying hash of the transaction
-    pub hash: Cow<'a, str>,
+    pub hash: String,
     /// The ledger index of the ledger that includes this transaction.
     pub ledger_index: Option<u32>,
     /// The transaction's compact transaction identifier.
-    pub ctid: Option<Cow<'a, str>>,
+    pub ctid: Option<String>,
     /// The close time of the ledger in which the transaction was applied,
     /// in seconds since the Ripple Epoch.
     pub date: Option<u32>,
@@ -47,29 +47,29 @@ pub struct TxBase<'a> {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-pub struct Tx<'a> {
+pub struct Tx {
     #[serde(flatten)]
-    pub base: TxBase<'a>,
+    pub base: TxBase,
     /// The transaction data represented in JSON.
     pub tx_json: Value,
     /// (JSON mode) Transaction metadata, which describes the results of
     /// the transaction.
-    pub meta: Option<TransactionMetadata<'a>>,
+    pub meta: Option<TransactionMetadata>,
     /// (Binary mode) Transaction metadata, which describes the results of
     /// the transaction, represented as a hex string.
-    pub meta_blob: Option<Cow<'a, str>>,
+    pub meta_blob: Option<String>,
     /// (Binary mode) The transaction data represented as a hex string.
-    pub tx_blob: Option<Cow<'a, str>>,
+    pub tx_blob: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-pub struct TxV1<'a> {
+pub struct TxV1 {
     #[serde(flatten)]
-    pub base: TxBase<'a>,
+    pub base: TxBase,
     /// Transaction metadata, which describes the results of the transaction.
-    pub meta: Option<TransactionMetadata<'a>>,
+    pub meta: Option<TransactionMetadata>,
     /// The transaction data represented as a hex string.
-    pub tx: Option<Cow<'a, str>>,
+    pub tx: Option<String>,
     /// Other fields from the `Transaction` object
     #[serde(flatten)]
     pub tx_json: Value,
@@ -80,10 +80,10 @@ pub struct TxV1<'a> {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "PascalCase")]
 #[serde(untagged)]
-pub enum Transaction<'a> {
+pub enum Transaction {
     #[serde(rename_all = "PascalCase")]
     AccountSet {
-        account: Cow<'a, str>,
+        account: String,
         fee: u32,
         sequence: u32,
         set_flag: u32,
@@ -91,7 +91,7 @@ pub enum Transaction<'a> {
     },
     #[serde(rename_all = "PascalCase")]
     TrustSet {
-        account: Cow<'a, str>,
+        account: String,
         fee: u32,
         flags: u32,
         limit_amount: Amount,
@@ -100,7 +100,7 @@ pub enum Transaction<'a> {
     },
 }
 
-impl<'a> TryFrom<XRPLResult<'a>> for TxVersionMap<'a> {
+impl<'a> TryFrom<XRPLResult<'a>> for TxVersionMap {
     type Error = XRPLModelException;
 
     fn try_from(result: XRPLResult<'a>) -> XRPLModelResult<Self> {
