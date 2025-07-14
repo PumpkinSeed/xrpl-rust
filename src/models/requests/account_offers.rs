@@ -1,4 +1,3 @@
-use alloc::borrow::Cow;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 
@@ -13,16 +12,16 @@ use super::{CommonFields, LedgerIndex, LookupByLedgerRequest, Marker, Request};
 /// `<https://xrpl.org/account_offers.html>`
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
-pub struct AccountOffers<'a> {
+pub struct AccountOffers {
     /// The common fields shared by all requests.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a>,
+    pub common_fields: CommonFields,
     /// A unique identifier for the account, most commonly the
     /// account's Address.
-    pub account: Cow<'a, str>,
+    pub account: String,
     /// The unique identifier of a ledger.
     #[serde(flatten)]
-    pub ledger_lookup: Option<LookupByLedgerRequest<'a>>,
+    pub ledger_lookup: Option<LookupByLedgerRequest>,
     /// Limit the number of transactions to retrieve. The server is
     /// not required to honor this value. Must be within the inclusive
     /// range 10 to 400.
@@ -33,30 +32,30 @@ pub struct AccountOffers<'a> {
     pub strict: Option<bool>,
     /// Value from a previous paginated response. Resume retrieving
     /// data where that response left off.
-    pub marker: Option<Marker<'a>>,
+    pub marker: Option<Marker>,
 }
 
-impl<'a> Model for AccountOffers<'a> {}
+impl Model for AccountOffers {}
 
-impl<'a> Request<'a> for AccountOffers<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'a> {
+impl Request for AccountOffers {
+    fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
 
-    fn get_common_fields_mut(&mut self) -> &mut CommonFields<'a> {
+    fn get_common_fields_mut(&mut self) -> &mut CommonFields {
         &mut self.common_fields
     }
 }
 
-impl<'a> AccountOffers<'a> {
+impl AccountOffers {
     pub fn new(
-        id: Option<Cow<'a, str>>,
-        account: Cow<'a, str>,
-        ledger_hash: Option<Cow<'a, str>>,
-        ledger_index: Option<LedgerIndex<'a>>,
+        id: Option<String>,
+        account: String,
+        ledger_hash: Option<String>,
+        ledger_index: Option<LedgerIndex>,
         limit: Option<u16>,
         strict: Option<bool>,
-        marker: Option<Marker<'a>>,
+        marker: Option<Marker>,
     ) -> Self {
         Self {
             common_fields: CommonFields {

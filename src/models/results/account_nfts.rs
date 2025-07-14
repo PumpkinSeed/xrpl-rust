@@ -1,5 +1,3 @@
-use alloc::borrow::Cow;
-
 use serde::{Deserialize, Serialize};
 
 use crate::models::requests::Marker;
@@ -11,15 +9,15 @@ use crate::models::requests::Marker;
 /// `<https://xrpl.org/account_nfts.html>`
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct AccountNfts<'a> {
+pub struct AccountNfts {
     /// The account that owns the list of NFTs.
-    pub account: Option<Cow<'a, str>>,
+    pub account: Option<String>,
     /// A list of NFTs owned by the account, formatted as NFT Objects.
     #[serde(rename = "account_nfts")]
-    pub nfts: Cow<'a, [NFToken<'a>]>,
+    pub nfts: Vec<NFToken>,
     /// (May be omitted) The identifying hash of the ledger that was used to
     /// generate this response.
-    pub ledger_hash: Option<Cow<'a, str>>,
+    pub ledger_hash: Option<String>,
     /// (May be omitted) The ledger index of the ledger that was used to
     /// generate this response.
     pub ledger_index: Option<u32>,
@@ -35,23 +33,23 @@ pub struct AccountNfts<'a> {
     /// (May be omitted) Server-defined value indicating the response is
     /// paginated. Pass this to the next call to resume where this call
     /// left off. Omitted when there are no additional pages after this one.
-    pub marker: Option<Marker<'a>>,
+    pub marker: Option<Marker>,
 }
 
 /// Each object in the account_nfts array represents one NFToken.
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct NFToken<'a> {
+pub struct NFToken {
     /// A bit-map of boolean flags enabled for this NFToken.
     /// See NFToken Flags for possible values.
     #[serde(rename = "Flags")]
     pub flags: u32,
     /// The account that issued this NFToken.
     #[serde(rename = "Issuer")]
-    pub issuer: Cow<'a, str>,
+    pub issuer: String,
     /// The unique identifier of this NFToken, in hexadecimal.
     #[serde(rename = "NFTokenID")]
-    pub nft_id: Cow<'a, str>,
+    pub nft_id: String,
     /// The token sequence number of this NFToken, which is unique for
     /// its issuer.
     pub nft_serial: u32,
@@ -61,7 +59,7 @@ pub struct NFToken<'a> {
     pub token_taxon: u32,
     /// The URI data associated with this NFToken, in hexadecimal.
     #[serde(rename = "URI")]
-    pub uri: Option<Cow<'a, str>>,
+    pub uri: Option<String>,
 }
 
 #[cfg(test)]
@@ -99,12 +97,12 @@ mod tests {
         let account_nfts: AccountNfts = serde_json::from_str(json).unwrap();
 
         // Test main struct fields
-        assert_eq!(account_nfts.account, "rsuHaTvJh1bDmDoxX9QcKP7HEBSBt4XsHx");
+        assert_eq!(account_nfts.account, Some("rsuHaTvJh1bDmDoxX9QcKP7HEBSBt4XsHx".to_string()));
         assert_eq!(
             account_nfts.ledger_hash.unwrap(),
             "46497E9FF17A993324F1A0A693DC068B467184023C7FD162812265EAAFEB97CB"
         );
-        assert_eq!(account_nfts.ledger_index, 2380559);
+        assert_eq!(account_nfts.ledger_index, Some(2380559));
         assert!(account_nfts.validated);
         assert_eq!(account_nfts.nfts.len(), 2);
 

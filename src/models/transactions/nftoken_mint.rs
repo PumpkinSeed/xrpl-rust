@@ -1,4 +1,3 @@
-use alloc::borrow::Cow;
 use alloc::vec::Vec;
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
@@ -49,7 +48,7 @@ pub enum NFTokenMintFlag {
     Debug, Serialize, Deserialize, PartialEq, Eq, Clone, xrpl_rust_macros::ValidateCurrencies,
 )]
 #[serde(rename_all = "PascalCase")]
-pub struct NFTokenMint<'a> {
+pub struct NFTokenMint {
     // The base fields for all transaction models.
     //
     // See Transaction Types:
@@ -58,7 +57,7 @@ pub struct NFTokenMint<'a> {
     // See Transaction Common Fields:
     // `<https://xrpl.org/transaction-common-fields.html>`
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, NFTokenMintFlag>,
+    pub common_fields: CommonFields<NFTokenMintFlag>,
     // The custom fields for the NFTokenMint model.
     //
     // See NFTokenMint fields:
@@ -72,7 +71,7 @@ pub struct NFTokenMint<'a> {
     /// is the issuer of the NFToken. If provided, the issuer's AccountRoot object must have
     /// the NFTokenMinter field set to the sender of this transaction (this transaction's
     /// Account field).
-    pub issuer: Option<Cow<'a, str>>,
+    pub issuer: Option<String>,
     /// The value specifies the fee charged by the issuer for secondary sales of the NFToken,
     /// if such sales are allowed. Valid values for this field are between 0 and 50000
     /// inclusive, allowing transfer rates of between 0.00% and 50.00% in increments of
@@ -86,10 +85,10 @@ pub struct NFTokenMint<'a> {
     /// an IPFS URI, a magnet link, immediate data encoded as an RFC 2379 "data" URL , or
     /// even an issuer-specific encoding. The URI is NOT checked for validity.
     #[serde(rename = "URI")]
-    pub uri: Option<Cow<'a, str>>,
+    pub uri: Option<String>,
 }
 
-impl<'a> Model for NFTokenMint<'a> {
+impl Model for NFTokenMint {
     fn get_errors(&self) -> XRPLModelResult<()> {
         self._get_issuer_error()?;
         self._get_transfer_fee_error()?;
@@ -98,7 +97,7 @@ impl<'a> Model for NFTokenMint<'a> {
     }
 }
 
-impl<'a> Transaction<'a, NFTokenMintFlag> for NFTokenMint<'a> {
+impl Transaction<NFTokenMintFlag> for NFTokenMint {
     fn has_flag(&self, flag: &NFTokenMintFlag) -> bool {
         self.common_fields.has_flag(flag)
     }
@@ -107,16 +106,16 @@ impl<'a> Transaction<'a, NFTokenMintFlag> for NFTokenMint<'a> {
         self.common_fields.get_transaction_type()
     }
 
-    fn get_common_fields(&self) -> &CommonFields<'_, NFTokenMintFlag> {
+    fn get_common_fields(&self) -> &CommonFields<NFTokenMintFlag> {
         self.common_fields.get_common_fields()
     }
 
-    fn get_mut_common_fields(&mut self) -> &mut CommonFields<'a, NFTokenMintFlag> {
+    fn get_mut_common_fields(&mut self) -> &mut CommonFields<NFTokenMintFlag> {
         self.common_fields.get_mut_common_fields()
     }
 }
 
-impl<'a> NFTokenMintError for NFTokenMint<'a> {
+impl NFTokenMintError for NFTokenMint {
     fn _get_issuer_error(&self) -> XRPLModelResult<()> {
         if let Some(issuer) = &self.issuer {
             if issuer == &self.common_fields.account {
@@ -165,11 +164,11 @@ impl<'a> NFTokenMintError for NFTokenMint<'a> {
     }
 }
 
-impl<'a> NFTokenMint<'a> {
+impl NFTokenMint {
     pub fn new(
-        account: Cow<'a, str>,
-        account_txn_id: Option<Cow<'a, str>>,
-        fee: Option<XRPAmount<'a>>,
+        account: String,
+        account_txn_id: Option<String>,
+        fee: Option<XRPAmount>,
         flags: Option<FlagCollection<NFTokenMintFlag>>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
@@ -178,9 +177,9 @@ impl<'a> NFTokenMint<'a> {
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
         nftoken_taxon: u32,
-        issuer: Option<Cow<'a, str>>,
+        issuer: Option<String>,
         transfer_fee: Option<u32>,
-        uri: Option<Cow<'a, str>>,
+        uri: Option<String>,
     ) -> Self {
         Self {
             common_fields: CommonFields::new(

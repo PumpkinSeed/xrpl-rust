@@ -1,4 +1,3 @@
-use alloc::borrow::Cow;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 
@@ -14,26 +13,26 @@ use super::{CommonFields, Request};
 /// `<https://xrpl.org/random.html#random>`
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
-pub struct Random<'a> {
+pub struct Random {
     /// The common fields shared by all requests.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a>,
+    pub common_fields: CommonFields,
 }
 
-impl<'a> Model for Random<'a> {}
+impl Model for Random {}
 
-impl<'a> Request<'a> for Random<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'a> {
+impl Request for Random {
+    fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
 
-    fn get_common_fields_mut(&mut self) -> &mut CommonFields<'a> {
+    fn get_common_fields_mut(&mut self) -> &mut CommonFields {
         &mut self.common_fields
     }
 }
 
-impl<'a> Random<'a> {
-    pub fn new(id: Option<Cow<'a, str>>) -> Self {
+impl Random {
+    pub fn new(id: Option<String>) -> Self {
         Self {
             common_fields: CommonFields {
                 command: RequestMethod::Random,

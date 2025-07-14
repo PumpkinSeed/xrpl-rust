@@ -1,4 +1,3 @@
-use alloc::borrow::Cow;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 
@@ -19,29 +18,29 @@ use super::{CommonFields, Request};
 /// `<https://xrpl.org/server_state.html#server_state>`
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
-pub struct ServerState<'a> {
+pub struct ServerState {
     /// The common fields shared by all requests.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a>,
-    pub ledger_index: Option<Cow<'a, str>>,
+    pub common_fields: CommonFields,
+    pub ledger_index: Option<String>,
 }
 
-impl<'a> Model for ServerState<'a> {}
+impl Model for ServerState {}
 
-impl<'a> Request<'a> for ServerState<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'a> {
+impl Request for ServerState {
+    fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
 
-    fn get_common_fields_mut(&mut self) -> &mut CommonFields<'a> {
+    fn get_common_fields_mut(&mut self) -> &mut CommonFields {
         &mut self.common_fields
     }
 }
 
-impl<'a> ServerState<'a> {
-    pub fn new(id: Option<Cow<'a, str>>) -> Self {
+impl ServerState {
+    pub fn new(id: Option<String>) -> Self {
         Self {
-            ledger_index: Some("current".into()),
+            ledger_index: Some("current".to_string()),
             common_fields: CommonFields {
                 command: RequestMethod::ServerState,
                 id,

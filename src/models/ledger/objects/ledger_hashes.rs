@@ -1,7 +1,6 @@
 use crate::models::FlagCollection;
 use crate::models::Model;
 use crate::models::{ledger::objects::LedgerEntryType, NoFlags};
-use alloc::borrow::Cow;
 use alloc::vec::Vec;
 use serde::{Deserialize, Serialize};
 
@@ -25,13 +24,13 @@ use super::{CommonFields, LedgerObject};
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 #[serde(rename_all = "PascalCase")]
-pub struct LedgerHashes<'a> {
+pub struct LedgerHashes {
     /// The base fields for all ledger object models.
     ///
     /// See Ledger Object Common Fields:
     /// `<https://xrpl.org/ledger-entry-common-fields.html>`
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, NoFlags>,
+    pub common_fields: CommonFields<NoFlags>,
     // The custom fields for the LedgerHashes model.
     //
     // See LedgerHashes fields:
@@ -40,37 +39,37 @@ pub struct LedgerHashes<'a> {
     pub first_ledger_sequence: u32,
     /// An array of up to 256 ledger hashes. The contents depend on which sub-type of `LedgerHashes`
     /// object this is.
-    pub hashes: Vec<Cow<'a, str>>,
+    pub hashes: Vec<String>,
     /// The Ledger Index of the last entry in this object's `Hashes` array.
     pub last_ledger_sequence: u32,
 }
 
-impl<'a> Model for LedgerHashes<'a> {}
+impl Model for LedgerHashes {}
 
-impl<'a> LedgerObject<NoFlags> for LedgerHashes<'a> {
+impl LedgerObject<NoFlags> for LedgerHashes {
     fn get_ledger_entry_type(&self) -> LedgerEntryType {
         self.common_fields.get_ledger_entry_type()
     }
 }
 
-impl<'a> LedgerHashes<'a> {
+impl LedgerHashes {
     pub fn new(
-        index: Option<Cow<'a, str>>,
-        ledger_index: Option<Cow<'a, str>>,
+        index: Option<String>,
+        ledger_index: Option<String>,
         first_ledger_sequence: u32,
-        hashes: Vec<Cow<'a, str>>,
+        hashes: Vec<String>,
         last_ledger_sequence: u32,
     ) -> Self {
         Self {
-            common_fields: CommonFields {
-                flags: FlagCollection::default(),
-                ledger_entry_type: LedgerEntryType::LedgerHashes,
-                index,
-                ledger_index,
-            },
+            common_fields: CommonFields::new(
+                FlagCollection::default(),
+                LedgerEntryType::LedgerHashes,
+                index.map(|x| x.to_string()),
+                ledger_index.map(|x| x.to_string()),
+            ),
             first_ledger_sequence,
-            hashes,
             last_ledger_sequence,
+            hashes,
         }
     }
 }
@@ -83,17 +82,15 @@ mod tests {
     #[test]
     fn test_serde() {
         let ledger_hashes = LedgerHashes::new(
-            Some(Cow::from(
-                "B4979A36CDC7F3D3D5C31A4EAE2AC7D7209DDA877588B9AFC66799692AB0D66B",
-            )),
+            Some("B4979A36CDC7F3D3D5C31A4EAE2AC7D7209DDA877588B9AFC66799692AB0D66B".to_string()),
             None,
             2,
             vec![
-                Cow::from("D638208ADBD04CBB10DE7B645D3AB4BA31489379411A3A347151702B6401AA78"),
-                Cow::from("254D690864E418DDD9BCAC93F41B1F53B1AE693FC5FE667CE40205C322D1BE3B"),
-                Cow::from("A2B31D28905E2DEF926362822BC412B12ABF6942B73B72A32D46ED2ABB7ACCFA"),
-                Cow::from("AB4014846DF818A4B43D6B1686D0DE0644FE711577C5AB6F0B2A21CCEE280140"),
-                Cow::from("3383784E82A8BA45F4DD5EF4EE90A1B2D3B4571317DBAC37B859836ADDE644C1"),
+                "D638208ADBD04CBB10DE7B645D3AB4BA31489379411A3A347151702B6401AA78".to_string(),
+                "254D690864E418DDD9BCAC93F41B1F53B1AE693FC5FE667CE40205C322D1BE3B".to_string(),
+                "A2B31D28905E2DEF926362822BC412B12ABF6942B73B72A32D46ED2ABB7ACCFA".to_string(),
+                "AB4014846DF818A4B43D6B1686D0DE0644FE711577C5AB6F0B2A21CCEE280140".to_string(),
+                "3383784E82A8BA45F4DD5EF4EE90A1B2D3B4571317DBAC37B859836ADDE644C1".to_string(),
             ],
             33872029,
         );

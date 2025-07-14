@@ -1,4 +1,4 @@
-use alloc::{borrow::Cow, vec::Vec};
+use alloc::vec::Vec;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 
@@ -9,45 +9,45 @@ use super::{CommonFields, LedgerEntryType, LedgerObject, XChainClaimProofSig};
 #[skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "PascalCase")]
-pub struct XChainOwnedClaimID<'a> {
+pub struct XChainOwnedClaimID {
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, NoFlags>,
-    pub account: Cow<'a, str>,
-    pub other_chain_source: Cow<'a, str>,
-    pub signature_reward: Amount<'a>,
+    pub common_fields: CommonFields<NoFlags>,
+    pub account: String,
+    pub other_chain_source: String,
+    pub signature_reward: Amount,
     #[serde(rename = "XChainBridge")]
-    pub xchain_bridge: XChainBridge<'a>,
+    pub xchain_bridge: XChainBridge,
     #[serde(rename = "XChainClaimAttestations")]
-    pub xchain_claim_attestations: Vec<XChainClaimProofSig<'a>>,
-    pub xchain_claim_id: Cow<'a, str>,
+    pub xchain_claim_attestations: Vec<XChainClaimProofSig>,
+    pub xchain_claim_id: String,
 }
 
-impl Model for XChainOwnedClaimID<'_> {}
+impl Model for XChainOwnedClaimID {}
 
-impl LedgerObject<NoFlags> for XChainOwnedClaimID<'_> {
+impl LedgerObject<NoFlags> for XChainOwnedClaimID {
     fn get_ledger_entry_type(&self) -> super::LedgerEntryType {
         self.common_fields.get_ledger_entry_type()
     }
 }
 
-impl<'a> XChainOwnedClaimID<'a> {
+impl XChainOwnedClaimID {
     pub fn new(
-        index: Option<Cow<'a, str>>,
-        ledger_index: Option<Cow<'a, str>>,
-        account: Cow<'a, str>,
-        other_chain_source: Cow<'a, str>,
-        signature_reward: Amount<'a>,
-        xchain_bridge: XChainBridge<'a>,
-        xchain_claim_attestations: Vec<XChainClaimProofSig<'a>>,
-        xchain_claim_id: Cow<'a, str>,
-    ) -> XChainOwnedClaimID<'a> {
+        index: Option<String>,
+        ledger_index: Option<String>,
+        account: String,
+        other_chain_source: String,
+        signature_reward: Amount,
+        xchain_bridge: XChainBridge,
+        xchain_claim_attestations: Vec<XChainClaimProofSig>,
+        xchain_claim_id: String,
+    ) -> XChainOwnedClaimID {
         XChainOwnedClaimID {
-            common_fields: CommonFields {
-                flags: Default::default(),
-                ledger_entry_type: LedgerEntryType::XChainOwnedClaimID,
+            common_fields: CommonFields::new(
+                Default::default(),
+                LedgerEntryType::XChainOwnedClaimID,
                 index,
                 ledger_index,
-            },
+            ),
             account,
             other_chain_source,
             signature_reward,

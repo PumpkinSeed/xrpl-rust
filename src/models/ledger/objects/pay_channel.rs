@@ -2,7 +2,6 @@ use crate::models::ledger::objects::LedgerEntryType;
 use crate::models::FlagCollection;
 use crate::models::NoFlags;
 use crate::models::{amount::Amount, Model};
-use alloc::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
@@ -17,41 +16,41 @@ use super::{CommonFields, LedgerObject};
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 #[serde(rename_all = "PascalCase")]
-pub struct PayChannel<'a> {
+pub struct PayChannel {
     /// The base fields for all ledger object models.
     ///
     /// See Ledger Object Common Fields:
     /// `<https://xrpl.org/ledger-entry-common-fields.html>`
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, NoFlags>,
+    pub common_fields: CommonFields<NoFlags>,
     // The custom fields for the PayChannel model.
     //
     // See PayChannel fields:
     // `<https://xrpl.org/paychannel.html#paychannel-fields>`
     /// The source address that owns this payment channel.
-    pub account: Cow<'a, str>,
+    pub account: String,
     /// Total XRP, in drops, that has been allocated to this channel. This includes XRP
     /// that has been paid to the destination address.
-    pub amount: Amount<'a>,
+    pub amount: Amount,
     /// Total XRP, in drops, already paid out by the channel. The difference between
     /// this value and the `Amount` field is how much XRP can still be paid to the destination
     /// address with `PaymentChannelClaim` transactions.
-    pub balance: Amount<'a>,
+    pub balance: Amount,
     /// The destination address for this payment channel. While the payment channel is open,
     /// this address is the only one that can receive XRP from the channel.
-    pub destination: Cow<'a, str>,
+    pub destination: String,
     /// A hint indicating which page of the source address's owner directory links to this
     /// object, in case the directory consists of multiple pages.
-    pub owner_node: Cow<'a, str>,
+    pub owner_node: String,
     /// The identifying hash of the transaction that most recently modified this object.
     #[serde(rename = "PreviousTxnID")]
-    pub previous_txn_id: Cow<'a, str>,
+    pub previous_txn_id: String,
     /// The index of the ledger that contains the transaction that most recently modified
     /// this object.
     pub previous_txn_lgr_seq: u32,
     /// Public key, in hexadecimal, of the key pair that can be used to sign claims against
     /// this channel. This can be any valid secp256k1 or Ed25519 public key.
-    pub public_key: Cow<'a, str>,
+    pub public_key: String,
     /// Number of seconds the source address must wait to close the channel if it still has
     /// any XRP in it.
     pub settle_delay: u32,
@@ -62,7 +61,7 @@ pub struct PayChannel<'a> {
     pub destination_tag: Option<u32>,
     /// A hint indicating which page of the destination's owner directory links to this object,
     /// in case the directory consists of multiple pages.
-    pub destination_node: Option<Cow<'a, str>>,
+    pub destination_node: Option<String>,
     /// The mutable expiration time for this payment channel, in seconds since the Ripple Epoch.
     pub expiration: Option<u32>,
     /// An arbitrary tag to further specify the source for this payment channel, such as a
@@ -70,40 +69,40 @@ pub struct PayChannel<'a> {
     pub source_tag: Option<u32>,
 }
 
-impl<'a> Model for PayChannel<'a> {}
+impl Model for PayChannel {}
 
-impl<'a> LedgerObject<NoFlags> for PayChannel<'a> {
+impl LedgerObject<NoFlags> for PayChannel {
     fn get_ledger_entry_type(&self) -> LedgerEntryType {
         self.common_fields.get_ledger_entry_type()
     }
 }
 
-impl<'a> PayChannel<'a> {
+impl PayChannel {
     pub fn new(
-        index: Option<Cow<'a, str>>,
-        ledger_index: Option<Cow<'a, str>>,
-        account: Cow<'a, str>,
-        amount: Amount<'a>,
-        balance: Amount<'a>,
-        destination: Cow<'a, str>,
-        owner_node: Cow<'a, str>,
-        previous_txn_id: Cow<'a, str>,
+        index: Option<String>,
+        ledger_index: Option<String>,
+        account: String,
+        amount: Amount,
+        balance: Amount,
+        destination: String,
+        owner_node: String,
+        previous_txn_id: String,
         previous_txn_lgr_seq: u32,
-        public_key: Cow<'a, str>,
+        public_key: String,
         settle_delay: u32,
         cancel_after: Option<u32>,
         destination_tag: Option<u32>,
-        destination_node: Option<Cow<'a, str>>,
+        destination_node: Option<String>,
         expiration: Option<u32>,
         source_tag: Option<u32>,
     ) -> Self {
         Self {
-            common_fields: CommonFields {
-                flags: FlagCollection::default(),
-                ledger_entry_type: LedgerEntryType::PayChannel,
-                index,
-                ledger_index,
-            },
+            common_fields: CommonFields::new(
+                FlagCollection::default(),
+                LedgerEntryType::PayChannel,
+                index.map(|x| x.to_string()),
+                ledger_index.map(|x| x.to_string()),
+            ),
             account,
             amount,
             balance,
@@ -125,27 +124,24 @@ impl<'a> PayChannel<'a> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use alloc::borrow::Cow;
 
     #[test]
     fn test_serde() {
         let pay_channel = PayChannel::new(
-            Some(Cow::from(
-                "96F76F27D8A327FC48753167EC04A46AA0E382E6F57F32FD12274144D00F1797",
-            )),
+            Some("96F76F27D8A327FC48753167EC04A46AA0E382E6F57F32FD12274144D00F1797".to_string()),
             None,
-            Cow::from("rBqb89MRQJnMPq8wTwEbtz4kvxrEDfcYvt"),
+            "rBqb89MRQJnMPq8wTwEbtz4kvxrEDfcYvt".to_string(),
             Amount::XRPAmount("4325800".into()),
             Amount::XRPAmount("2323423".into()),
-            Cow::from("rf1BiGeXwwQoi8Z2ueFYTEXSwuJYfV2Jpn"),
-            Cow::from("0000000000000000"),
-            Cow::from("F0AB71E777B2DA54B86231E19B82554EF1F8211F92ECA473121C655BFC5329BF"),
+            "rf1BiGeXwwQoi8Z2ueFYTEXSwuJYfV2Jpn".to_string(),
+            "0000000000000000".to_string(),
+            "F0AB71E777B2DA54B86231E19B82554EF1F8211F92ECA473121C655BFC5329BF".to_string(),
             14524914,
-            Cow::from("32D2471DB72B27E3310F355BB33E339BF26F8392D5A93D3BC0FC3B566612DA0F0A"),
+            "32D2471DB72B27E3310F355BB33E339BF26F8392D5A93D3BC0FC3B566612DA0F0A".to_string(),
             3600,
             Some(536891313),
             Some(1002341),
-            Some(Cow::from("0000000000000000")),
+            Some("0000000000000000".to_string()),
             Some(536027313),
             Some(0),
         );

@@ -10,14 +10,14 @@ use crate::{
         XRPAmount,
     },
 };
-use alloc::borrow::{Cow, ToOwned};
+use alloc::borrow::ToOwned;
 use alloc::string::ToString;
 use crate::models::results::XRPLResponse;
 
 pub async fn does_account_exist<C>(
-    address: Cow<'_, str>,
+    address: String,
     client: &C,
-    ledger_index: Option<Cow<'_, str>>,
+    ledger_index: Option<String>,
 ) -> XRPLHelperResult<bool>
 where
     C: XRPLAsyncClient,
@@ -29,20 +29,20 @@ where
 }
 
 pub async fn get_next_valid_seq_number(
-    address: Cow<'_, str>,
+    address: String,
     client: &impl XRPLAsyncClient,
-    ledger_index: Option<Cow<'_, str>>,
+    ledger_index: Option<String>,
 ) -> XRPLHelperResult<u32> {
     let account_info =
         get_account_root(address, client, ledger_index.unwrap_or("current".into())).await?;
     Ok(account_info.sequence)
 }
 
-pub async fn get_xrp_balance<'a: 'b, 'b, C>(
-    address: Cow<'a, str>,
-    client: &'a C,
-    ledger_index: Option<Cow<'a, str>>,
-) -> XRPLHelperResult<XRPAmount<'b>>
+pub async fn get_xrp_balance<C>(
+    address: String,
+    client: &C,
+    ledger_index: Option<String>,
+) -> XRPLHelperResult<XRPAmount>
 where
     C: XRPLAsyncClient,
 {
@@ -54,11 +54,11 @@ where
     }
 }
 
-pub async fn get_account_root<'a: 'b, 'b, C>(
-    address: Cow<'a, str>,
-    client: &'a C,
-    ledger_index: Cow<'a, str>,
-) -> XRPLHelperResult<AccountRoot<'b>>
+pub async fn get_account_root<C>(
+    address: String,
+    client: &C,
+    ledger_index: String,
+) -> XRPLHelperResult<AccountRoot>
 where
     C: XRPLAsyncClient,
 {
@@ -68,16 +68,16 @@ where
     }
     let request = AccountInfo::new(
         None,
-        classic_address,
+        classic_address.to_string(),
         None,
-        Some(ledger_index.into()),
+        Some(ledger_index.to_string().into()),
         None,
         None,
         None,
     )
     .into();
     let response = client.request(request).await?;
-    let response: XRPLResponse<'a, results::account_info::AccountInfoVersionMap> = serde_json::from_str(&response)?;
+    let response: XRPLResponse<results::account_info::AccountInfoVersionMap> = serde_json::from_str(&response)?;
 
     let account_info = match response.result {
         Some(result) => result,
@@ -92,10 +92,10 @@ where
     Ok(account_root)
 }
 
-pub async fn get_latest_transaction<'a: 'b, 'b, C>(
-    mut address: Cow<'a, str>,
+pub async fn get_latest_transaction<C>(
+    mut address: String,
     client: &C,
-) -> XRPLHelperResult<crate::models::results::account_tx::AccountTxVersionMap<'b>>
+) -> XRPLHelperResult<results::account_tx::AccountTxVersionMap>
 where
     C: XRPLAsyncClient,
 {
@@ -104,7 +104,7 @@ where
     }
     let account_tx = AccountTx::new(
         None,
-        address,
+        address.to_string(),
         None,
         Some("validated".into()),
         None,
@@ -116,7 +116,7 @@ where
     );
     let response_raw = client.request(account_tx.into()).await?;
     let response: results::account_tx::AccountTxVersionMap =
-        serde_json::from_str(&response_raw)?; // TODO probably it is XRPLResponse<'a, results::account_tx::AccountTxVersionMap>
+        serde_json::from_str(&response_raw)?; // TODO probably it is XRPLResponse<results::account_tx::AccountTxVersionMap>
 
     Ok(response)
 }

@@ -1,6 +1,6 @@
 use core::fmt::Debug;
 
-use alloc::{borrow::Cow, format};
+use alloc::format;
 use serde::{de::DeserializeOwned, Serialize};
 use strum::IntoEnumIterator;
 
@@ -26,29 +26,29 @@ use crate::{
 };
 use crate::models::results::XRPLResponse;
 
-pub async fn submit_and_wait<'a: 'b, 'b, T, F, C>(
-    transaction: &'b mut T,
+pub async fn submit_and_wait<T, F, C>(
+    transaction: &mut T,
     client: &C,
     wallet: Option<&Wallet>,
     check_fee: Option<bool>,
     autofill: Option<bool>,
-) -> XRPLHelperResult<TxVersionMap<'b>>
+) -> XRPLHelperResult<TxVersionMap>
 where
-    T: Transaction<'a, F> + Model + Clone + DeserializeOwned + Debug,
-    F: IntoEnumIterator + Serialize + Debug + PartialEq + Debug + Clone + 'a,
+    T: Transaction<F> + Model + Clone + DeserializeOwned + Debug,
+    F: IntoEnumIterator + Serialize + Debug + PartialEq + Debug + Clone,
     C: XRPLAsyncClient,
 {
     get_signed_transaction(transaction, client, wallet, check_fee, autofill).await?;
     send_reliable_submission(transaction, client).await
 }
 
-async fn send_reliable_submission<'a: 'b, 'b, T, F, C>(
-    transaction: &'b mut T,
+async fn send_reliable_submission<T, F, C>(
+    transaction: &mut T,
     client: &C,
-) -> XRPLHelperResult<TxVersionMap<'b>>
+) -> XRPLHelperResult<TxVersionMap>
 where
-    T: Transaction<'a, F> + Model + Clone + DeserializeOwned + Debug,
-    F: IntoEnumIterator + Serialize + Debug + PartialEq + Debug + Clone + 'a,
+    T: Transaction<F> + Model + Clone + DeserializeOwned + Debug,
+    F: IntoEnumIterator + Serialize + Debug + PartialEq + Debug + Clone,
     C: XRPLAsyncClient,
 {
     let tx_hash = transaction.get_hash()?;
@@ -73,11 +73,11 @@ where
     }
 }
 
-async fn wait_for_final_transaction_result<'a: 'b, 'b, C>(
-    tx_hash: Cow<'a, str>,
+async fn wait_for_final_transaction_result<C>(
+    tx_hash: String,
     client: &C,
     last_ledger_sequence: u32,
-) -> XRPLHelperResult<TxVersionMap<'b>>
+) -> XRPLHelperResult<TxVersionMap>
 where
     C: XRPLAsyncClient,
 {
@@ -97,7 +97,7 @@ where
         // sleep for 1 second
         wait_seconds(1).await;
         let response = client
-            .request(requests::tx::Tx::new(None, None, None, None, Some(tx_hash.clone())).into())
+            .request(requests::tx::Tx::new(None, None, None, None, Some(tx_hash.to_string())).into())
             .await?;
         let response: XRPLResponse<TxVersionMap> = serde_json::from_str(&response)?;
 
@@ -144,7 +144,7 @@ where
     )
 }
 
-async fn get_signed_transaction<'a, T, F, C>(
+async fn get_signed_transaction<T, F, C>(
     transaction: &mut T,
     client: &C,
     wallet: Option<&Wallet>,
@@ -152,7 +152,7 @@ async fn get_signed_transaction<'a, T, F, C>(
     do_autofill: Option<bool>,
 ) -> XRPLHelperResult<()>
 where
-    T: Transaction<'a, F> + Model + Clone + DeserializeOwned + Debug,
+    T: Transaction<F> + Model + Clone + DeserializeOwned + Debug,
     F: IntoEnumIterator + Serialize + Debug + PartialEq + Debug + Clone,
     C: XRPLAsyncClient,
 {
@@ -202,7 +202,7 @@ mod test_submit_and_wait {
             .await
             .unwrap();
         let mut tx = AccountSet::new(
-            Cow::from(wallet.classic_address.clone()),
+            wallet.classic_address.clone(),
             None,
             None,
             None,

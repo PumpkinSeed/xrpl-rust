@@ -1,5 +1,3 @@
-use alloc::borrow::Cow;
-
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
@@ -12,16 +10,16 @@ use crate::models::requests::Marker;
 /// `<https://xrpl.org/account_objects.html>`
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct AccountObjects<'a> {
+pub struct AccountObjects {
     /// Unique Address of the account this request corresponds to
-    pub account: Cow<'a, str>,
+    pub account: String,
     /// Array of objects owned by this account. Each object is in its raw
     /// ledger format. Using Value since objects can be of different types
     /// (RippleState, Offer, etc.)
-    pub account_objects: Cow<'a, [Value]>,
+    pub account_objects: Vec<Value>,
     /// The identifying hash of the ledger that was used to generate this
     /// response. May be omitted.
-    pub ledger_hash: Option<Cow<'a, str>>,
+    pub ledger_hash: Option<String>,
     /// The ledger index of the ledger version that was used to generate
     /// this response. May be omitted if ledger_current_index is provided.
     pub ledger_index: u32,
@@ -34,7 +32,7 @@ pub struct AccountObjects<'a> {
     /// Server-defined value indicating the response is paginated. Pass this
     /// to the next call to resume where this call left off. Omitted when
     /// there are no additional pages after this one.
-    pub marker: Option<Marker<'a>>,
+    pub marker: Option<Marker>,
     /// If true, the information in this response comes from a validated
     /// ledger version. Otherwise, the information is subject to change.
     pub validated: bool,

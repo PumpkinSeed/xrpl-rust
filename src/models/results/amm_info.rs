@@ -1,5 +1,3 @@
-use alloc::borrow::Cow;
-
 use serde::{Deserialize, Serialize};
 
 use crate::models::Amount;
@@ -11,15 +9,15 @@ use crate::models::Amount;
 /// `<https://xrpl.org/amm_info.html>`
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct AMMInfo<'a> {
+pub struct AMMInfo {
     /// The AMM Description Object for the requested asset pair.
-    pub amm: AMMDescription<'a>,
+    pub amm: AMMDescription,
     /// The ledger index of the current in-progress ledger.
     /// Omitted if ledger_index is provided instead.
     pub ledger_current_index: Option<u32>,
     /// The identifying hash of the ledger version used.
     /// Omitted if ledger_current_index is provided instead.
-    pub ledger_hash: Option<Cow<'a, str>>,
+    pub ledger_hash: Option<String>,
     /// The ledger index of the ledger version used.
     /// Omitted if ledger_current_index is provided instead.
     pub ledger_index: Option<u32>,
@@ -31,58 +29,58 @@ pub struct AMMInfo<'a> {
 /// the ledger.
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct AMMDescription<'a> {
+pub struct AMMDescription {
     /// The Address of the AMM Account.
-    pub account: Cow<'a, str>,
+    pub account: String,
     /// The total amount of one asset in the AMM's pool.
-    pub amount: Amount<'a>,
+    pub amount: Amount,
     /// The total amount of the other asset in the AMM's pool.
-    pub amount2: Amount<'a>,
+    pub amount2: Amount,
     /// If true, the amount currency is currently frozen. Omitted for XRP.
     pub asset_frozen: Option<bool>,
     /// If true, the amount2 currency is currently frozen. Omitted for XRP.
     pub asset2_frozen: Option<bool>,
     /// Details about the current auction slot holder, if there is one.
-    pub auction_slot: Option<AuctionSlot<'a>>,
+    pub auction_slot: Option<AuctionSlot>,
     /// The total amount of this AMM's LP Tokens outstanding.
     /// If a liquidity provider was specified, this is their LP Token balance.
-    pub lp_token: Amount<'a>,
+    pub lp_token: Amount,
     /// The AMM's current trading fee, in units of 1/100,000.
     pub trading_fee: u32,
     /// The current votes for the AMM's trading fee.
-    pub vote_slots: Option<Cow<'a, [VoteSlot<'a>]>>,
+    pub vote_slots: Option<Vec<VoteSlot>>,
 }
 
 /// Describes the current auction slot holder of the AMM.
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct AuctionSlot<'a> {
+pub struct AuctionSlot {
     /// The Address of the account that owns the auction slot.
-    pub account: Cow<'a, str>,
+    pub account: String,
     /// Additional accounts eligible for the discounted trading fee.
-    pub auth_accounts: Option<Cow<'a, [AuthAccount<'a>]>>,
+    pub auth_accounts: Option<Vec<AuthAccount>>,
     /// The discounted trading fee (1/10 of the AMM's normal trading fee).
     pub discounted_fee: u32,
     /// The ISO 8601 UTC timestamp when this auction slot expires.
-    pub expiration: Cow<'a, str>,
+    pub expiration: String,
     /// The amount in LP Tokens paid to win the auction slot.
-    pub price: Amount<'a>,
+    pub price: Amount,
     /// Current 72-minute time interval (0-19).
     pub time_interval: u32,
 }
 
 /// Represents an authorized account for discounted trading.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct AuthAccount<'a> {
+pub struct AuthAccount {
     /// The address of the designated account.
-    pub account: Cow<'a, str>,
+    pub account: String,
 }
 
 /// Represents one liquidity provider's vote to set the trading fee.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct VoteSlot<'a> {
+pub struct VoteSlot {
     /// The Address of this liquidity provider.
-    pub account: Cow<'a, str>,
+    pub account: String,
     /// The trading fee voted for, in units of 1/100,000.
     pub trading_fee: u32,
     /// The vote weight, proportional to LP Token holdings.

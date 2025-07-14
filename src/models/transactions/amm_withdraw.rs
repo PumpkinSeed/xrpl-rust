@@ -1,4 +1,4 @@
-use alloc::{borrow::Cow, vec::Vec};
+use alloc::vec::Vec;
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 use serde_with::skip_serializing_none;
@@ -33,29 +33,29 @@ pub enum AMMWithdrawFlag {
     Debug, Serialize, Deserialize, PartialEq, Eq, Clone, xrpl_rust_macros::ValidateCurrencies,
 )]
 #[serde(rename_all = "PascalCase")]
-pub struct AMMWithdraw<'a> {
-    pub common_fields: CommonFields<'a, AMMWithdrawFlag>,
+pub struct AMMWithdraw {
+    pub common_fields: CommonFields<AMMWithdrawFlag>,
     /// The definition for one of the assets in the AMM's pool.
-    pub asset: Currency<'a>,
+    pub asset: Currency,
     /// The definition for the other asset in the AMM's pool.
     #[serde(rename = "Asset2")]
-    pub asset2: Currency<'a>,
+    pub asset2: Currency,
     /// The amount of one asset to withdraw from the AMM.
     /// This must match the type of one of the assets (tokens or XRP) in the AMM's pool.
-    pub amount: Option<Amount<'a>>,
+    pub amount: Option<Amount>,
     /// The amount of another asset to withdraw from the AMM.
     /// If present, this must match the type of the other asset in the AMM's pool
     /// and cannot be the same type as Amount.
     #[serde(rename = "Amount2")]
-    pub amount2: Option<Amount<'a>>,
+    pub amount2: Option<Amount>,
     /// The minimum effective price, in LP Token returned, to pay per unit of the asset
     /// to withdraw.
-    pub e_price: Option<Amount<'a>>,
+    pub e_price: Option<Amount>,
     /// How many of the AMM's LP Tokens to redeem.
-    pub lp_token_in: Option<IssuedCurrencyAmount<'a>>,
+    pub lp_token_in: Option<IssuedCurrencyAmount>,
 }
 
-impl Model for AMMWithdraw<'_> {
+impl Model for AMMWithdraw {
     fn get_errors(&self) -> crate::models::XRPLModelResult<()> {
         self.validate_currencies()?;
         if self.amount2.is_some() && self.amount.is_none() {
@@ -74,25 +74,25 @@ impl Model for AMMWithdraw<'_> {
     }
 }
 
-impl<'a> Transaction<'a, AMMWithdrawFlag> for AMMWithdraw<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'_, AMMWithdrawFlag> {
+impl Transaction<AMMWithdrawFlag> for AMMWithdraw {
+    fn get_transaction_type(&self) -> &TransactionType {
+        self.common_fields.get_transaction_type()
+    }
+
+    fn get_common_fields(&self) -> &CommonFields<AMMWithdrawFlag> {
         &self.common_fields
     }
 
-    fn get_mut_common_fields(&mut self) -> &mut CommonFields<'a, AMMWithdrawFlag> {
+    fn get_mut_common_fields(&mut self) -> &mut CommonFields<AMMWithdrawFlag> {
         self.common_fields.get_mut_common_fields()
-    }
-
-    fn get_transaction_type(&self) -> &super::TransactionType {
-        self.common_fields.get_transaction_type()
     }
 }
 
-impl<'a> AMMWithdraw<'a> {
+impl AMMWithdraw {
     pub fn new(
-        account: Cow<'a, str>,
-        account_txn_id: Option<Cow<'a, str>>,
-        fee: Option<XRPAmount<'a>>,
+        account: String,
+        account_txn_id: Option<String>,
+        fee: Option<XRPAmount>,
         flags: Option<FlagCollection<AMMWithdrawFlag>>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
@@ -100,12 +100,12 @@ impl<'a> AMMWithdraw<'a> {
         signers: Option<Vec<Signer>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
-        asset: Currency<'a>,
-        asset2: Currency<'a>,
-        amount: Option<Amount<'a>>,
-        amount2: Option<Amount<'a>>,
-        e_price: Option<Amount<'a>>,
-        lp_token_in: Option<IssuedCurrencyAmount<'a>>,
+        asset: Currency,
+        asset2: Currency,
+        amount: Option<Amount>,
+        amount2: Option<Amount>,
+        e_price: Option<Amount>,
+        lp_token_in: Option<IssuedCurrencyAmount>,
     ) -> Self {
         AMMWithdraw {
             common_fields: CommonFields::new(

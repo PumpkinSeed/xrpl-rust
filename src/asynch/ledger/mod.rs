@@ -71,7 +71,7 @@ pub async fn get_fee(
     client: &impl XRPLAsyncClient,
     max_fee: Option<u32>,
     fee_type: Option<FeeType>,
-) -> XRPLHelperResult<XRPAmount<'_>> {
+) -> XRPLHelperResult<XRPAmount> {
     let fee_request = Fee::new(None);
     let response = client.request(fee_request.into()).await?;
     let result: XRPLResponse<results::fee::Fee> = serde_json::from_str(&response)?;
@@ -88,7 +88,7 @@ pub async fn get_fee(
 
 fn match_fee_type(
     fee_type: Option<FeeType>,
-    drops: results::fee::Drops<'_>,
+    drops: results::fee::Drops,
 ) -> XRPLHelperResult<u32> {
     match fee_type {
         None | Some(FeeType::Open) => Ok(drops.open_ledger_fee.try_into()?),

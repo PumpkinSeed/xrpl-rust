@@ -1,4 +1,3 @@
-use alloc::borrow::Cow;
 use alloc::vec::Vec;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
@@ -15,42 +14,42 @@ use super::{CommonFields, LedgerIndex, LookupByLedgerRequest, Request};
 /// `<https://xrpl.org/gateway_balances.html>`
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
-pub struct GatewayBalances<'a> {
+pub struct GatewayBalances {
     /// The common fields shared by all requests.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a>,
+    pub common_fields: CommonFields,
     /// The Address to check. This should be the issuing address.
-    pub account: Cow<'a, str>,
+    pub account: String,
     /// An operational address to exclude from the balances
     /// issued, or an array of such addresses.
-    pub hotwallet: Option<Vec<Cow<'a, str>>>,
+    pub hotwallet: Option<Vec<String>>,
     /// The unique identifier of a ledger.
     #[serde(flatten)]
-    pub ledger_lookup: Option<LookupByLedgerRequest<'a>>,
+    pub ledger_lookup: Option<LookupByLedgerRequest>,
     /// If true, only accept an address or public key for the
     /// account parameter. Defaults to false.
     pub strict: Option<bool>,
 }
 
-impl<'a> Model for GatewayBalances<'a> {}
+impl Model for GatewayBalances {}
 
-impl<'a> Request<'a> for GatewayBalances<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'a> {
+impl Request for GatewayBalances {
+    fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
 
-    fn get_common_fields_mut(&mut self) -> &mut CommonFields<'a> {
+    fn get_common_fields_mut(&mut self) -> &mut CommonFields {
         &mut self.common_fields
     }
 }
 
-impl<'a> GatewayBalances<'a> {
+impl GatewayBalances {
     pub fn new(
-        id: Option<Cow<'a, str>>,
-        account: Cow<'a, str>,
-        hotwallet: Option<Vec<Cow<'a, str>>>,
-        ledger_hash: Option<Cow<'a, str>>,
-        ledger_index: Option<LedgerIndex<'a>>,
+        id: Option<String>,
+        account: String,
+        hotwallet: Option<Vec<String>>,
+        ledger_hash: Option<String>,
+        ledger_index: Option<LedgerIndex>,
         strict: Option<bool>,
     ) -> Self {
         Self {

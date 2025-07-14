@@ -1,5 +1,3 @@
-use core::marker::PhantomData;
-
 use serde::{Deserialize, Serialize};
 
 /// Response format for the ledger_current method, which returns the sequence number
@@ -8,14 +6,11 @@ use serde::{Deserialize, Serialize};
 /// See Ledger Current:
 /// `<https://xrpl.org/ledger_current.html>`
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct LedgerCurrent<'a> {
+pub struct LedgerCurrent {
     /// The ledger index of this ledger version.
     /// Note: A ledger_hash field is not provided, because the hash of the current
     /// ledger is constantly changing along with its contents.
     pub ledger_current_index: u32,
-    /// Keep the lifetime parameter consistent with other result types
-    #[serde(skip)]
-    phantom: PhantomData<&'a ()>,
 }
 
 #[cfg(test)]

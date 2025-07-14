@@ -1,4 +1,3 @@
-use alloc::borrow::Cow;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 
@@ -13,23 +12,23 @@ use super::{CommonFields, LedgerIndex, LookupByLedgerRequest, Request};
 /// `<https://xrpl.org/book_offers.html#book_offers>`
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
-pub struct BookOffers<'a> {
+pub struct BookOffers {
     /// The common fields shared by all requests.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a>,
+    pub common_fields: CommonFields,
     /// Specification of which currency the account taking
     /// the offer would receive, as an object with currency
     /// and issuer fields (omit issuer for XRP),
     /// like currency amounts.
-    pub taker_gets: Currency<'a>,
+    pub taker_gets: Currency,
     /// Specification of which currency the account taking
     /// the offer would pay, as an object with currency and
     /// issuer fields (omit issuer for XRP),
     /// like currency amounts.
-    pub taker_pays: Currency<'a>,
+    pub taker_pays: Currency,
     /// The unique identifier of a ledger.
     #[serde(flatten)]
-    pub ledger_lookup: Option<LookupByLedgerRequest<'a>>,
+    pub ledger_lookup: Option<LookupByLedgerRequest>,
     /// If provided, the server does not provide more than
     /// this many offers in the results. The total number of
     /// results returned may be fewer than the limit,
@@ -39,30 +38,30 @@ pub struct BookOffers<'a> {
     /// Unfunded offers placed by this account are always
     /// included in the response. (You can use this to look
     /// up your own orders to cancel them.)
-    pub taker: Option<Cow<'a, str>>,
+    pub taker: Option<String>,
 }
 
-impl<'a> Model for BookOffers<'a> {}
+impl Model for BookOffers {}
 
-impl<'a> Request<'a> for BookOffers<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'a> {
+impl Request for BookOffers {
+    fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
 
-    fn get_common_fields_mut(&mut self) -> &mut CommonFields<'a> {
+    fn get_common_fields_mut(&mut self) -> &mut CommonFields {
         &mut self.common_fields
     }
 }
 
-impl<'a> BookOffers<'a> {
+impl BookOffers {
     pub fn new(
-        id: Option<Cow<'a, str>>,
-        taker_gets: Currency<'a>,
-        taker_pays: Currency<'a>,
-        ledger_hash: Option<Cow<'a, str>>,
-        ledger_index: Option<LedgerIndex<'a>>,
+        id: Option<String>,
+        taker_gets: Currency,
+        taker_pays: Currency,
+        ledger_hash: Option<String>,
+        ledger_index: Option<LedgerIndex>,
         limit: Option<u16>,
-        taker: Option<Cow<'a, str>>,
+        taker: Option<String>,
     ) -> Self {
         Self {
             common_fields: CommonFields {

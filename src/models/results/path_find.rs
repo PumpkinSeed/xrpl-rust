@@ -1,5 +1,3 @@
-use alloc::borrow::Cow;
-
 use serde::{Deserialize, Serialize};
 
 use crate::models::Amount;
@@ -13,16 +11,16 @@ use crate::models::Amount;
 /// `<https://xrpl.org/path_find.html>`
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct PathFind<'a> {
+pub struct PathFind {
     /// Array of objects with suggested paths to take. If empty, then no paths were found
     /// connecting the source and destination accounts.
-    pub alternatives: Cow<'a, [PathAlternative<'a>]>,
+    pub alternatives: Vec<PathAlternative>,
     /// Unique address of the account that would receive a transaction.
-    pub destination_account: Cow<'a, str>,
+    pub destination_account: String,
     /// Currency Amount that the destination would receive in a transaction.
-    pub destination_amount: Amount<'a>,
+    pub destination_amount: Amount,
     /// Unique address that would send a transaction.
-    pub source_account: Cow<'a, str>,
+    pub source_account: String,
     /// If false, this is the result of an incomplete search. A later reply may have
     /// a better path. If true, then this is the best path found. Until you close the
     /// pathfinding request, rippled continues to send updates each time a new ledger closes.
@@ -32,23 +30,23 @@ pub struct PathFind<'a> {
 /// Represents a path from one possible source currency (held by the initiating account)
 /// to the destination account and currency.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct PathAlternative<'a> {
+pub struct PathAlternative {
     /// Array of arrays of objects defining payment paths.
-    pub paths_computed: Cow<'a, [Cow<'a, [PathStep<'a>]>]>,
+    pub paths_computed: Vec<Vec<PathStep>>,
     /// Currency Amount that the source would have to send along this path for the
     /// destination to receive the desired amount.
-    pub source_amount: Amount<'a>,
+    pub source_amount: Amount,
 }
 
 /// A PathStep represents an individual step along a Path.
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Default, Clone)]
-pub struct PathStep<'a> {
-    pub account: Option<Cow<'a, str>>,
-    pub currency: Option<Cow<'a, str>>,
-    pub issuer: Option<Cow<'a, str>>,
+pub struct PathStep {
+    pub account: Option<String>,
+    pub currency: Option<String>,
+    pub issuer: Option<String>,
     pub r#type: Option<u8>,
-    pub type_hex: Option<Cow<'a, str>>,
+    pub type_hex: Option<String>,
 }
 
 #[cfg(test)]

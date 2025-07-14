@@ -1,4 +1,3 @@
-use alloc::borrow::Cow;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 
@@ -12,10 +11,10 @@ use super::{CommonFields, Request};
 /// `<https://xrpl.org/tx.html>`
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
-pub struct Tx<'a> {
+pub struct Tx {
     /// The common fields shared by all requests.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a>,
+    pub common_fields: CommonFields,
     /// If true, return transaction data and metadata as binary
     /// serialized to hexadecimal strings. If false, return
     /// transaction data and metadata as JSON. The default is false.
@@ -31,28 +30,28 @@ pub struct Tx<'a> {
     /// it was able to search all the ledgers in this range.
     pub min_ledger: Option<u32>,
     /// The 256-bit hash of the transaction to look up, as hexadecimal.
-    pub transaction: Option<Cow<'a, str>>,
+    pub transaction: Option<String>,
 }
 
-impl<'a> Model for Tx<'a> {}
+impl Model for Tx {}
 
-impl<'a> Request<'a> for Tx<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'a> {
+impl Request for Tx {
+    fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
 
-    fn get_common_fields_mut(&mut self) -> &mut CommonFields<'a> {
+    fn get_common_fields_mut(&mut self) -> &mut CommonFields {
         &mut self.common_fields
     }
 }
 
-impl<'a> Tx<'a> {
+impl Tx {
     pub fn new(
-        id: Option<Cow<'a, str>>,
+        id: Option<String>,
         binary: Option<bool>,
         max_ledger: Option<u32>,
         min_ledger: Option<u32>,
-        transaction: Option<Cow<'a, str>>,
+        transaction: Option<String>,
     ) -> Self {
         Self {
             common_fields: CommonFields {

@@ -1,4 +1,4 @@
-use alloc::{borrow::Cow, vec::Vec};
+use alloc::vec::Vec;
 
 use crate::models::ledger::objects::LedgerEntryType;
 use crate::models::transactions::metadata::TransactionMetadata;
@@ -13,7 +13,7 @@ fn flatmap<T, R>(func: impl Fn(T) -> Vec<R>, list_of_items: Vec<T>) -> Vec<R> {
     modified_items
 }
 
-pub fn get_nftoken_ids_from_nftokens(nftokens: Vec<NFTokenMetadata<'_>>) -> Vec<Cow<'_, str>> {
+pub fn get_nftoken_ids_from_nftokens(nftokens: Vec<NFTokenMetadata>) -> Vec<String> {
     nftokens
         .into_iter()
         .map(|token| token.nftoken.nftoken_id)
@@ -38,7 +38,7 @@ fn has_nftoken_page(node: &AffectedNode) -> bool {
     }
 }
 
-fn get_previous_nftokens<'a>(node: &'a AffectedNode) -> Vec<NFTokenMetadata<'a>> {
+fn get_previous_nftokens(node: &AffectedNode) -> Vec<NFTokenMetadata> {
     match node {
         AffectedNode::ModifiedNode {
             previous_fields, ..
@@ -57,7 +57,7 @@ fn get_previous_nftokens<'a>(node: &'a AffectedNode) -> Vec<NFTokenMetadata<'a>>
     }
 }
 
-fn get_new_nftokens<'a>(node: &'a AffectedNode) -> Vec<NFTokenMetadata<'a>> {
+fn get_new_nftokens(node: &AffectedNode) -> Vec<NFTokenMetadata> {
     match node {
         AffectedNode::ModifiedNode { final_fields, .. } => {
             if let Some(final_fields) = final_fields {
@@ -81,7 +81,7 @@ fn get_new_nftokens<'a>(node: &'a AffectedNode) -> Vec<NFTokenMetadata<'a>> {
     }
 }
 
-pub fn get_nftoken_id<'a: 'b, 'b>(meta: &'a TransactionMetadata<'a>) -> Option<Cow<'b, str>> {
+pub fn get_nftoken_id(meta: &TransactionMetadata) -> Option<String> {
     let affected_nodes: Vec<&AffectedNode> = meta
         .affected_nodes
         .iter()
@@ -92,10 +92,10 @@ pub fn get_nftoken_id<'a: 'b, 'b>(meta: &'a TransactionMetadata<'a>) -> Option<C
         return None;
     }
 
-    let previous_token_ids: Vec<Cow<'_, str>> =
+    let previous_token_ids: Vec<String> =
         get_nftoken_ids_from_nftokens(flatmap(get_previous_nftokens, affected_nodes.clone()));
 
-    let final_token_ids: Vec<Cow<'_, str>> =
+    let final_token_ids: Vec<String> =
         get_nftoken_ids_from_nftokens(flatmap(get_new_nftokens, affected_nodes));
 
     final_token_ids
@@ -112,7 +112,7 @@ mod test {
 
     #[derive(Debug, Clone, Serialize, Deserialize)]
     struct Txn {
-        pub meta: TransactionMetadata<'static>,
+        pub meta: TransactionMetadata,
     }
 
     fn load_tests() -> &'static Option<(Txn, Txn)> {

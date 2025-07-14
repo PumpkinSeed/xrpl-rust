@@ -1,5 +1,3 @@
-use alloc::borrow::Cow;
-
 use serde::{Deserialize, Serialize};
 
 /// Response from an account_currencies request, containing a list of
@@ -9,16 +7,16 @@ use serde::{Deserialize, Serialize};
 /// `<https://xrpl.org/account_currencies.html>`
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct AccountCurrencies<'a> {
+pub struct AccountCurrencies {
     /// The identifying hash of the ledger version used to retrieve this data,
     /// as hex.
-    pub ledger_hash: Option<Cow<'a, str>>,
+    pub ledger_hash: Option<String>,
     /// The ledger index of the ledger version used to retrieve this data.
     pub ledger_index: u32,
     /// Array of Currency Codes for currencies that this account can receive.
-    pub receive_currencies: Cow<'a, [Cow<'a, str>]>,
+    pub receive_currencies: Vec<String>,
     /// Array of Currency Codes for currencies that this account can send.
-    pub send_currencies: Cow<'a, [Cow<'a, str>]>,
+    pub send_currencies: Vec<String>,
     /// If true, this data comes from a validated ledger.
     pub validated: bool,
 }

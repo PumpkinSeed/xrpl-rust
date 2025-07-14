@@ -1,4 +1,3 @@
-use alloc::borrow::Cow;
 use alloc::vec::Vec;
 use derive_new::new;
 use serde::{Deserialize, Serialize};
@@ -15,10 +14,10 @@ use super::{CommonFields, Request};
 /// `<https://xrpl.org/subscribe.html#subscribe>`
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone, new)]
 #[serde(rename_all(serialize = "PascalCase", deserialize = "snake_case"))]
-pub struct SubscribeBook<'a> {
-    pub taker: Cow<'a, str>,
-    pub taker_gets: Currency<'a>,
-    pub taker_pays: Currency<'a>,
+pub struct SubscribeBook {
+    pub taker: String,
+    pub taker_gets: Currency,
+    pub taker_pays: Currency,
     #[serde(default = "default_false")]
     pub both: Option<bool>,
     #[serde(default = "default_false")]
@@ -49,54 +48,54 @@ pub enum StreamParameter {
 /// `<https://xrpl.org/subscribe.html>`
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
-pub struct Subscribe<'a> {
+pub struct Subscribe {
     /// The common fields shared by all requests.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a>,
+    pub common_fields: CommonFields,
     /// Array with the unique addresses of accounts to monitor
     /// for validated transactions. The addresses must be in the
     /// XRP Ledger's base58 format. The server sends a notification
     /// for any transaction that affects at least one of these accounts.
-    pub accounts: Option<Vec<Cow<'a, str>>>,
+    pub accounts: Option<Vec<String>>,
     /// Like accounts, but include transactions that are not
     /// yet finalized.
-    pub accounts_proposed: Option<Vec<Cow<'a, str>>>,
+    pub accounts_proposed: Option<Vec<String>>,
     /// Array of objects defining order books  to monitor for
     /// updates, as detailed below.
-    pub books: Option<Vec<SubscribeBook<'a>>>,
+    pub books: Option<Vec<SubscribeBook>>,
     /// Array of string names of generic streams to subscribe to.
     pub streams: Option<Vec<StreamParameter>>,
     /// (Optional for Websocket; Required otherwise) URL where the server
     /// sends a JSON-RPC callbacks for each event. Admin-only.
-    pub url: Option<Cow<'a, str>>,
+    pub url: Option<String>,
     /// Password to provide for basic authentication at the callback URL.
-    pub url_password: Option<Cow<'a, str>>,
+    pub url_password: Option<String>,
     /// Username to provide for basic authentication at the callback URL.
-    pub url_username: Option<Cow<'a, str>>,
+    pub url_username: Option<String>,
 }
 
-impl<'a> Model for Subscribe<'a> {}
+impl Model for Subscribe {}
 
-impl<'a> Request<'a> for Subscribe<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'a> {
+impl Request for Subscribe {
+    fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
 
-    fn get_common_fields_mut(&mut self) -> &mut CommonFields<'a> {
+    fn get_common_fields_mut(&mut self) -> &mut CommonFields {
         &mut self.common_fields
     }
 }
 
-impl<'a> Subscribe<'a> {
+impl Subscribe {
     pub fn new(
-        id: Option<Cow<'a, str>>,
-        accounts: Option<Vec<Cow<'a, str>>>,
-        accounts_proposed: Option<Vec<Cow<'a, str>>>,
-        books: Option<Vec<SubscribeBook<'a>>>,
+        id: Option<String>,
+        accounts: Option<Vec<String>>,
+        accounts_proposed: Option<Vec<String>>,
+        books: Option<Vec<SubscribeBook>>,
         streams: Option<Vec<StreamParameter>>,
-        url: Option<Cow<'a, str>>,
-        url_password: Option<Cow<'a, str>>,
-        url_username: Option<Cow<'a, str>>,
+        url: Option<String>,
+        url_password: Option<String>,
+        url_username: Option<String>,
     ) -> Self {
         Self {
             common_fields: CommonFields {

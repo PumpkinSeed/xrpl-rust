@@ -30,10 +30,13 @@ use crate::{
     wallet::Wallet,
 };
 
+use super::exceptions::XRPLHelperResult;
+use crate::asynch::transaction::exceptions::XRPLSubmitAndWaitException;
+use crate::models::results::XRPLResponse;
 use alloc::string::String;
 use alloc::string::ToString;
+use alloc::vec;
 use alloc::vec::Vec;
-use alloc::{borrow::Cow, vec};
 use core::convert::TryInto;
 use core::fmt::Debug;
 use exceptions::XRPLTransactionHelperException;
@@ -41,9 +44,6 @@ use serde::Serialize;
 use serde::{de::DeserializeOwned, Deserialize};
 use serde_json::Value;
 use strum::IntoEnumIterator;
-use crate::asynch::transaction::exceptions::XRPLSubmitAndWaitException;
-use crate::models::results::XRPLResponse;
-use super::exceptions::XRPLHelperResult;
 
 const OWNER_RESERVE: &str = "2000000"; // 2 XRP
 const RESTRICTED_NETWORKS: u16 = 1024;
@@ -53,7 +53,7 @@ const LEDGER_OFFSET: u8 = 20;
 pub fn sign<'a, T, F>(transaction: &mut T, wallet: &Wallet, multisign: bool) -> XRPLHelperResult<()>
 where
     F: IntoEnumIterator + Serialize + Debug + PartialEq,
-    T: Transaction<'a, F> + Model + Serialize + DeserializeOwned + Clone + Debug,
+    T: Transaction<F> + Model + Serialize + DeserializeOwned + Clone + Debug,
 {
     transaction.validate()?;
 
@@ -90,10 +90,10 @@ pub async fn sign_and_submit<'a, 'b, T, F, C>(
     wallet: &Wallet,
     autofill: bool,
     check_fee: bool,
-) -> XRPLHelperResult<SubmitResult<'a>>
+) -> XRPLHelperResult<SubmitResult>
 where
     F: IntoEnumIterator + Serialize + Debug + PartialEq,
-    T: Transaction<'a, F> + Model + Serialize + DeserializeOwned + Clone + Debug,
+    T: Transaction<F> + Model + Serialize + DeserializeOwned + Clone + Debug,
     C: XRPLAsyncClient,
 {
     if autofill {
@@ -107,13 +107,13 @@ where
     submit(transaction, client).await
 }
 
-pub async fn autofill<'a, 'b, F, T, C>(
+pub async fn autofill<'b, F, T, C>(
     transaction: &mut T,
     client: &'b C,
     signers_count: Option<u8>,
 ) -> XRPLHelperResult<()>
 where
-    T: Transaction<'a, F> + Model + Clone,
+    T: Transaction<F> + Model + Clone,
     F: IntoEnumIterator + Serialize + Debug + PartialEq,
     C: XRPLAsyncClient,
 {
@@ -147,7 +147,7 @@ pub async fn autofill_and_sign<'a, 'b, T, F, C>(
 ) -> XRPLHelperResult<()>
 where
     F: IntoEnumIterator + Serialize + Debug + PartialEq,
-    T: Transaction<'a, F> + Model + Serialize + DeserializeOwned + Clone + Debug,
+    T: Transaction<F> + Model + Serialize + DeserializeOwned + Clone + Debug,
     C: XRPLAsyncClient,
 {
     if check_fee {
@@ -159,22 +159,22 @@ where
     Ok(())
 }
 
-pub async fn submit<'a, T, F, C>(transaction: &T, client: &C) -> XRPLHelperResult<SubmitResult<'a>>
+pub async fn submit<'a, T, F, C>(transaction: &T, client: &C) -> XRPLHelperResult<SubmitResult>
 where
     F: IntoEnumIterator + Serialize + Debug + PartialEq,
-    T: Transaction<'a, F> + Model + Serialize + DeserializeOwned + Clone + Debug,
+    T: Transaction<F> + Model + Serialize + DeserializeOwned + Clone + Debug,
     C: XRPLAsyncClient,
 {
     transaction.validate()?;
     let txn_blob = encode(transaction)?;
     let req = Submit::new(None, txn_blob.into(), None);
     let response_raw = client.request(req.into()).await?;
-    let response: XRPLResponse<'a, SubmitResult<'a>> = serde_json::from_str(&response_raw)?;
-    
+    let response: XRPLResponse<SubmitResult> = serde_json::from_str(&response_raw)?;
+
     match response.result {
         Some(result) => Ok(result),
         None => {
-            let response_unknown: XRPLResponse<'a, Value> = serde_json::from_str(&response_raw)?;
+            let response_unknown: XRPLResponse<Value> = serde_json::from_str(&response_raw)?;
             match examine_submit_error(response_unknown).err() {
                 Some(e) => Err(e),
                 None => Err(XRPLModelException::MissingField("result".to_string()).into()),
@@ -183,13 +183,13 @@ where
     }
 }
 
-pub async fn calculate_fee_per_transaction_type<'a, 'b, 'c, T, F, C>(
+pub async fn calculate_fee_per_transaction_type<'b, 'c, T, F, C>(
     transaction: &T,
     client: Option<&'b C>,
     signers_count: Option<u8>,
-) -> XRPLHelperResult<XRPAmount<'c>>
+) -> XRPLHelperResult<XRPAmount>
 where
-    T: Transaction<'a, F>,
+    T: Transaction<F>,
     F: IntoEnumIterator + Serialize + Debug + PartialEq,
     C: XRPLAsyncClient,
 {
@@ -235,9 +235,9 @@ where
 
 async fn get_owner_reserve_from_response(
     client: &impl XRPLAsyncClient,
-) -> XRPLHelperResult<XRPAmount<'_>> {
+) -> XRPLHelperResult<XRPAmount> {
     let owner_reserve_response = client.request(ServerState::new(None).into()).await?;
-    let owner_reserve_response: XRPLResponse<'_, ServerStateResult> =
+    let owner_reserve_response: XRPLResponse<ServerStateResult> =
         serde_json::from_str(&owner_reserve_response)?;
     let result = owner_reserve_response.result.unwrap();
     match result.state.validated_ledger {
@@ -246,10 +246,10 @@ async fn get_owner_reserve_from_response(
     }
 }
 
-fn calculate_base_fee_for_escrow_finish<'a: 'b, 'b>(
-    net_fee: XRPAmount<'a>,
-    fulfillment: Option<Cow<str>>,
-) -> XRPLHelperResult<XRPAmount<'b>> {
+fn calculate_base_fee_for_escrow_finish(
+    net_fee: XRPAmount,
+    fulfillment: Option<String>,
+) -> XRPLHelperResult<XRPAmount> {
     if let Some(fulfillment) = fulfillment {
         calculate_based_on_fulfillment(fulfillment, net_fee)
     } else {
@@ -257,10 +257,10 @@ fn calculate_base_fee_for_escrow_finish<'a: 'b, 'b>(
     }
 }
 
-fn calculate_based_on_fulfillment<'a>(
-    fulfillment: Cow<str>,
-    net_fee: XRPAmount<'_>,
-) -> XRPLHelperResult<XRPAmount<'a>> {
+fn calculate_based_on_fulfillment(
+    fulfillment: String,
+    net_fee: XRPAmount,
+) -> XRPLHelperResult<XRPAmount> {
     let fulfillment_bytes: Vec<u8> = fulfillment.chars().map(|c| c as u8).collect();
     let net_fee_f64: f64 = net_fee.try_into()?;
     let base_fee_string =
@@ -273,7 +273,7 @@ fn calculate_based_on_fulfillment<'a>(
         .into())
 }
 
-fn txn_needs_network_id(common_fields: CommonFields<'_>) -> XRPLHelperResult<bool> {
+fn txn_needs_network_id(common_fields: CommonFields) -> XRPLHelperResult<bool> {
     let is_higher_restricted_networks = if let Some(network_id) = common_fields.network_id {
         network_id > RESTRICTED_NETWORKS as u32
     } else {
@@ -372,10 +372,10 @@ enum AccountFieldType {
     Destination,
 }
 
-async fn check_txn_fee<'a, 'b, T, F, C>(transaction: &mut T, client: &'b C) -> XRPLHelperResult<()>
+async fn check_txn_fee<'b, T, F, C>(transaction: &mut T, client: &'b C) -> XRPLHelperResult<()>
 where
     F: IntoEnumIterator + Serialize + Debug + PartialEq,
-    T: Transaction<'a, F> + Model + Serialize + DeserializeOwned + Clone,
+    T: Transaction<F> + Model + Serialize + DeserializeOwned + Clone,
     C: XRPLAsyncClient,
 {
     // max of xrp_to_drops(0.1) and calculate_fee_per_transaction_type
@@ -393,10 +393,10 @@ where
     }
 }
 
-fn prepare_transaction<'a, T, F>(transaction: &mut T, wallet: &Wallet) -> XRPLHelperResult<()>
+fn prepare_transaction<T, F>(transaction: &mut T, wallet: &Wallet) -> XRPLHelperResult<()>
 where
     F: IntoEnumIterator + Serialize + Debug + PartialEq,
-    T: Transaction<'a, F> + Serialize + DeserializeOwned + Clone,
+    T: Transaction<F> + Serialize + DeserializeOwned + Clone,
 {
     let commond_fields = transaction.get_mut_common_fields();
     commond_fields.signing_pub_key = Some(wallet.public_key.clone().into());
@@ -423,7 +423,7 @@ fn validate_account_xaddress<'a, T, F>(
 ) -> XRPLHelperResult<()>
 where
     F: IntoEnumIterator + Serialize + Debug + PartialEq,
-    T: Transaction<'a, F> + Serialize + DeserializeOwned + Clone,
+    T: Transaction<F> + Serialize + DeserializeOwned + Clone,
 {
     let (account_field_name, tag_field_name) = match serde_json::to_string(&account_field) {
         Ok(name) => {
@@ -477,7 +477,7 @@ fn convert_to_classic_address<'a, T, F>(
 ) -> XRPLHelperResult<()>
 where
     F: IntoEnumIterator + Serialize + Debug + PartialEq,
-    T: Transaction<'a, F> + Serialize + DeserializeOwned + Clone,
+    T: Transaction<F> + Serialize + DeserializeOwned + Clone,
 {
     let address = get_transaction_field_value::<F, _, String>(transaction, field_name)?;
     if is_valid_xaddress(&address) {
@@ -495,10 +495,8 @@ where
     }
 }
 
-fn examine_submit_error(response : XRPLResponse<'_, Value>) -> XRPLHelperResult<()> {
-    let default_error = XRPLModelException::MissingField(
-        "result".to_string(),
-    ).into();
+fn examine_submit_error(response: XRPLResponse<Value>) -> XRPLHelperResult<()> {
+    let default_error = XRPLModelException::MissingField("result".to_string()).into();
     let result = match response.result {
         Some(result) => result,
         None => return Err(default_error),
@@ -514,7 +512,11 @@ fn examine_submit_error(response : XRPLResponse<'_, Value>) -> XRPLHelperResult<
             };
             if status_str == "error" {
                 let error = result.get("error").unwrap().as_str().unwrap_or_default();
-                let error_exception = result.get("error_exception").unwrap().as_str().unwrap_or_default();
+                let error_exception = result
+                    .get("error_exception")
+                    .unwrap()
+                    .as_str()
+                    .unwrap_or_default();
                 let mut error_response = String::new();
                 error_response.push_str("Error: ");
                 error_response.push_str(error);
@@ -587,8 +589,6 @@ mod test_autofill {
 #[cfg(all(feature = "json-rpc", feature = "std"))]
 #[cfg(test)]
 mod test_sign {
-    use alloc::borrow::Cow;
-
     use crate::{
         asynch::{
             clients::AsyncJsonRpcClient,
@@ -603,7 +603,7 @@ mod test_sign {
     async fn test_sign() {
         let wallet = Wallet::new("sEdT7wHTCLzDG7ueaw4hroSTBvH7Mk5", 0).unwrap();
         let mut tx = AccountSet::new(
-            Cow::from(wallet.classic_address.clone()),
+            wallet.classic_address.clone(),
             None,
             Some("10".into()),
             None,
@@ -623,7 +623,7 @@ mod test_sign {
             None,
         );
         sign(&mut tx, &wallet, false).unwrap();
-        let expected_signature: Cow<str> =
+        let expected_signature: String =
             "C3F435CFBFAE996FE297F3A71BEAB68FF5322CBF039E41A9615BC48A59FB4EC\
             5A55F8D4EC0225D47056E02ECCCDF7E8FF5F8B7FAA1EBBCBF7D0491FCB2D98807"
                 .into();
@@ -638,7 +638,7 @@ mod test_sign {
             .await
             .unwrap();
         let mut tx = AccountSet::new(
-            Cow::from(wallet.classic_address.clone()),
+            wallet.classic_address.clone(),
             None,
             None,
             None,

@@ -1,5 +1,3 @@
-use alloc::borrow::Cow;
-
 use serde::{Deserialize, Serialize};
 
 use crate::models::{amount::XRPAmount, requests::Marker};
@@ -12,14 +10,14 @@ use crate::models::{amount::XRPAmount, requests::Marker};
 /// `<https://xrpl.org/account_channels.html>`
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct AccountChannels<'a> {
+pub struct AccountChannels {
     /// The address of the source/owner of the payment channels.
-    pub account: Cow<'a, str>,
+    pub account: String,
     /// Payment channels owned by this account.
-    pub channels: Cow<'a, [Channel<'a>]>,
+    pub channels: Vec<Channel>,
     /// The identifying Hash of the ledger version used to generate this
     /// response.
-    pub ledger_hash: Option<Cow<'a, str>>,
+    pub ledger_hash: Option<String>,
     /// The Ledger Index of the ledger version used to generate this response.
     pub ledger_index: u32,
     /// If true, the information comes from a validated ledger version.
@@ -29,28 +27,28 @@ pub struct AccountChannels<'a> {
     pub limit: Option<u32>,
     /// Server-defined value for pagination. Pass this to the next call to
     /// resume getting results where this call left off.
-    pub marker: Option<Marker<'a>>,
+    pub marker: Option<Marker>,
 }
 
 /// Represents a single payment channel object in the XRP Ledger.
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct Channel<'a> {
+pub struct Channel {
     /// The owner of the channel, as an Address.
-    pub account: Cow<'a, str>,
+    pub account: String,
     /// The total amount of XRP, in drops allocated to this channel.
-    pub amount: XRPAmount<'a>,
+    pub amount: XRPAmount,
     /// The total amount of XRP, in drops, paid out from this channel.
-    pub balance: XRPAmount<'a>,
+    pub balance: XRPAmount,
     /// A unique ID for this channel, as a 64-character hexadecimal string.
-    pub channel_id: Cow<'a, str>,
+    pub channel_id: String,
     /// The destination account of the channel, as an Address.
-    pub destination_account: Cow<'a, str>,
+    pub destination_account: String,
     /// The public key for the payment channel in the XRP Ledger's
     /// base58 format.
-    pub public_key: Option<Cow<'a, str>>,
+    pub public_key: Option<String>,
     /// The public key for the payment channel in hexadecimal format.
-    pub public_key_hex: Option<Cow<'a, str>>,
+    pub public_key_hex: Option<String>,
     /// The number of seconds the payment channel must stay open after the
     /// owner requests to close it.
     pub settle_delay: u64,

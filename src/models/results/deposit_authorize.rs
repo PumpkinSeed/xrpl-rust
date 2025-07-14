@@ -1,4 +1,3 @@
-use alloc::borrow::Cow;
 use serde::{Deserialize, Serialize};
 
 /// Response format for the deposit_authorized method, which indicates whether
@@ -8,19 +7,19 @@ use serde::{Deserialize, Serialize};
 /// `<https://xrpl.org/deposit_authorized.html>`
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct DepositAuthorized<'a> {
+pub struct DepositAuthorized {
     /// The credentials specified in the request, if any.
-    pub credentials: Option<Cow<'a, [Cow<'a, str>]>>,
+    pub credentials: Option<Vec<String>>,
     /// Whether the specified source account is authorized to send payments
     /// directly to the destination account. If true, either the destination
     /// account does not require deposit authorization or the source account
     /// is preauthorized.
     pub deposit_authorized: bool,
     /// The destination account specified in the request.
-    pub destination_account: Cow<'a, str>,
+    pub destination_account: String,
     /// The identifying hash of the ledger that was used to generate this
     /// response.
-    pub ledger_hash: Option<Cow<'a, str>>,
+    pub ledger_hash: Option<String>,
     /// The ledger index of the ledger version that was used to generate
     /// this response.
     pub ledger_index: Option<u32>,
@@ -28,7 +27,7 @@ pub struct DepositAuthorized<'a> {
     /// was used to generate this response.
     pub ledger_current_index: Option<u32>,
     /// The source account specified in the request.
-    pub source_account: Cow<'a, str>,
+    pub source_account: String,
     /// If true, the information comes from a validated ledger version.
     pub validated: Option<bool>,
 }

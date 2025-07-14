@@ -1,4 +1,4 @@
-use alloc::{borrow::Cow, vec::Vec};
+use alloc::vec::Vec;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 
@@ -22,39 +22,39 @@ use super::{AuthAccount, CommonFields, Memo, Signer, Transaction};
     Debug, Serialize, Deserialize, PartialEq, Eq, Clone, xrpl_rust_macros::ValidateCurrencies,
 )]
 #[serde(rename_all = "PascalCase")]
-pub struct AMMBid<'a> {
+pub struct AMMBid {
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, NoFlags>,
+    pub common_fields: CommonFields<NoFlags>,
     /// The definition for one of the assets in the AMM's pool.
-    pub asset: Currency<'a>,
+    pub asset: Currency,
     /// The definition for the other asset in the AMM's pool.
     #[serde(rename = "Asset2")]
-    pub asset2: Currency<'a>,
+    pub asset2: Currency,
     /// Pay at least this LPToken amount for the slot.
     /// Setting this value higher makes it harder for others to outbid you.
     /// If omitted, pay the minimum necessary to win the bid.
-    pub bid_min: Option<IssuedCurrencyAmount<'a>>,
+    pub bid_min: Option<IssuedCurrencyAmount>,
     /// Pay at most this LPToken amount for the slot.
     /// If the cost to win the bid is higher than this amount, the transaction fails.
     /// If omitted, pay as much as necessary to win the bid.
-    pub bid_max: Option<IssuedCurrencyAmount<'a>>,
+    pub bid_max: Option<IssuedCurrencyAmount>,
     /// A list of up to 4 additional accounts that you allow to trade at the discounted fee.
     /// This cannot include the address of the transaction sender.
     pub auth_accounts: Option<Vec<AuthAccount>>,
 }
 
-impl Model for AMMBid<'_> {
+impl Model for AMMBid {
     fn get_errors(&self) -> crate::models::XRPLModelResult<()> {
         self.validate_currencies()
     }
 }
 
-impl<'a> Transaction<'a, NoFlags> for AMMBid<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'_, NoFlags> {
+impl Transaction<NoFlags> for AMMBid {
+    fn get_common_fields(&self) -> &CommonFields<NoFlags> {
         &self.common_fields
     }
 
-    fn get_mut_common_fields(&mut self) -> &mut CommonFields<'a, NoFlags> {
+    fn get_mut_common_fields(&mut self) -> &mut CommonFields<NoFlags> {
         self.common_fields.get_mut_common_fields()
     }
 
@@ -63,23 +63,23 @@ impl<'a> Transaction<'a, NoFlags> for AMMBid<'a> {
     }
 }
 
-impl<'a> AMMBid<'_> {
+impl AMMBid {
     pub fn new(
-        account: Cow<'a, str>,
-        account_txn_id: Option<Cow<'a, str>>,
-        fee: Option<XRPAmount<'a>>,
+        account: String,
+        account_txn_id: Option<String>,
+        fee: Option<XRPAmount>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
         sequence: Option<u32>,
         signers: Option<Vec<Signer>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
-        asset: Currency<'a>,
-        asset2: Currency<'a>,
-        bid_min: Option<IssuedCurrencyAmount<'a>>,
-        bid_max: Option<IssuedCurrencyAmount<'a>>,
+        asset: Currency,
+        asset2: Currency,
+        bid_min: Option<IssuedCurrencyAmount>,
+        bid_max: Option<IssuedCurrencyAmount>,
         auth_accounts: Option<Vec<AuthAccount>>,
-    ) -> AMMBid<'a> {
+    ) -> AMMBid {
         AMMBid {
             common_fields: CommonFields::new(
                 account,

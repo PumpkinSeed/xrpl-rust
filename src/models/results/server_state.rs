@@ -1,5 +1,3 @@
-use alloc::borrow::Cow;
-
 use serde::{Deserialize, Serialize};
 
 use crate::models::amount::XRPAmount;
@@ -7,21 +5,21 @@ use crate::models::amount::XRPAmount;
 /// Server state response data
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct State<'a> {
+pub struct State {
     /// If true, this server is amendment blocked
     pub amendment_blocked: Option<bool>,
     /// The version number of the running rippled version
-    pub build_version: Cow<'a, str>,
+    pub build_version: String,
     /// Range expression indicating the sequence numbers of the ledger versions
     /// in the database. Can be disjoint, e.g. "2500-5000,32570-7695432"
-    pub complete_ledgers: Option<Cow<'a, str>>,
+    pub complete_ledgers: Option<String>,
     /// Information on the most recently closed ledger that has not been
     /// validated
-    pub closed_ledger: Option<ValidatedLedger<'a>>,
+    pub closed_ledger: Option<ValidatedLedger>,
     /// Amount of time spent waiting for I/O operations, in milliseconds
     pub io_latency_ms: Option<u32>,
     /// Number of times server had over 250 transactions waiting to be processed
-    pub jq_trans_overflow: Option<Cow<'a, str>>,
+    pub jq_trans_overflow: Option<String>,
     /// Information about the last time the server closed a ledger
     pub last_close: Option<LastClose>,
     /// Baseline amount of server load used in transaction cost calculations
@@ -37,29 +35,29 @@ pub struct State<'a> {
     /// Load factor based on load to server, cluster, and network
     pub load_factor_server: Option<u32>,
     /// Count of peer disconnections
-    pub peer_disconnects: Option<Cow<'a, str>>,
+    pub peer_disconnects: Option<String>,
     /// Count of resource-related peer disconnections
-    pub peer_disconnects_resources: Option<Cow<'a, str>>,
+    pub peer_disconnects_resources: Option<String>,
     /// Number of other rippled servers currently connected
     pub peers: Option<u32>,
     /// Public key used for peer-to-peer communications
-    pub pubkey_node: Option<Cow<'a, str>>,
+    pub pubkey_node: Option<String>,
     /// Current server state (e.g., "full", "validating", etc.)
-    pub server_state: Option<Cow<'a, str>>,
+    pub server_state: Option<String>,
     /// Consecutive microseconds in current state
-    pub server_state_duration_us: Option<Cow<'a, str>>,
+    pub server_state_duration_us: Option<String>,
     /// Information about time spent in various server states
     pub state_accounting: Option<StateAccounting>,
     /// Current UTC time according to server
-    pub time: Option<Cow<'a, str>>,
+    pub time: Option<String>,
     /// Number of consecutive seconds server has been operational
     pub uptime: Option<u64>,
     /// Information about the most recent fully-validated ledger
-    pub validated_ledger: Option<ValidatedLedger<'a>>,
+    pub validated_ledger: Option<ValidatedLedger>,
     /// Minimum number of trusted validations required
     pub validation_quorum: Option<u32>,
     /// List of ports where the server is listening for API commands
-    pub ports: Option<Cow<'a, [PortDescriptor<'a>]>>,
+    pub ports: Option<Vec<PortDescriptor>>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
@@ -70,8 +68,8 @@ pub struct LastClose {
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
 pub struct StateAccountingEntry {
-    pub duration_us: Cow<'static, str>,
-    pub transitions: Cow<'static, str>,
+    pub duration_us: String,
+    pub transitions: String,
 }
 
 #[serde_with::skip_serializing_none]
@@ -86,26 +84,26 @@ pub struct StateAccounting {
 
 /// Port configuration information
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-pub struct PortDescriptor<'a> {
+pub struct PortDescriptor {
     /// Port number where the server is listening
-    pub port: Cow<'a, str>,
+    pub port: String,
     /// List of protocols being served on this port
-    pub protocol: Cow<'a, [Cow<'a, str>]>,
+    pub protocol: Vec<String>,
 }
 
 /// Information about a validated ledger
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct ValidatedLedger<'a> {
+pub struct ValidatedLedger {
     /// Base fee in drops of XRP for transaction propagation
-    pub base_fee: XRPAmount<'a>,
+    pub base_fee: XRPAmount,
     /// Time this ledger was closed (seconds since Ripple Epoch)
     pub close_time: u32,
     /// Unique hash of this ledger version
-    pub hash: Cow<'a, str>,
+    pub hash: String,
     /// Minimum account reserve
-    pub reserve_base: XRPAmount<'a>,
+    pub reserve_base: XRPAmount,
     /// Owner reserve for each owned item
-    pub reserve_inc: XRPAmount<'a>,
+    pub reserve_inc: XRPAmount,
     /// Ledger index of this version
     pub seq: u32,
 }
@@ -117,8 +115,8 @@ pub struct ValidatedLedger<'a> {
 /// See Server State:
 /// `<https://xrpl.org/server_state.html>`
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct ServerState<'a> {
-    pub state: State<'a>,
+pub struct ServerState {
+    pub state: State,
 }
 
 #[cfg(test)]

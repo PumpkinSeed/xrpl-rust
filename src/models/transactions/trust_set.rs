@@ -1,4 +1,3 @@
-use alloc::borrow::Cow;
 use alloc::vec::Vec;
 
 use serde::{Deserialize, Serialize};
@@ -47,7 +46,7 @@ pub enum TrustSetFlag {
     Debug, Serialize, Deserialize, PartialEq, Eq, Clone, xrpl_rust_macros::ValidateCurrencies,
 )]
 #[serde(rename_all = "PascalCase")]
-pub struct TrustSet<'a> {
+pub struct TrustSet {
     // The base fields for all transaction models.
     //
     // See Transaction Types:
@@ -57,13 +56,13 @@ pub struct TrustSet<'a> {
     // `<https://xrpl.org/transaction-common-fields.html>`
     /// The type of transaction.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, TrustSetFlag>,
+    pub common_fields: CommonFields<TrustSetFlag>,
     // The custom fields for the TrustSet model.
     //
     // See TrustSet fields:
     // `<https://xrpl.org/trustset.html#trustset-fields>`
     /// Object defining the trust line to create or modify, in the format of a Currency Amount.
-    pub limit_amount: IssuedCurrencyAmount<'a>,
+    pub limit_amount: IssuedCurrencyAmount,
     /// Value incoming balances on this trust line at the ratio of this number per
     /// 1,000,000,000 units. A value of 0 is shorthand for treating balances at face value.
     pub quality_in: Option<u32>,
@@ -72,13 +71,13 @@ pub struct TrustSet<'a> {
     pub quality_out: Option<u32>,
 }
 
-impl<'a> Model for TrustSet<'a> {
+impl Model for TrustSet {
     fn get_errors(&self) -> crate::models::XRPLModelResult<()> {
         self.validate_currencies()
     }
 }
 
-impl<'a> Transaction<'a, TrustSetFlag> for TrustSet<'a> {
+impl Transaction<TrustSetFlag> for TrustSet {
     fn has_flag(&self, flag: &TrustSetFlag) -> bool {
         self.common_fields.has_flag(flag)
     }
@@ -87,20 +86,20 @@ impl<'a> Transaction<'a, TrustSetFlag> for TrustSet<'a> {
         self.common_fields.get_transaction_type()
     }
 
-    fn get_common_fields(&self) -> &CommonFields<'_, TrustSetFlag> {
+    fn get_common_fields(&self) -> &CommonFields<TrustSetFlag> {
         self.common_fields.get_common_fields()
     }
 
-    fn get_mut_common_fields(&mut self) -> &mut CommonFields<'a, TrustSetFlag> {
+    fn get_mut_common_fields(&mut self) -> &mut CommonFields<TrustSetFlag> {
         self.common_fields.get_mut_common_fields()
     }
 }
 
-impl<'a> TrustSet<'a> {
+impl TrustSet {
     pub fn new(
-        account: Cow<'a, str>,
-        account_txn_id: Option<Cow<'a, str>>,
-        fee: Option<XRPAmount<'a>>,
+        account: String,
+        account_txn_id: Option<String>,
+        fee: Option<XRPAmount>,
         flags: Option<FlagCollection<TrustSetFlag>>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
@@ -108,7 +107,7 @@ impl<'a> TrustSet<'a> {
         signers: Option<Vec<Signer>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
-        limit_amount: IssuedCurrencyAmount<'a>,
+        limit_amount: IssuedCurrencyAmount,
         quality_in: Option<u32>,
         quality_out: Option<u32>,
     ) -> Self {

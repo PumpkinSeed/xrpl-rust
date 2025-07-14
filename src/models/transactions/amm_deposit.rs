@@ -1,4 +1,4 @@
-use alloc::{borrow::Cow, vec::Vec};
+use alloc::vec::Vec;
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 use serde_with::skip_serializing_none;
@@ -37,31 +37,31 @@ pub enum AMMDepositFlag {
     Debug, Serialize, Deserialize, PartialEq, Eq, Clone, xrpl_rust_macros::ValidateCurrencies,
 )]
 #[serde(rename_all = "PascalCase")]
-pub struct AMMDeposit<'a> {
+pub struct AMMDeposit {
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, AMMDepositFlag>,
+    pub common_fields: CommonFields<AMMDepositFlag>,
     /// The definition for one of the assets in the AMM's pool.
-    pub asset: Currency<'a>,
+    pub asset: Currency,
     /// The definition for the other asset in the AMM's pool.
     #[serde(rename = "Asset2")]
-    pub asset2: Currency<'a>,
+    pub asset2: Currency,
     /// The amount of one asset to deposit to the AMM.
     /// If present, this must match the type of one of the assets (tokens or XRP)
     /// in the AMM's pool.
-    pub amount: Option<Amount<'a>>,
+    pub amount: Option<Amount>,
     /// The amount of another asset to add to the AMM.
     /// If present, this must match the type of the other asset in the AMM's pool
     /// and cannot be the same asset as Amount.
     #[serde(rename = "Amount2")]
-    pub amount2: Option<Amount<'a>>,
+    pub amount2: Option<Amount>,
     /// The maximum effective price, in the deposit asset, to pay
     /// for each LP Token received.
-    pub e_price: Option<Amount<'a>>,
+    pub e_price: Option<Amount>,
     /// How many of the AMM's LP Tokens to buy.
-    pub lp_token_out: Option<IssuedCurrencyAmount<'a>>,
+    pub lp_token_out: Option<IssuedCurrencyAmount>,
 }
 
-impl Model for AMMDeposit<'_> {
+impl Model for AMMDeposit {
     fn get_errors(&self) -> XRPLModelResult<()> {
         self.validate_currencies()?;
         if self.amount2.is_some() && self.amount.is_none() {
@@ -84,12 +84,12 @@ impl Model for AMMDeposit<'_> {
     }
 }
 
-impl<'a> Transaction<'a, AMMDepositFlag> for AMMDeposit<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'_, AMMDepositFlag> {
+impl Transaction<AMMDepositFlag> for AMMDeposit {
+    fn get_common_fields(&self) -> &CommonFields<AMMDepositFlag> {
         &self.common_fields
     }
 
-    fn get_mut_common_fields(&mut self) -> &mut CommonFields<'a, AMMDepositFlag> {
+    fn get_mut_common_fields(&mut self) -> &mut CommonFields<AMMDepositFlag> {
         self.common_fields.get_mut_common_fields()
     }
 
@@ -98,11 +98,11 @@ impl<'a> Transaction<'a, AMMDepositFlag> for AMMDeposit<'a> {
     }
 }
 
-impl<'a> AMMDeposit<'a> {
+impl AMMDeposit {
     pub fn new(
-        account: Cow<'a, str>,
-        account_txn_id: Option<Cow<'a, str>>,
-        fee: Option<XRPAmount<'a>>,
+        account: String,
+        account_txn_id: Option<String>,
+        fee: Option<XRPAmount>,
         flags: Option<FlagCollection<AMMDepositFlag>>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
@@ -110,13 +110,13 @@ impl<'a> AMMDeposit<'a> {
         signers: Option<Vec<Signer>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
-        asset: Currency<'a>,
-        asset2: Currency<'a>,
-        amount: Option<Amount<'a>>,
-        amount2: Option<Amount<'a>>,
-        e_price: Option<Amount<'a>>,
-        lp_token_out: Option<IssuedCurrencyAmount<'a>>,
-    ) -> AMMDeposit<'a> {
+        asset: Currency,
+        asset2: Currency,
+        amount: Option<Amount>,
+        amount2: Option<Amount>,
+        e_price: Option<Amount>,
+        lp_token_out: Option<IssuedCurrencyAmount>,
+    ) -> AMMDeposit {
         AMMDeposit {
             common_fields: CommonFields::new(
                 account,
@@ -153,7 +153,7 @@ mod test_errors {
     #[test]
     fn test_no_amount() {
         let deposit = AMMDeposit::new(
-            Cow::Borrowed("rPEPPER7kfTD9w2To4CQk6UCfuHM9c6GDY"),
+            "rPEPPER7kfTD9w2To4CQk6UCfuHM9c6GDY".to_string(),
             None,
             Some("10".into()),
             None,
@@ -177,7 +177,7 @@ mod test_errors {
     #[test]
     fn test_no_lp_token_out_or_amount() {
         let deposit = AMMDeposit::new(
-            Cow::Borrowed("rPEPPER7kfTD9w2To4CQk6UCfuHM9c6GDY"),
+            "rPEPPER7kfTD9w2To4CQk6UCfuHM9c6GDY".to_string(),
             None,
             Some("10".into()),
             None,
@@ -201,7 +201,7 @@ mod test_errors {
     #[test]
     fn test_amount2_no_amount() {
         let deposit = AMMDeposit::new(
-            Cow::Borrowed("rPEPPER7kfTD9w2To4CQk6UCfuHM9c6GDY"),
+            "rPEPPER7kfTD9w2To4CQk6UCfuHM9c6GDY".to_string(),
             None,
             Some("10".into()),
             None,

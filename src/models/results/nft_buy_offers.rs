@@ -1,5 +1,3 @@
-use alloc::borrow::Cow;
-
 use serde::{Deserialize, Serialize};
 
 use crate::models::requests::Marker;
@@ -13,17 +11,17 @@ use super::nft_offer::NFTOffer;
 /// `<https://xrpl.org/nft_buy_offers.html>`
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct NFTBuyOffers<'a> {
+pub struct NFTBuyOffers {
     /// The NFToken these offers are for, as specified in the request.
-    pub nft_id: Cow<'a, str>,
+    pub nft_id: String,
     /// A list of buy offers for the token.
-    pub offers: Cow<'a, [NFTOffer<'a>]>,
+    pub offers: Vec<NFTOffer>,
     /// The limit, as specified in the request.
     pub limit: Option<u32>,
     /// Server-defined value indicating the response is paginated. Pass this
     /// to the next call to resume where this call left off. Omitted when
     /// there are no pages of information after this one.
-    pub marker: Option<Marker<'a>>,
+    pub marker: Option<Marker>,
 }
 
 #[cfg(test)]

@@ -1,4 +1,4 @@
-use alloc::{borrow::Cow, vec::Vec};
+use alloc::vec::Vec;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 
@@ -34,14 +34,14 @@ pub const AMM_CREATE_MAX_FEE: u16 = 1000;
     Debug, Serialize, Deserialize, PartialEq, Eq, Clone, xrpl_rust_macros::ValidateCurrencies,
 )]
 #[serde(rename_all = "PascalCase")]
-pub struct AMMCreate<'a> {
+pub struct AMMCreate {
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, NoFlags>,
+    pub common_fields: CommonFields<NoFlags>,
     /// The first of the two assets to fund this AMM with. This must be a positive amount.
-    pub amount: Amount<'a>,
+    pub amount: Amount,
     /// The second of the two assets to fund this AMM with. This must be a positive amount.
     #[serde(rename = "Amount2")]
-    pub amount2: Amount<'a>,
+    pub amount2: Amount,
     /// The fee to charge for trades against this AMM instance, in units of 1/100,000;
     /// a value of 1 is equivalent to 0.001%.
     /// The maximum value is 1000, indicating a 1% fee.
@@ -49,19 +49,19 @@ pub struct AMMCreate<'a> {
     pub trading_fee: u16,
 }
 
-impl Model for AMMCreate<'_> {
+impl Model for AMMCreate {
     fn get_errors(&self) -> XRPLModelResult<()> {
         self.get_tranding_fee_error()?;
         self.validate_currencies()
     }
 }
 
-impl<'a> Transaction<'a, NoFlags> for AMMCreate<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'_, NoFlags> {
+impl Transaction<NoFlags> for AMMCreate {
+    fn get_common_fields(&self) -> &CommonFields<NoFlags> {
         &self.common_fields
     }
 
-    fn get_mut_common_fields(&mut self) -> &mut CommonFields<'a, NoFlags> {
+    fn get_mut_common_fields(&mut self) -> &mut CommonFields<NoFlags> {
         self.common_fields.get_mut_common_fields()
     }
 
@@ -70,21 +70,21 @@ impl<'a> Transaction<'a, NoFlags> for AMMCreate<'a> {
     }
 }
 
-impl<'a> AMMCreate<'a> {
+impl AMMCreate {
     pub fn new(
-        account: Cow<'a, str>,
-        account_txn_id: Option<Cow<'a, str>>,
-        fee: Option<XRPAmount<'a>>,
+        account: String,
+        account_txn_id: Option<String>,
+        fee: Option<XRPAmount>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
         sequence: Option<u32>,
         signers: Option<Vec<Signer>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
-        amount: Amount<'a>,
-        amount2: Amount<'a>,
+        amount: Amount,
+        amount2: Amount,
         trading_fee: u16,
-    ) -> AMMCreate<'a> {
+    ) -> AMMCreate {
         AMMCreate {
             common_fields: CommonFields::new(
                 account,
@@ -132,7 +132,7 @@ mod test_errors {
     #[test]
     fn test_trading_fee_error() {
         let amm_create = AMMCreate::new(
-            Cow::Borrowed("rPEPPER7kfTD9w2To4CQk6UCfuHM9c6GDY"),
+            "rPEPPER7kfTD9w2To4CQk6UCfuHM9c6GDY".to_string(),
             None,
             Some(XRPAmount::from("1000")),
             Some(20),
@@ -162,7 +162,7 @@ mod test_errors {
     #[test]
     fn test_no_error() {
         let amm_create = AMMCreate::new(
-            Cow::Borrowed("rPEPPER7kfTD9w2To4CQk6UCfuHM9c6GDY"),
+            "rPEPPER7kfTD9w2To4CQk6UCfuHM9c6GDY".to_string(),
             None,
             Some(XRPAmount::from("1000")),
             Some(20),

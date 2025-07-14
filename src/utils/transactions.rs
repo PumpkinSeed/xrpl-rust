@@ -8,13 +8,13 @@ use crate::{models::transactions::Transaction, XRPLSerdeJsonError};
 
 use super::exceptions::XRPLUtilsResult;
 
-pub fn get_transaction_field_value<'a, F, T, R>(
+pub fn get_transaction_field_value<F, T, R>(
     transaction: &T,
     field_name: &str,
 ) -> XRPLUtilsResult<R>
 where
     F: IntoEnumIterator + Serialize + Debug + PartialEq,
-    T: Transaction<'a, F> + Serialize,
+    T: Transaction<F> + Serialize,
     R: DeserializeOwned,
 {
     let txn_value = serde_json::to_value(transaction)?;
@@ -25,14 +25,14 @@ where
     Ok(serde_json::from_value::<R>(common_field_value.clone())?)
 }
 
-pub fn set_transaction_field_value<'a, F, T, V>(
+pub fn set_transaction_field_value<F, T, V>(
     transaction: &mut T,
     field_name: &str,
     field_value: V,
 ) -> XRPLUtilsResult<()>
 where
     F: IntoEnumIterator + Serialize + Debug + PartialEq,
-    T: Transaction<'a, F> + Serialize + DeserializeOwned,
+    T: Transaction<F> + Serialize + DeserializeOwned,
     V: Serialize,
 {
     match serde_json::to_value(&mut *transaction) {
@@ -50,13 +50,13 @@ where
     }
 }
 
-pub fn validate_transaction_has_field<'a, T, F>(
+pub fn validate_transaction_has_field<T, F>(
     transaction: &T,
     field_name: &str,
 ) -> XRPLUtilsResult<()>
 where
     F: IntoEnumIterator + Serialize + Debug + PartialEq,
-    T: Transaction<'a, F> + Serialize,
+    T: Transaction<F> + Serialize,
 {
     serde_json::to_value(transaction)?
         .get(field_name)

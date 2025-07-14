@@ -1,5 +1,3 @@
-use alloc::borrow::Cow;
-
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
@@ -8,31 +6,31 @@ use crate::models::Amount;
 /// Server information
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct Info<'a> {
+pub struct Info {
     /// If true, this server is amendment blocked
     pub amendment_blocked: Option<bool>,
     /// The version number of the running rippled server
-    pub build_version: Cow<'a, str>,
+    pub build_version: String,
     /// Information about the most recently closed ledger that has not been
     /// validated
-    pub closed_ledger: Option<LedgerInfo<'a>>,
+    pub closed_ledger: Option<LedgerInfo>,
     /// Range expression indicating the sequence numbers of the ledger versions
     /// in the database
-    pub complete_ledgers: Cow<'a, str>,
+    pub complete_ledgers: String,
     /// Performance metrics for RPC calls and JobQueue
     pub counters: Option<Value>,
     /// Items currently being run in the job queue
     pub current_activity: Option<Value>,
     /// Server hostname or RFC-1751 word based on node public key
-    pub hostid: Option<Cow<'a, str>>,
+    pub hostid: Option<String>,
     /// Amount of time spent waiting for I/O operations, in milliseconds
     pub io_latency_ms: u32,
     /// Number of times server had over 250 transactions waiting
-    pub jq_trans_overflow: Option<Cow<'a, str>>,
+    pub jq_trans_overflow: Option<String>,
     /// Information about the last ledger close
     pub last_close: LastClose,
     /// Detailed information about the current load state
-    pub load: Option<Load<'a>>,
+    pub load: Option<Load>,
     /// Current transaction cost multiplier
     pub load_factor: u32,
     /// Transaction cost multiplier based on local load
@@ -52,38 +50,38 @@ pub struct Info<'a> {
     /// Number of connected peer servers
     pub peers: u32,
     /// List of ports listening for API commands
-    pub ports: Option<Cow<'a, [Value]>>,
+    pub ports: Option<Vec<Port>>,
     /// Public key for peer-to-peer communications
-    pub pubkey_node: Cow<'a, str>,
+    pub pubkey_node: String,
     /// Public key for ledger validations
-    pub pubkey_validator: Option<Cow<'a, str>>,
+    pub pubkey_validator: Option<String>,
     /// Reporting mode configuration information
-    pub reporting: Option<Reporting<'a>>,
+    pub reporting: Option<Reporting>,
     /// Current server state
-    pub server_state: Cow<'a, str>,
+    pub server_state: String,
     /// Microseconds in current state
-    pub server_state_duration_us: Option<Cow<'a, str>>,
+    pub server_state_duration_us: Option<String>,
     /// Server state accounting information
     pub state_accounting: Option<Value>,
     /// Current UTC time according to server
-    pub time: Option<Cow<'a, str>>,
+    pub time: Option<String>,
     /// Seconds server has been operational
     pub uptime: Option<u64>,
     /// Information about the most recent validated ledger
-    pub validated_ledger: Option<LedgerInfo<'a>>,
+    pub validated_ledger: Option<LedgerInfo>,
     /// Minimum required trusted validations
     pub validation_quorum: u32,
     /// Validator list expiration time
     pub validator_list_expires: Option<u32>,
     /// Validator list information
-    pub validator_list: Option<ValidatorList<'a>>,
+    pub validator_list: Option<ValidatorList>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct ValidatorList<'a> {
+pub struct ValidatorList {
     pub count: u32,
-    pub expiration: Cow<'a, str>,
-    pub status: Cow<'a, str>,
+    pub expiration: String,
+    pub status: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
@@ -110,36 +108,36 @@ impl Eq for LastClose {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct Load<'a> {
+pub struct Load {
     /// Information about job types and time spent
-    pub job_types: Cow<'a, [Value]>,
+    pub job_types: Vec<Value>,
     /// Number of threads in main job pool
     pub threads: u32,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct Reporting<'a> {
+pub struct Reporting {
     /// List of P2P-mode servers
-    pub etl_sources: Cow<'a, [Value]>,
+    pub etl_sources: Vec<Value>,
     /// Whether server is writing to external database
     pub is_writer: bool,
     /// Last publish time
-    pub last_publish_time: Cow<'a, str>,
+    pub last_publish_time: String,
 }
 
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct LedgerInfo<'a> {
+pub struct LedgerInfo {
     /// Time since ledger close in seconds
     pub age: Option<u32>,
     /// Base fee in XRP (Not drops for some reason?)
-    pub base_fee_xrp: Option<Amount<'a>>,
+    pub base_fee_xrp: Option<Amount>,
     /// Unique ledger hash
-    pub hash: Cow<'a, str>,
+    pub hash: String,
     /// Minimum XRP reserve for accounts (Not drops for some reason?)
-    pub reserve_base_xrp: Option<Amount<'a>>,
+    pub reserve_base_xrp: Option<Amount>,
     /// Additional XRP reserve per owned object (Not drops for some reason?)
-    pub reserve_inc_xrp: Option<Amount<'a>>,
+    pub reserve_inc_xrp: Option<Amount>,
     /// Ledger sequence number
     pub seq: u32,
 }
@@ -150,8 +148,14 @@ pub struct LedgerInfo<'a> {
 /// See Server Info:
 /// `<https://xrpl.org/server_info.html#server_info>`
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct ServerInfo<'a> {
-    pub info: Info<'a>,
+pub struct ServerInfo {
+    pub info: Info,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
+pub struct Port {
+    pub port: String,
+    pub protocol: Vec<String>,
 }
 
 #[cfg(test)]
@@ -222,6 +226,7 @@ mod tests {
         assert_eq!(result.info.load_factor, 1);
         assert_eq!(result.info.network_id, Some(10));
         assert_eq!(result.info.peers, 22);
+        assert_eq!(result.info.ports.unwrap()[0].port, "7777");
         assert_eq!(
             result.info.pubkey_node,
             "n9KQK8yvTDcZdGyhu2EGdDnFPEBSsY5wEGpU5GgpygTgLFsjQyPt"

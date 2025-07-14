@@ -1,4 +1,3 @@
-use alloc::borrow::Cow;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 
@@ -12,28 +11,28 @@ use super::{CommonFields, Request};
 /// `<https://xrpl.org/nft_sell_offers.html>`
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
-pub struct NftSellOffers<'a> {
+pub struct NftSellOffers {
     /// The common fields shared by all requests.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a>,
+    pub common_fields: CommonFields,
     /// The unique identifier of a NFToken object.
-    pub nft_id: Cow<'a, str>,
+    pub nft_id: String,
 }
 
-impl<'a> Model for NftSellOffers<'a> {}
+impl Model for NftSellOffers {}
 
-impl<'a> Request<'a> for NftSellOffers<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'a> {
+impl Request for NftSellOffers {
+    fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
 
-    fn get_common_fields_mut(&mut self) -> &mut CommonFields<'a> {
+    fn get_common_fields_mut(&mut self) -> &mut CommonFields {
         &mut self.common_fields
     }
 }
 
-impl<'a> NftSellOffers<'a> {
-    pub fn new(id: Option<Cow<'a, str>>, nft_id: Cow<'a, str>) -> Self {
+impl NftSellOffers {
+    pub fn new(id: Option<String>, nft_id: String) -> Self {
         Self {
             common_fields: CommonFields {
                 command: RequestMethod::NFTSellOffers,

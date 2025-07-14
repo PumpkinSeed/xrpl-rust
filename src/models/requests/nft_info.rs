@@ -1,4 +1,3 @@
-use alloc::borrow::Cow;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 
@@ -10,36 +9,36 @@ use super::{CommonFields, LedgerIndex, LookupByLedgerRequest, Request, RequestMe
 /// NFToken
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
-pub struct NFTInfo<'a> {
+pub struct NFTInfo {
     /// The common fields shared by all requests.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a>,
+    pub common_fields: CommonFields,
     /// The unique identifier of a ledger.
     #[serde(flatten)]
-    pub ledger_lookup: Option<LookupByLedgerRequest<'a>>,
+    pub ledger_lookup: Option<LookupByLedgerRequest>,
     /// The unique identifier of an NFToken.
     /// The request returns past transactions of this NFToken.
-    pub nft_id: Cow<'a, str>,
+    pub nft_id: String,
 }
 
-impl Model for NFTInfo<'_> {}
+impl Model for NFTInfo {}
 
-impl<'a> Request<'a> for NFTInfo<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'a> {
+impl Request for NFTInfo {
+    fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
 
-    fn get_common_fields_mut(&mut self) -> &mut CommonFields<'a> {
+    fn get_common_fields_mut(&mut self) -> &mut CommonFields {
         &mut self.common_fields
     }
 }
 
-impl<'a> NFTInfo<'a> {
+impl NFTInfo {
     pub fn new(
-        id: Option<Cow<'a, str>>,
-        nft_id: Cow<'a, str>,
-        ledger_hash: Option<Cow<'a, str>>,
-        ledger_index: Option<LedgerIndex<'a>>,
+        id: Option<String>,
+        nft_id: String,
+        ledger_hash: Option<String>,
+        ledger_index: Option<LedgerIndex>,
     ) -> Self {
         Self {
             common_fields: CommonFields {

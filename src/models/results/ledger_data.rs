@@ -1,5 +1,3 @@
-use alloc::borrow::Cow;
-
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
@@ -12,30 +10,30 @@ use crate::models::requests::Marker;
 /// `<https://xrpl.org/ledger_data.html>`
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct LedgerData<'a> {
+pub struct LedgerData {
     /// The ledger index of this ledger version.
     pub ledger_index: u32,
     /// Unique identifying hash of this ledger version.
-    pub ledger_hash: Cow<'a, str>,
+    pub ledger_hash: String,
     /// Array of JSON objects containing data from the ledger's state tree.
-    pub state: Cow<'a, [LedgerObject<'a>]>,
+    pub state: Vec<LedgerObject>,
     /// Server-defined value indicating the response is paginated.
     /// Pass this to the next call to resume where this call left off.
-    pub marker: Option<Marker<'a>>,
+    pub marker: Option<Marker>,
 }
 
 /// Represents a single object in the ledger's state tree.
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct LedgerObject<'a> {
+pub struct LedgerObject {
     /// (Only included if binary true) Hex representation of the requested data
-    pub data: Option<Cow<'a, str>>,
+    pub data: Option<String>,
     /// (Only included if binary false) String indicating what type of ledger
     /// object this object represents.
     #[serde(rename = "LedgerEntryType")]
-    pub ledger_entry_type: Option<Cow<'a, str>>,
+    pub ledger_entry_type: Option<String>,
     /// Unique identifier for this ledger entry, as hex.
-    pub index: Cow<'a, str>,
+    pub index: String,
     /// Additional fields describing this object, depending on which ledger
     /// object type it is.
     #[serde(flatten)]

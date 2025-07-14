@@ -1,4 +1,3 @@
-use alloc::borrow::Cow;
 use alloc::vec::Vec;
 
 use serde::{Deserialize, Serialize};
@@ -56,7 +55,7 @@ pub enum OfferCreateFlag {
     Debug, Serialize, Deserialize, PartialEq, Eq, Clone, xrpl_rust_macros::ValidateCurrencies,
 )]
 #[serde(rename_all = "PascalCase")]
-pub struct OfferCreate<'a> {
+pub struct OfferCreate {
     // The base fields for all transaction models.
     //
     // See Transaction Types:
@@ -66,28 +65,28 @@ pub struct OfferCreate<'a> {
     // `<https://xrpl.org/transaction-common-fields.html>`
     /// The type of transaction.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, OfferCreateFlag>,
+    pub common_fields: CommonFields<OfferCreateFlag>,
     // The custom fields for the OfferCreate model.
     //
     // See OfferCreate fields:
     // `<https://xrpl.org/offercreate.html#offercreate-fields>`
     /// The amount and type of currency being sold.
-    pub taker_gets: Amount<'a>,
+    pub taker_gets: Amount,
     /// The amount and type of currency being bought.
-    pub taker_pays: Amount<'a>,
+    pub taker_pays: Amount,
     /// Time after which the Offer is no longer active, in seconds since the Ripple Epoch.
     pub expiration: Option<u32>,
     /// An Offer to delete first, specified in the same way as OfferCancel.
     pub offer_sequence: Option<u32>,
 }
 
-impl<'a> Model for OfferCreate<'a> {
+impl Model for OfferCreate {
     fn get_errors(&self) -> crate::models::XRPLModelResult<()> {
         self.validate_currencies()
     }
 }
 
-impl<'a> Transaction<'a, OfferCreateFlag> for OfferCreate<'a> {
+impl Transaction<OfferCreateFlag> for OfferCreate {
     fn has_flag(&self, flag: &OfferCreateFlag) -> bool {
         self.common_fields.has_flag(flag)
     }
@@ -96,20 +95,20 @@ impl<'a> Transaction<'a, OfferCreateFlag> for OfferCreate<'a> {
         self.common_fields.get_transaction_type()
     }
 
-    fn get_common_fields(&self) -> &CommonFields<'_, OfferCreateFlag> {
+    fn get_common_fields(&self) -> &CommonFields<OfferCreateFlag> {
         self.common_fields.get_common_fields()
     }
 
-    fn get_mut_common_fields(&mut self) -> &mut CommonFields<'a, OfferCreateFlag> {
+    fn get_mut_common_fields(&mut self) -> &mut CommonFields<OfferCreateFlag> {
         self.common_fields.get_mut_common_fields()
     }
 }
 
-impl<'a> OfferCreate<'a> {
+impl OfferCreate {
     pub fn new(
-        account: Cow<'a, str>,
-        account_txn_id: Option<Cow<'a, str>>,
-        fee: Option<XRPAmount<'a>>,
+        account: String,
+        account_txn_id: Option<String>,
+        fee: Option<XRPAmount>,
         flags: Option<FlagCollection<OfferCreateFlag>>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
@@ -117,8 +116,8 @@ impl<'a> OfferCreate<'a> {
         signers: Option<Vec<Signer>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
-        taker_gets: Amount<'a>,
-        taker_pays: Amount<'a>,
+        taker_gets: Amount,
+        taker_pays: Amount,
         expiration: Option<u32>,
         offer_sequence: Option<u32>,
     ) -> Self {

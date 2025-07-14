@@ -1,5 +1,3 @@
-use alloc::borrow::Cow;
-
 use serde::{Deserialize, Serialize};
 
 /// Response format for the channel_verify method, which verifies the
@@ -9,15 +7,15 @@ use serde::{Deserialize, Serialize};
 /// `<https://xrpl.org/channel_verify.html>`
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct ChannelVerify<'a> {
+pub struct ChannelVerify {
     /// The credentials specified in the request, if any.
-    pub credentials: Option<Cow<'a, [Cow<'a, str>]>>,
+    pub credentials: Option<Vec<String>>,
     /// Whether the signature is valid for the stated amount, channel,
     /// and public key.
     pub signature_verified: bool,
     /// The identifying hash of the ledger that was used to generate
     /// this response.
-    pub ledger_hash: Option<Cow<'a, str>>,
+    pub ledger_hash: Option<String>,
     /// The ledger index of the ledger version that was used to generate
     /// this response.
     pub ledger_index: Option<u32>,

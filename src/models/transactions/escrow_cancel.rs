@@ -1,4 +1,3 @@
-use alloc::borrow::Cow;
 use alloc::vec::Vec;
 
 use serde::{Deserialize, Serialize};
@@ -23,55 +22,55 @@ use super::{Memo, Signer};
     Debug, Serialize, Deserialize, PartialEq, Eq, Clone, xrpl_rust_macros::ValidateCurrencies,
 )]
 #[serde(rename_all = "PascalCase")]
-pub struct EscrowCancel<'a> {
+pub struct EscrowCancel {
     /// The base fields for all transaction models.
     ///
     /// See Transaction Common Fields:
     /// `<https://xrpl.org/transaction-common-fields.html>`
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, NoFlags>,
+    pub common_fields: CommonFields<NoFlags>,
     // The custom fields for the EscrowCancel model.
     //
     // See EscrowCancel fields:
     // `<https://xrpl.org/escrowcancel.html#escrowcancel-flags>`
     /// Address of the source account that funded the escrow payment.
-    pub owner: Cow<'a, str>,
+    pub owner: String,
     /// Transaction sequence (or Ticket number) of EscrowCreate transaction that created the escrow to cancel.
     pub offer_sequence: u32,
 }
 
-impl<'a> Model for EscrowCancel<'a> {
+impl Model for EscrowCancel {
     fn get_errors(&self) -> crate::models::XRPLModelResult<()> {
         self.validate_currencies()
     }
 }
 
-impl<'a> Transaction<'a, NoFlags> for EscrowCancel<'a> {
+impl Transaction<NoFlags> for EscrowCancel {
     fn get_transaction_type(&self) -> &TransactionType {
         self.common_fields.get_transaction_type()
     }
 
-    fn get_common_fields(&self) -> &CommonFields<'_, NoFlags> {
+    fn get_common_fields(&self) -> &CommonFields<NoFlags> {
         self.common_fields.get_common_fields()
     }
 
-    fn get_mut_common_fields(&mut self) -> &mut CommonFields<'a, NoFlags> {
+    fn get_mut_common_fields(&mut self) -> &mut CommonFields<NoFlags> {
         self.common_fields.get_mut_common_fields()
     }
 }
 
-impl<'a> EscrowCancel<'a> {
+impl EscrowCancel {
     pub fn new(
-        account: Cow<'a, str>,
-        account_txn_id: Option<Cow<'a, str>>,
-        fee: Option<XRPAmount<'a>>,
+        account: String,
+        account_txn_id: Option<String>,
+        fee: Option<XRPAmount>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
         sequence: Option<u32>,
         signers: Option<Vec<Signer>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
-        owner: Cow<'a, str>,
+        owner: String,
         offer_sequence: u32,
     ) -> Self {
         Self {

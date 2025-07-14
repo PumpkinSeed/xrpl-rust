@@ -1,4 +1,3 @@
-use alloc::borrow::Cow;
 use alloc::vec::Vec;
 
 use serde::{Deserialize, Serialize};
@@ -17,7 +16,7 @@ use crate::models::{FlagCollection, NoFlags};
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 #[serde(rename_all = "PascalCase")]
-pub struct SetFee<'a> {
+pub struct SetFee {
     // The base fields for all transaction models.
     //
     // See Transaction Types:
@@ -27,46 +26,46 @@ pub struct SetFee<'a> {
     // `<https://xrpl.org/transaction-common-fields.html>`
     /// The type of transaction.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, NoFlags>,
+    pub common_fields: CommonFields<NoFlags>,
     /// The custom fields for the SetFee model.
     ///
     /// See SetFee fields:
     /// `<https://xrpl.org/setfee.html#setfee-fields>`
-    pub base_fee: XRPAmount<'a>,
+    pub base_fee: XRPAmount,
     pub reference_fee_units: u32,
     pub reserve_base: u32,
     pub reserve_increment: u32,
     pub ledger_sequence: u32,
 }
 
-impl<'a> Model for SetFee<'a> {}
+impl Model for SetFee {}
 
-impl<'a> Transaction<'a, NoFlags> for SetFee<'a> {
+impl Transaction<NoFlags> for SetFee {
     fn get_transaction_type(&self) -> &TransactionType {
         self.common_fields.get_transaction_type()
     }
 
-    fn get_common_fields(&self) -> &CommonFields<'_, NoFlags> {
+    fn get_common_fields(&self) -> &CommonFields<NoFlags> {
         self.common_fields.get_common_fields()
     }
 
-    fn get_mut_common_fields(&mut self) -> &mut CommonFields<'a, NoFlags> {
+    fn get_mut_common_fields(&mut self) -> &mut CommonFields<NoFlags> {
         self.common_fields.get_mut_common_fields()
     }
 }
 
-impl<'a> SetFee<'a> {
+impl SetFee {
     pub fn new(
-        account: Cow<'a, str>,
-        account_txn_id: Option<Cow<'a, str>>,
-        fee: Option<XRPAmount<'a>>,
+        account: String,
+        account_txn_id: Option<String>,
+        fee: Option<XRPAmount>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
         sequence: Option<u32>,
         signers: Option<Vec<Signer>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
-        base_fee: XRPAmount<'a>,
+        base_fee: XRPAmount,
         reference_fee_units: u32,
         reserve_base: u32,
         reserve_increment: u32,

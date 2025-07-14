@@ -55,9 +55,9 @@ mod _std {
     }
 
     impl XRPLClient for AsyncJsonRpcClient {
-        async fn request_impl<'a: 'b, 'b>(
+        async fn request_impl(
             &self,
-            request: XRPLRequest<'a>,
+            request: XRPLRequest,
         ) -> XRPLClientResult<String> {
             let client = HttpClient::new();
             let request_json_rpc = request_to_json_rpc(&request)?;
@@ -88,7 +88,7 @@ mod _std {
         async fn request_funding(
             &self,
             url: Option<Url>,
-            request: FundFaucet<'_>,
+            request: FundFaucet,
         ) -> XRPLClientResult<()> {
             let faucet_url = self.get_faucet_url(url)?;
             let client = HttpClient::new();

@@ -32,7 +32,7 @@ pub struct WebSocketClosed;
 
 #[allow(async_fn_in_trait)]
 pub trait XRPLAsyncWebsocketIO {
-    async fn xrpl_send(&mut self, message: XRPLRequest<'_>) -> XRPLClientResult<()>;
+    async fn xrpl_send(&mut self, message: XRPLRequest) -> XRPLClientResult<()>;
 
     async fn xrpl_receive(&mut self) -> XRPLClientResult<Option<String>>;
 }
@@ -81,7 +81,7 @@ where
         + MessageHandler
         + Unpin,
 {
-    async fn xrpl_send(&mut self, message: XRPLRequest<'_>) -> XRPLClientResult<()> {
+    async fn xrpl_send(&mut self, message: XRPLRequest) -> XRPLClientResult<()> {
         let message = serde_json::to_string(&message)?;
 
         self.send(message).await

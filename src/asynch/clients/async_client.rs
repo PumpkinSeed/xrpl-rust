@@ -7,13 +7,13 @@ use alloc::string::String;
 
 #[allow(async_fn_in_trait)]
 pub trait XRPLAsyncClient: XRPLClient {
-    async fn request<'a: 'b, 'b>(&self, request: XRPLRequest<'a>) -> XRPLClientResult<String> {
+    async fn request(&self, request: XRPLRequest) -> XRPLClientResult<String> {
         self.request_impl(request).await
     }
 
-    async fn get_common_fields(&self) -> XRPLClientResult<CommonFields<'_>> {
+    async fn get_common_fields(&self) -> XRPLClientResult<CommonFields> {
         let server_state_raw = self.request(ServerState::new(None).into()).await?;
-        let server_state: XRPLResponse<'_, ServerStateResult> =
+        let server_state: XRPLResponse<ServerStateResult> =
             serde_json::from_str(&server_state_raw)?;
         let server_state = server_state.result.unwrap(); // TODO
         let common_fields = CommonFields {

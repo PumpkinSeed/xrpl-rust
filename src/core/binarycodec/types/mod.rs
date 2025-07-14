@@ -41,7 +41,6 @@ use crate::core::binarycodec::definitions::get_transaction_type_code;
 use crate::core::binarycodec::definitions::FieldInstance;
 use crate::core::exceptions::XRPLCoreResult;
 use crate::core::BinaryParser;
-use alloc::borrow::Cow;
 use alloc::borrow::ToOwned;
 use alloc::string::String;
 use alloc::string::ToString;
@@ -499,7 +498,7 @@ impl AsRef<[u8]> for STObject {
     }
 }
 
-fn handle_xaddress(field: Cow<str>, xaddress: Cow<str>) -> XRPLCoreResult<Map<String, Value>> {
+fn handle_xaddress(field: String, xaddress: String) -> XRPLCoreResult<Map<String, Value>> {
     let (classic_address, tag, _is_test_net) = xaddress_to_classic_address(&xaddress)?;
     if let Some(tag) = tag {
         if field == DESTINATION {

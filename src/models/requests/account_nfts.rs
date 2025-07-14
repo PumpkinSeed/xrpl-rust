@@ -1,4 +1,3 @@
-use alloc::borrow::Cow;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 
@@ -10,41 +9,41 @@ use super::{CommonFields, Marker, Request};
 /// by the specified account.
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
-pub struct AccountNfts<'a> {
+pub struct AccountNfts {
     /// The common fields shared by all requests.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a>,
+    pub common_fields: CommonFields,
     /// The unique identifier of an account, typically the
     /// account's Address. The request returns a list of
     /// NFTs owned by this account.
-    pub account: Cow<'a, str>,
+    pub account: String,
     /// Limit the number of token pages to retrieve. Each page
     /// can contain up to 32 NFTs. The limit value cannot be
     /// lower than 20 or more than 400. The default is 100.
     pub limit: Option<u32>,
     /// Value from a previous paginated response. Resume
     /// retrieving data where that response left off.
-    pub marker: Option<Marker<'a>>,
+    pub marker: Option<Marker>,
 }
 
-impl<'a> Model for AccountNfts<'a> {}
+impl Model for AccountNfts {}
 
-impl<'a> Request<'a> for AccountNfts<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'a> {
+impl Request for AccountNfts {
+    fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
 
-    fn get_common_fields_mut(&mut self) -> &mut CommonFields<'a> {
+    fn get_common_fields_mut(&mut self) -> &mut CommonFields {
         &mut self.common_fields
     }
 }
 
-impl<'a> AccountNfts<'a> {
+impl AccountNfts {
     pub fn new(
-        id: Option<Cow<'a, str>>,
-        account: Cow<'a, str>,
+        id: Option<String>,
+        account: String,
         limit: Option<u32>,
-        marker: Option<Marker<'a>>,
+        marker: Option<Marker>,
     ) -> Self {
         Self {
             common_fields: CommonFields {

@@ -1,5 +1,3 @@
-use alloc::borrow::Cow;
-
 use serde::{Deserialize, Serialize};
 
 /// Represents an AccountRoot ledger object in the XRP Ledger.
@@ -10,39 +8,39 @@ use serde::{Deserialize, Serialize};
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
 #[serde(rename_all = "PascalCase")]
-pub struct Node<'a> {
+pub struct Node {
     /// The identifying address of this account
-    pub account: Cow<'a, str>,
+    pub account: String,
     /// The identifying hash of the transaction that most recently modified
     /// this object
     #[serde(rename = "AccountTxnID")]
-    pub account_txn_id: Cow<'a, str>,
+    pub account_txn_id: String,
     /// The account's current XRP balance in drops
-    pub balance: Cow<'a, str>,
+    pub balance: String,
     /// The domain associated with this account. The raw domain value is a
     /// hex string representing the ASCII for the domain
-    pub domain: Option<Cow<'a, str>>,
+    pub domain: Option<String>,
     /// Hash of an email address to be used for generating an avatar image
-    pub email_hash: Option<Cow<'a, str>>,
+    pub email_hash: Option<String>,
     /// Various boolean flags enabled for this account
     pub flags: u32,
     /// The type of ledger object. For AccountRoot objects, this is always
     /// "AccountRoot"
-    pub ledger_entry_type: Cow<'a, str>,
+    pub ledger_entry_type: String,
     /// Public key for sending encrypted messages to this account
-    pub message_key: Option<Cow<'a, str>>,
+    pub message_key: Option<String>,
     /// Number of objects this account owns in the ledger, which contributes
     /// to its owner reserve
     pub owner_count: u32,
     /// Identifying hash of the previous transaction that modified this object
     #[serde(rename = "PreviousTxnID")]
-    pub previous_txn_id: Cow<'a, str>,
+    pub previous_txn_id: String,
     /// Ledger index of the ledger containing the previous transaction that
     /// modified this object
     pub previous_txn_lgr_seq: u32,
     /// The identifying address of a key pair that can be used to authorize
     /// transactions for this account instead of the master key
-    pub regular_key: Option<Cow<'a, str>>,
+    pub regular_key: Option<String>,
     /// The sequence number of the next valid transaction for this account
     pub sequence: u32,
     /// The rate to charge when users transfer this account's issued currencies,
@@ -50,7 +48,7 @@ pub struct Node<'a> {
     pub transfer_rate: Option<u32>,
     /// The unique ID of this ledger entry
     #[serde(rename = "index")]
-    pub index: Cow<'a, str>,
+    pub index: String,
 }
 
 /// Response format for the ledger_entry method, which returns a single ledger
@@ -60,22 +58,22 @@ pub struct Node<'a> {
 /// `<https://xrpl.org/ledger_entry.html>`
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct LedgerEntry<'a> {
+pub struct LedgerEntry {
     /// The unique ID of this ledger entry.
-    pub index: Cow<'a, str>,
+    pub index: String,
     /// The ledger index of the ledger that was used when retrieving this data.
     pub ledger_index: Option<u32>,
     /// The identifying hash of the ledger version used to retrieve this data
-    pub ledger_hash: Option<Cow<'a, str>>,
+    pub ledger_hash: Option<String>,
     /// Object containing the data of this ledger entry, according to the
     /// ledger format. Omitted if "binary": true specified.
-    pub node: Option<Node<'a>>,
+    pub node: Option<Node>,
     /// The binary representation of the ledger object, as hexadecimal.
     /// Only present if "binary": true specified.
-    pub node_binary: Option<Cow<'a, str>>,
+    pub node_binary: Option<String>,
     /// (Clio server only) The ledger index where the ledger entry object was
     /// deleted. Only present if include_deleted parameter is set.
-    pub deleted_ledger_index: Option<Cow<'a, str>>,
+    pub deleted_ledger_index: Option<String>,
     /// Whether this data is from a validated ledger version
     pub validated: Option<bool>,
 }

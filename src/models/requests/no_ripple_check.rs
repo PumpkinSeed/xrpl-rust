@@ -1,4 +1,3 @@
-use alloc::borrow::Cow;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 use strum_macros::Display;
@@ -29,13 +28,13 @@ pub enum NoRippleCheckRole {
 /// `<https://xrpl.org/noripple_check.html>`
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
-pub struct NoRippleCheck<'a> {
+pub struct NoRippleCheck {
     /// The common fields shared by all requests.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a>,
+    pub common_fields: CommonFields,
     /// A unique identifier for the account, most commonly the
     /// account's address.
-    pub account: Cow<'a, str>,
+    pub account: String,
     /// Whether the address refers to a gateway or user.
     /// Recommendations depend on the role of the account.
     /// Issuers must have Default Ripple enabled and must disable
@@ -44,7 +43,7 @@ pub struct NoRippleCheck<'a> {
     pub role: NoRippleCheckRole,
     /// The unique identifier of a ledger.
     #[serde(flatten)]
-    pub ledger_lookup: Option<LookupByLedgerRequest<'a>>,
+    pub ledger_lookup: Option<LookupByLedgerRequest>,
     /// The maximum number of trust line problems to include in the
     /// results. Defaults to 300.
     pub limit: Option<u16>,
@@ -54,25 +53,25 @@ pub struct NoRippleCheck<'a> {
     pub transactions: Option<bool>,
 }
 
-impl<'a> Model for NoRippleCheck<'a> {}
+impl Model for NoRippleCheck {}
 
-impl<'a> Request<'a> for NoRippleCheck<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'a> {
+impl Request for NoRippleCheck {
+    fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
 
-    fn get_common_fields_mut(&mut self) -> &mut CommonFields<'a> {
+    fn get_common_fields_mut(&mut self) -> &mut CommonFields {
         &mut self.common_fields
     }
 }
 
-impl<'a> NoRippleCheck<'a> {
+impl NoRippleCheck {
     pub fn new(
-        id: Option<Cow<'a, str>>,
-        account: Cow<'a, str>,
+        id: Option<String>,
+        account: String,
         role: NoRippleCheckRole,
-        ledger_hash: Option<Cow<'a, str>>,
-        ledger_index: Option<LedgerIndex<'a>>,
+        ledger_hash: Option<String>,
+        ledger_index: Option<LedgerIndex>,
         limit: Option<u16>,
         transactions: Option<bool>,
     ) -> Self {

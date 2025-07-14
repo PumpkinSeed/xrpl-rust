@@ -12,7 +12,7 @@ use crate::{
 pub fn multisign<'a, T, F>(transaction: &mut T, tx_list: &'a Vec<T>) -> XRPLHelperResult<()>
 where
     F: IntoEnumIterator + Serialize + Debug + PartialEq + 'a,
-    T: Transaction<'a, F>,
+    T: Transaction<F>,
 {
     let mut decoded_tx_signers = Vec::new();
     for tx in tx_list {
@@ -36,7 +36,6 @@ where
 
 #[cfg(test)]
 mod test {
-    use alloc::borrow::Cow;
 
     use super::*;
     use crate::asynch::transaction::sign;
@@ -49,7 +48,7 @@ mod test {
         let first_signer = Wallet::new("sEdTLQkHAWpdS7FDk7EvuS7Mz8aSMRh", 0).unwrap();
         let second_signer = Wallet::new("sEd7DXaHkGQD8mz8xcRLDxfMLqCurif", 0).unwrap();
         let mut account_set_txn = AccountSet::new(
-            Cow::from(wallet.classic_address.clone()),
+            wallet.classic_address.clone(),
             None,
             Some("40".into()),
             None,

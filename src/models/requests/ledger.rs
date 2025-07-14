@@ -1,4 +1,3 @@
-use alloc::borrow::Cow;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 
@@ -12,10 +11,10 @@ use super::{CommonFields, Request};
 /// `<https://xrpl.org/ledger.html>`
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
-pub struct Ledger<'a> {
+pub struct Ledger {
     /// The common fields shared by all requests.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a>,
+    pub common_fields: CommonFields,
     /// Admin required. If true, return information on accounts
     /// in the ledger. Ignored if you did not specify a ledger
     /// version. Defaults to false. Caution: This returns a very
@@ -38,10 +37,10 @@ pub struct Ledger<'a> {
     /// the order of several hundred megabytes!
     pub full: Option<bool>,
     /// A 20-byte hex string for the ledger version to use.
-    pub ledger_hash: Option<Cow<'a, str>>,
+    pub ledger_hash: Option<String>,
     /// The ledger index of the ledger to use, or a shortcut
     /// string to choose a ledger automatically.
-    pub ledger_index: Option<Cow<'a, str>>,
+    pub ledger_index: Option<String>,
     /// If true, include owner_funds field in the metadata of
     /// OfferCreate transactions in the response. Defaults to
     /// false. Ignored unless transactions are included and
@@ -56,27 +55,27 @@ pub struct Ledger<'a> {
     pub transactions: Option<bool>,
 }
 
-impl<'a> Model for Ledger<'a> {}
+impl Model for Ledger {}
 
-impl<'a> Request<'a> for Ledger<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'a> {
+impl Request for Ledger {
+    fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
 
-    fn get_common_fields_mut(&mut self) -> &mut CommonFields<'a> {
+    fn get_common_fields_mut(&mut self) -> &mut CommonFields {
         &mut self.common_fields
     }
 }
 
-impl<'a> Ledger<'a> {
+impl Ledger {
     pub fn new(
-        id: Option<Cow<'a, str>>,
+        id: Option<String>,
         accounts: Option<bool>,
         binary: Option<bool>,
         expand: Option<bool>,
         full: Option<bool>,
-        ledger_hash: Option<Cow<'a, str>>,
-        ledger_index: Option<Cow<'a, str>>,
+        ledger_hash: Option<String>,
+        ledger_index: Option<String>,
         owner_funds: Option<bool>,
         queue: Option<bool>,
         transactions: Option<bool>,

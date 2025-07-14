@@ -1,15 +1,15 @@
 use crate::models::currency::ToAmount;
 use crate::models::{amount::XRPAmount, XRPLModelException};
 use crate::models::{Model, XRPLModelResult};
-use alloc::borrow::Cow;
+
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, PartialEq, Eq, Clone, Serialize, Deserialize, Default)]
-pub struct XRP<'a> {
-    pub currency: Cow<'a, str>,
+pub struct XRP {
+    pub currency: String,
 }
 
-impl<'a> Model for XRP<'a> {
+impl Model for XRP {
     fn get_errors(&self) -> XRPLModelResult<()> {
         if self.currency != "XRP" {
             Err(XRPLModelException::InvalidValue {
@@ -23,13 +23,13 @@ impl<'a> Model for XRP<'a> {
     }
 }
 
-impl<'a> ToAmount<'a, XRPAmount<'a>> for XRP<'a> {
-    fn to_amount(&self, value: Cow<'a, str>) -> XRPAmount<'a> {
+impl ToAmount<XRPAmount> for XRP {
+    fn to_amount(&self, value: String) -> XRPAmount {
         XRPAmount(value)
     }
 }
 
-impl<'a> XRP<'a> {
+impl XRP {
     pub fn new() -> Self {
         Self {
             currency: "XRP".into(),
@@ -37,8 +37,8 @@ impl<'a> XRP<'a> {
     }
 }
 
-impl<'a> From<XRPAmount<'a>> for XRP<'a> {
-    fn from(_value: XRPAmount<'a>) -> Self {
+impl From<XRPAmount> for XRP {
+    fn from(_value: XRPAmount) -> Self {
         Self {
             currency: "XRP".into(),
         }

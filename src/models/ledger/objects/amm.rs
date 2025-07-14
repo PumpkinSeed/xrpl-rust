@@ -2,7 +2,6 @@ use crate::models::ledger::objects::LedgerEntryType;
 use crate::models::FlagCollection;
 use crate::models::NoFlags;
 use crate::models::{amount::Amount, Currency, Model};
-use alloc::borrow::Cow;
 use alloc::string::String;
 use alloc::vec::Vec;
 use derive_new::new;
@@ -23,9 +22,9 @@ serde_with_tag! {
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone, new, Default)]
 #[serde(rename_all = "PascalCase")]
 /// `<https://xrpl.org/amm.html#auction-slot-object>`
-pub struct AuctionSlot<'a> {
+pub struct AuctionSlot {
     /// The current owner of this auction slot.
-    pub account: Cow<'a, str>,
+    pub account: String,
     /// The trading fee to be charged to the auction owner, in the same format as TradingFee. By
     /// default this is 0, meaning that the auction owner can trade at no fee instead of the
     /// standard fee for this AMM.
@@ -33,7 +32,7 @@ pub struct AuctionSlot<'a> {
     /// The time when this slot expires, in seconds since the Ripple Epoch.
     pub expiration: u32,
     /// The amount the auction owner paid to win this slot, in LP Tokens.
-    pub price: Amount<'a>,
+    pub price: Amount,
     /// A list of at most 4 additional accounts that are authorized to trade at the discounted fee
     /// for this AMM instance.
     pub auth_accounts: Option<Vec<AuthAccount>>,
@@ -54,68 +53,68 @@ serde_with_tag! {
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 #[serde(rename_all = "PascalCase")]
-pub struct AMM<'a> {
+pub struct AMM {
     /// The base fields for all ledger object models.
     ///
     /// See Ledger Object Common Fields:
     /// `<https://xrpl.org/ledger-entry-common-fields.html>`
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, NoFlags>,
+    pub common_fields: CommonFields<NoFlags>,
     // The custom fields for the AMM model.
     //
     // See AMM fields:
     // `<https://xrpl.org/amm.html#amm-fields>`
     /// The address of the special account that holds this `AMM's` assets.
     #[serde(rename = "AMMAccount")]
-    pub amm_account: Cow<'a, str>,
+    pub amm_account: String,
     /// The definition for one of the two assets this `AMM` holds. In JSON, this is an object with
     /// `currency` and `issuer` fields.
-    pub asset: Currency<'a>,
+    pub asset: Currency,
     /// The definition for the other asset this `AMM` holds. In JSON, this is an object with
     /// `currency` and `issuer` fields.
-    pub asset2: Currency<'a>,
+    pub asset2: Currency,
     /// The total outstanding balance of liquidity provider tokens from this `AMM` instance.
     /// The holders of these tokens can vote on the `AMM's` trading fee in proportion to their
     /// holdings, or redeem the tokens for a share of the `AMM's` assets which grows with the
     /// trading fees collected.
     #[serde(rename = "LPTokenBalance")]
-    pub lptoken_balance: Amount<'a>,
+    pub lptoken_balance: Amount,
     /// The percentage fee to be charged for trades against this `AMM` instance,
     /// in units of 1/100,000. The maximum value is 1000, for a 1% fee.
     pub trading_fee: u16,
     /// Details of the current owner of the auction slot, as an `AuctionSlot` object.
-    pub auction_slot: Option<AuctionSlot<'a>>,
+    pub auction_slot: Option<AuctionSlot>,
     /// A list of vote objects, representing votes on the pool's trading fee.
     pub vote_slots: Option<Vec<VoteEntry>>,
 }
 
-impl<'a> Model for AMM<'a> {}
+impl Model for AMM {}
 
-impl<'a> LedgerObject<NoFlags> for AMM<'a> {
+impl LedgerObject<NoFlags> for AMM {
     fn get_ledger_entry_type(&self) -> LedgerEntryType {
         self.common_fields.get_ledger_entry_type()
     }
 }
 
-impl<'a> AMM<'a> {
+impl AMM {
     pub fn new(
-        index: Option<Cow<'a, str>>,
-        ledger_index: Option<Cow<'a, str>>,
-        amm_account: Cow<'a, str>,
-        asset: Currency<'a>,
-        asset2: Currency<'a>,
-        lptoken_balance: Amount<'a>,
+        index: Option<String>,
+        ledger_index: Option<String>,
+        amm_account: String,
+        asset: Currency,
+        asset2: Currency,
+        lptoken_balance: Amount,
         trading_fee: u16,
-        auction_slot: Option<AuctionSlot<'a>>,
+        auction_slot: Option<AuctionSlot>,
         vote_slots: Option<Vec<VoteEntry>>,
     ) -> Self {
         Self {
-            common_fields: CommonFields {
-                flags: FlagCollection::default(),
-                ledger_entry_type: LedgerEntryType::AMM,
-                index,
-                ledger_index,
-            },
+            common_fields: CommonFields::new(
+                FlagCollection::default(),
+                LedgerEntryType::AMM,
+                index.map(|x| x.to_string()),
+                ledger_index.map(|x| x.to_string()),
+            ),
             amm_account,
             asset,
             asset2,
@@ -132,16 +131,16 @@ mod test_serde {
     use crate::models::amount::{Amount, IssuedCurrencyAmount};
     use crate::models::currency::{Currency, IssuedCurrency, XRP};
     use crate::models::ledger::objects::amm::{AuctionSlot, AuthAccount, VoteEntry, AMM};
-    use alloc::borrow::Cow;
+
     use alloc::string::ToString;
     use alloc::vec;
 
     #[test]
     fn test_serialize() {
         let amm = AMM::new(
-            Some(Cow::from("ForTest")),
+            Some("ForTest".to_string()),
             None,
-            Cow::from("rE54zDvgnghAoPopCgvtiqWNq3dU5y836S"),
+            "rE54zDvgnghAoPopCgvtiqWNq3dU5y836S".to_string(),
             Currency::XRP(XRP::new()),
             Currency::IssuedCurrency(IssuedCurrency::new(
                 "TST".into(),
@@ -154,7 +153,7 @@ mod test_serde {
             )),
             600,
             Some(AuctionSlot::new(
-                Cow::from("rJVUeRqDFNs2xqA7ncVE6ZoAhPUoaJJSQm"),
+                "rJVUeRqDFNs2xqA7ncVE6ZoAhPUoaJJSQm".to_string(),
                 0,
                 721870180,
                 Amount::IssuedCurrencyAmount(IssuedCurrencyAmount::new(

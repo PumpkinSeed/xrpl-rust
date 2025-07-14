@@ -1,5 +1,3 @@
-use alloc::borrow::Cow;
-
 use crate::{
     core::addresscodec::encode_classic_address,
     models::{transactions::nftoken_mint::NFTokenMintFlag, FlagCollection},
@@ -8,11 +6,11 @@ use crate::{
 
 use super::exceptions::XRPLUtilsResult;
 
-pub struct NFTokenId<'a> {
-    pub nftoken_id: Cow<'a, str>,
+pub struct NFTokenId {
+    pub nftoken_id: String,
     pub flags: FlagCollection<NFTokenMintFlag>,
     pub transfer_fee: u32,
-    pub issuer: Cow<'a, str>,
+    pub issuer: String,
     pub taxon: u64,
     pub sequence: u32,
 }
@@ -52,7 +50,7 @@ pub fn unscramble_taxon(taxon: u64, token_seq: u64) -> u64 {
 /// |    `---> TransferFee: 1337.0 bps or 13.37%
 /// |
 /// `---> Flags: 11 -> lsfBurnable, lsfOnlyXRP and lsfTransferable
-pub fn parse_nftoken_id(nft_id: Cow<str>) -> XRPLUtilsResult<NFTokenId<'_>> {
+pub fn parse_nftoken_id(nft_id: String) -> XRPLUtilsResult<NFTokenId> {
     const EXPECTED_LEN: usize = 64;
 
     if nft_id.len() != EXPECTED_LEN {
@@ -86,7 +84,7 @@ mod tests {
     #[test]
     fn test_parse_nftoken_id() {
         let nft_id = "000B0539C35B55AA096BA6D87A6E6C965A6534150DC56E5E12C5D09E0000000C";
-        let nftoken_id = parse_nftoken_id(Cow::Borrowed(nft_id)).unwrap();
+        let nftoken_id = parse_nftoken_id(nft_id.to_string()).unwrap();
         assert_eq!(nftoken_id.flags.len(), 3);
         assert_eq!(nftoken_id.transfer_fee, 1337);
         assert_eq!(nftoken_id.issuer, "rJoxBSzpXhPtAuqFmqxQtGKjA13jUJWthE");

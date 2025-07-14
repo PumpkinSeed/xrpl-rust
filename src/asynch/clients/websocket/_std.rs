@@ -202,9 +202,9 @@ where
         self.uri.clone()
     }
 
-    async fn request_impl<'a: 'b, 'b>(
+    async fn request_impl(
         &self,
-        mut request: XRPLRequest<'a>,
+        mut request: XRPLRequest,
     ) -> XRPLClientResult<String> {
         // setup request future
         self.set_request_id(&mut request);

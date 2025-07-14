@@ -1,5 +1,3 @@
-use alloc::borrow::Cow;
-
 use serde::{Deserialize, Serialize};
 
 /// Response format for the random command, which provides a random number to
@@ -11,9 +9,9 @@ use serde::{Deserialize, Serialize};
 /// See Random:
 /// `<https://xrpl.org/random.html#random>`
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct Random<'a> {
+pub struct Random {
     /// A random 256-bit value represented as a hexadecimal string.
-    pub random: Cow<'a, str>,
+    pub random: String,
 }
 
 #[cfg(test)]
@@ -38,9 +36,7 @@ mod tests {
     #[test]
     fn test_random_serialization() {
         let random = Random {
-            random: Cow::Borrowed(
-                "8ED765AEBBD6767603C2C9375B2679AEC76E6A8133EF59F04F9FC1AAA70E41AF",
-            ),
+            random: "8ED765AEBBD6767603C2C9375B2679AEC76E6A8133EF59F04F9FC1AAA70E41AF".to_string(),
         };
 
         let json = serde_json::to_value(&random).unwrap();

@@ -1,4 +1,3 @@
-use alloc::borrow::Cow;
 use alloc::vec::Vec;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
@@ -20,13 +19,13 @@ use crate::models::{FlagCollection, NoFlags, XRPLModelException, XRPLModelResult
     Debug, Serialize, Deserialize, PartialEq, Eq, Clone, xrpl_rust_macros::ValidateCurrencies,
 )]
 #[serde(rename_all = "PascalCase")]
-pub struct EscrowCreate<'a> {
+pub struct EscrowCreate {
     /// The base fields for all transaction models.
     ///
     /// See Transaction Common Fields:
     /// `<https://xrpl.org/transaction-common-fields.html>`
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, NoFlags>,
+    pub common_fields: CommonFields<NoFlags>,
     // The custom fields for the EscrowCreate model.
     //
     // See EscrowCreate fields:
@@ -34,9 +33,9 @@ pub struct EscrowCreate<'a> {
     /// Amount of XRP, in drops, to deduct from the sender's balance and escrow.
     /// Once escrowed, the XRP can either go to the Destination address
     /// (after the FinishAfter time) or returned to the sender (after the CancelAfter time).
-    pub amount: XRPAmount<'a>,
+    pub amount: XRPAmount,
     /// Address to receive escrowed XRP.
-    pub destination: Cow<'a, str>,
+    pub destination: String,
     /// Arbitrary tag to further specify the destination for this escrowed
     /// payment, such as a hosted recipient at the destination address.
     pub destination_tag: Option<u32>,
@@ -53,31 +52,31 @@ pub struct EscrowCreate<'a> {
     /// condition is fulfilled. If the condition is not fulfilled
     /// before the expiration time specified in the CancelAfter
     /// field, the XRP can only revert to the sender.
-    pub condition: Option<Cow<'a, str>>,
+    pub condition: Option<String>,
 }
 
-impl<'a> Model for EscrowCreate<'a> {
+impl Model for EscrowCreate {
     fn get_errors(&self) -> XRPLModelResult<()> {
         self._get_finish_after_error()?;
         self.validate_currencies()
     }
 }
 
-impl<'a> Transaction<'a, NoFlags> for EscrowCreate<'a> {
+impl Transaction<NoFlags> for EscrowCreate {
     fn get_transaction_type(&self) -> &TransactionType {
         self.common_fields.get_transaction_type()
     }
 
-    fn get_common_fields(&self) -> &CommonFields<'_, NoFlags> {
+    fn get_common_fields(&self) -> &CommonFields<NoFlags> {
         self.common_fields.get_common_fields()
     }
 
-    fn get_mut_common_fields(&mut self) -> &mut CommonFields<'a, NoFlags> {
+    fn get_mut_common_fields(&mut self) -> &mut CommonFields<NoFlags> {
         self.common_fields.get_mut_common_fields()
     }
 }
 
-impl<'a> EscrowCreateError for EscrowCreate<'a> {
+impl EscrowCreateError for EscrowCreate {
     fn _get_finish_after_error(&self) -> XRPLModelResult<()> {
         if let (Some(finish_after), Some(cancel_after)) = (self.finish_after, self.cancel_after) {
             if finish_after >= cancel_after {
@@ -96,21 +95,21 @@ impl<'a> EscrowCreateError for EscrowCreate<'a> {
     }
 }
 
-impl<'a> EscrowCreate<'a> {
+impl EscrowCreate {
     pub fn new(
-        account: Cow<'a, str>,
-        account_txn_id: Option<Cow<'a, str>>,
-        fee: Option<XRPAmount<'a>>,
+        account: String,
+        account_txn_id: Option<String>,
+        fee: Option<XRPAmount>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
         sequence: Option<u32>,
         signers: Option<Vec<Signer>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
-        amount: XRPAmount<'a>,
-        destination: Cow<'a, str>,
+        amount: XRPAmount,
+        destination: String,
         cancel_after: Option<u32>,
-        condition: Option<Cow<'a, str>>,
+        condition: Option<String>,
         destination_tag: Option<u32>,
         finish_after: Option<u32>,
     ) -> Self {

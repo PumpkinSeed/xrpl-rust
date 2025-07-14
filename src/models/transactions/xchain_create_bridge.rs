@@ -1,4 +1,4 @@
-use alloc::{borrow::Cow, vec::Vec};
+use alloc::vec::Vec;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 
@@ -12,16 +12,16 @@ use super::{CommonFields, Memo, Signer, Transaction, TransactionType};
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, xrpl_rust_macros::ValidateCurrencies)]
 #[serde(rename_all = "PascalCase")]
-pub struct XChainCreateBridge<'a> {
+pub struct XChainCreateBridge {
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, NoFlags>,
-    pub signature_reward: Amount<'a>,
+    pub common_fields: CommonFields<NoFlags>,
+    pub signature_reward: Amount,
     #[serde(rename = "XChainBridge")]
-    pub xchain_bridge: XChainBridge<'a>,
-    pub min_account_create_amount: Option<XRPAmount<'a>>,
+    pub xchain_bridge: XChainBridge,
+    pub min_account_create_amount: Option<XRPAmount>,
 }
 
-impl Model for XChainCreateBridge<'_> {
+impl Model for XChainCreateBridge {
     fn get_errors(&self) -> XRPLModelResult<()> {
         self.validate_currencies()?;
         self.get_same_door_error()?;
@@ -31,35 +31,35 @@ impl Model for XChainCreateBridge<'_> {
     }
 }
 
-impl<'a> Transaction<'a, NoFlags> for XChainCreateBridge<'a> {
+impl Transaction<NoFlags> for XChainCreateBridge {
     fn get_transaction_type(&self) -> &super::TransactionType {
         self.common_fields.get_transaction_type()
     }
 
-    fn get_common_fields(&self) -> &CommonFields<'_, NoFlags> {
+    fn get_common_fields(&self) -> &CommonFields<NoFlags> {
         &self.common_fields
     }
 
-    fn get_mut_common_fields(&mut self) -> &mut CommonFields<'a, NoFlags> {
+    fn get_mut_common_fields(&mut self) -> &mut CommonFields<NoFlags> {
         &mut self.common_fields
     }
 }
 
-impl<'a> XChainCreateBridge<'a> {
+impl XChainCreateBridge {
     pub fn new(
-        account: Cow<'a, str>,
-        account_txn_id: Option<Cow<'a, str>>,
-        fee: Option<XRPAmount<'a>>,
+        account: String,
+        account_txn_id: Option<String>,
+        fee: Option<XRPAmount>,
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
         sequence: Option<u32>,
         signers: Option<Vec<Signer>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
-        signature_reward: Amount<'a>,
-        xchain_bridge: XChainBridge<'a>,
-        min_account_create_amount: Option<XRPAmount<'a>>,
-    ) -> XChainCreateBridge<'a> {
+        signature_reward: Amount,
+        xchain_bridge: XChainBridge,
+        min_account_create_amount: Option<XRPAmount>,
+    ) -> XChainCreateBridge {
         XChainCreateBridge {
             common_fields: CommonFields::new(
                 account,
@@ -95,7 +95,7 @@ impl<'a> XChainCreateBridge<'a> {
     fn get_account_door_mismatch_error(&self) -> XRPLModelResult<()> {
         let bridge = &self.xchain_bridge;
         if ![&bridge.issuing_chain_door, &bridge.locking_chain_door]
-            .contains(&&self.common_fields.account)
+            .contains(&&self.common_fields.account.to_string())
         {
             Err(XRPLXChainCreateBridgeException::AccountDoorMismatch.into())
         } else {
@@ -130,7 +130,6 @@ impl<'a> XChainCreateBridge<'a> {
 mod test_xchain_create_bridge {
     use super::XChainCreateBridge;
     use crate::models::{Amount, IssuedCurrency, Model, XChainBridge, XRPAmount, XRP};
-    use alloc::borrow::Cow;
 
     const ACCOUNT: &str = "r9LqNeG6qHxjeUocjvVki2XR35weJ9mZgQ";
     const ACCOUNT2: &str = "rpZc4mVfWUif9CRoHRKKcmhu1nx2xktxBo";
@@ -139,27 +138,27 @@ mod test_xchain_create_bridge {
     const ISSUER: &str = "rGWrZyQqhTp9Xu7G5Pkayo7bXjH4k4QYpf";
     const GENESIS: &str = "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh";
 
-    fn xrp_bridge<'a>() -> XChainBridge<'a> {
+    fn xrp_bridge() -> XChainBridge {
         XChainBridge {
-            locking_chain_door: Cow::Borrowed(ACCOUNT),
+            locking_chain_door: ACCOUNT.to_string(),
             locking_chain_issue: XRP::new().into(),
-            issuing_chain_door: Cow::Borrowed(GENESIS),
+            issuing_chain_door: GENESIS.to_string(),
             issuing_chain_issue: XRP::new().into(),
         }
     }
 
-    fn iou_bridge<'a>() -> XChainBridge<'a> {
+    fn iou_bridge() -> XChainBridge {
         XChainBridge {
-            locking_chain_door: Cow::Borrowed(ACCOUNT),
+            locking_chain_door: ACCOUNT.to_string(),
             locking_chain_issue: IssuedCurrency {
-                currency: Cow::Borrowed("USD"),
-                issuer: Cow::Borrowed(ISSUER),
+                currency: "USD".to_string(),
+                issuer: ISSUER.to_string(),
             }
             .into(),
-            issuing_chain_door: Cow::Borrowed(ACCOUNT2),
+            issuing_chain_door: ACCOUNT2.to_string(),
             issuing_chain_issue: IssuedCurrency {
-                currency: Cow::Borrowed("USD"),
-                issuer: Cow::Borrowed(ACCOUNT2),
+                currency: "USD".to_string(),
+                issuer: ACCOUNT2.to_string(),
             }
             .into(),
         }
@@ -169,7 +168,7 @@ mod test_xchain_create_bridge {
     fn test_successful_xrp_xrp_bridge() {
         let bridge = xrp_bridge();
         let txn = XChainCreateBridge::new(
-            Cow::Borrowed(ACCOUNT),
+            ACCOUNT.to_string(),
             None,
             Some(XRPAmount::from(FEE)),
             None,
@@ -189,7 +188,7 @@ mod test_xchain_create_bridge {
     fn test_successful_iou_iou_bridge() {
         let bridge = iou_bridge();
         let txn = XChainCreateBridge::new(
-            Cow::Borrowed(ACCOUNT),
+            ACCOUNT.to_string(),
             None,
             Some(XRPAmount::from(FEE)),
             None,
@@ -209,21 +208,21 @@ mod test_xchain_create_bridge {
     #[should_panic]
     fn test_same_door_accounts() {
         let bridge = XChainBridge {
-            locking_chain_door: Cow::Borrowed(ACCOUNT),
+            locking_chain_door: ACCOUNT.to_string(),
             locking_chain_issue: IssuedCurrency {
-                currency: Cow::Borrowed("USD"),
-                issuer: Cow::Borrowed(ISSUER),
+                currency: "USD".to_string(),
+                issuer: ISSUER.to_string(),
             }
             .into(),
-            issuing_chain_door: Cow::Borrowed(ACCOUNT),
+            issuing_chain_door: ACCOUNT.to_string(),
             issuing_chain_issue: IssuedCurrency {
-                currency: Cow::Borrowed("USD"),
-                issuer: Cow::Borrowed(ACCOUNT),
+                currency: "USD".to_string(),
+                issuer: ACCOUNT.to_string(),
             }
             .into(),
         };
         let txn = XChainCreateBridge::new(
-            Cow::Borrowed(ACCOUNT),
+            ACCOUNT.to_string(),
             None,
             Some(XRPAmount::from(FEE)),
             None,
@@ -243,17 +242,17 @@ mod test_xchain_create_bridge {
     #[should_panic]
     fn test_xrp_iou_bridge() {
         let bridge = XChainBridge {
-            locking_chain_door: Cow::Borrowed(ACCOUNT),
+            locking_chain_door: ACCOUNT.to_string(),
             locking_chain_issue: XRP::new().into(),
-            issuing_chain_door: Cow::Borrowed(ACCOUNT),
+            issuing_chain_door: ACCOUNT.to_string(),
             issuing_chain_issue: IssuedCurrency {
-                currency: Cow::Borrowed("USD"),
-                issuer: Cow::Borrowed(ACCOUNT),
+                currency: "USD".to_string(),
+                issuer: ACCOUNT.to_string(),
             }
             .into(),
         };
         let txn = XChainCreateBridge::new(
-            Cow::Borrowed(ACCOUNT),
+            ACCOUNT.to_string(),
             None,
             Some(XRPAmount::from(FEE)),
             None,
@@ -273,17 +272,17 @@ mod test_xchain_create_bridge {
     #[should_panic]
     fn test_iou_xrp_bridge() {
         let bridge = XChainBridge {
-            locking_chain_door: Cow::Borrowed(ACCOUNT),
+            locking_chain_door: ACCOUNT.to_string(),
             locking_chain_issue: IssuedCurrency {
-                currency: Cow::Borrowed("USD"),
-                issuer: Cow::Borrowed(ISSUER),
+                currency: "USD".to_string(),
+                issuer: ISSUER.to_string(),
             }
             .into(),
-            issuing_chain_door: Cow::Borrowed(ACCOUNT),
+            issuing_chain_door: ACCOUNT.to_string(),
             issuing_chain_issue: XRP::new().into(),
         };
         let txn = XChainCreateBridge::new(
-            Cow::Borrowed(ACCOUNT),
+            ACCOUNT.to_string(),
             None,
             Some(XRPAmount::from(FEE)),
             None,
@@ -303,13 +302,13 @@ mod test_xchain_create_bridge {
     #[should_panic]
     fn test_account_not_in_bridge() {
         let bridge = XChainBridge {
-            locking_chain_door: Cow::Borrowed(ACCOUNT),
+            locking_chain_door: ACCOUNT.to_string(),
             locking_chain_issue: XRP::new().into(),
-            issuing_chain_door: Cow::Borrowed(ACCOUNT2),
+            issuing_chain_door: ACCOUNT2.to_string(),
             issuing_chain_issue: XRP::new().into(),
         };
         let txn = XChainCreateBridge::new(
-            Cow::Borrowed(GENESIS),
+            GENESIS.to_string(),
             None,
             Some(XRPAmount::from(FEE)),
             None,
@@ -330,7 +329,7 @@ mod test_xchain_create_bridge {
     fn test_iou_iou_min_account_create_amount() {
         let bridge = iou_bridge();
         let txn = XChainCreateBridge::new(
-            Cow::Borrowed(ACCOUNT),
+            ACCOUNT.to_string(),
             None,
             Some(XRPAmount::from(FEE)),
             None,
@@ -351,7 +350,7 @@ mod test_xchain_create_bridge {
     fn test_invalid_signature_reward() {
         let bridge = xrp_bridge();
         let txn = XChainCreateBridge::new(
-            Cow::Borrowed(ACCOUNT),
+            ACCOUNT.to_string(),
             None,
             Some(XRPAmount::from(FEE)),
             None,
@@ -372,7 +371,7 @@ mod test_xchain_create_bridge {
     fn test_invalid_min_account_create_amount() {
         let bridge = xrp_bridge();
         let txn = XChainCreateBridge::new(
-            Cow::Borrowed(ACCOUNT),
+            ACCOUNT.to_string(),
             None,
             Some(XRPAmount::from(FEE)),
             None,

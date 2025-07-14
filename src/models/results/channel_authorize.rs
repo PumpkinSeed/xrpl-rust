@@ -1,5 +1,3 @@
-use alloc::borrow::Cow;
-
 use serde::{Deserialize, Serialize};
 
 /// Response format for the channel_authorize method, which creates a
@@ -10,14 +8,14 @@ use serde::{Deserialize, Serialize};
 /// `<https://xrpl.org/channel_authorize.html>`
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct ChannelAuthorize<'a> {
+pub struct ChannelAuthorize {
     /// The signature for this claim, as a hexadecimal value. To process
     /// the claim, the destination account of the payment channel must send a
     /// `PaymentChannelClaim`` transaction with this signature, the exact
     /// Channel ID, XRP amount, and public key of the channel.
-    pub signature: Cow<'a, str>,
+    pub signature: String,
     /// The credentials specified in the request, if any.
-    pub credentials: Option<Cow<'a, [Cow<'a, str>]>>,
+    pub credentials: Option<Vec<String>>,
 }
 
 #[cfg(test)]

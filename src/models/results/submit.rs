@@ -1,4 +1,3 @@
-use alloc::borrow::Cow;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
@@ -9,16 +8,16 @@ use serde_json::Value;
 /// `<https://xrpl.org/submit.html>`
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct Submit<'a> {
+pub struct Submit {
     /// Text result code indicating the preliminary result of the transaction,
     /// for example tesSUCCESS
-    pub engine_result: Cow<'a, str>,
+    pub engine_result: String,
     /// Numeric version of the result code. Not recommended.
     pub engine_result_code: i32,
     /// Human-readable explanation of the transaction's preliminary result
-    pub engine_result_message: Cow<'a, str>,
+    pub engine_result_message: String,
     /// The complete transaction in hex string format
-    pub tx_blob: Cow<'a, str>,
+    pub tx_blob: String,
     /// The complete transaction in JSON format
     pub tx_json: Value,
     /// (Omitted in sign-and-submit mode) The value true indicates that the
@@ -52,7 +51,7 @@ pub struct Submit<'a> {
     /// (Omitted in sign-and-submit mode) The current open ledger cost before
     /// processing this transaction. Transactions with a lower cost are likely
     /// to be queued.
-    pub open_ledger_cost: Option<Cow<'a, str>>,
+    pub open_ledger_cost: Option<String>,
     /// (Omitted in sign-and-submit mode) The ledger index of the newest validated
     /// ledger at the time of submission. This provides a lower bound on the ledger
     /// versions that the transaction can appear in as a result of this request.

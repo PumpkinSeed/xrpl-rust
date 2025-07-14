@@ -1,7 +1,6 @@
 use crate::models::ledger::objects::LedgerEntryType;
 use crate::models::FlagCollection;
 use crate::models::Model;
-use alloc::borrow::Cow;
 use alloc::string::String;
 use alloc::vec::Vec;
 use derive_new::new;
@@ -46,23 +45,23 @@ serde_with_tag! {
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 #[serde(rename_all = "PascalCase")]
-pub struct SignerList<'a> {
+pub struct SignerList {
     /// The base fields for all ledger object models.
     ///
     /// See Ledger Object Common Fields:
     /// `<https://xrpl.org/ledger-entry-common-fields.html>`
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a, SignerListFlag>,
+    pub common_fields: CommonFields<SignerListFlag>,
     // The custom fields for the SignerList model.
     //
     // See SignerList fields:
     // `<https://xrpl.org/signerlist.html#signerlist-fields>`
     /// A hint indicating which page of the owner directory links to this object, in case
     /// the directory consists of multiple pages.
-    pub owner_node: Cow<'a, str>,
+    pub owner_node: String,
     /// The identifying hash of the transaction that most recently modified this object.
     #[serde(rename = "PreviousTxnID")]
-    pub previous_txn_id: Cow<'a, str>,
+    pub previous_txn_id: String,
     /// The index of the ledger that contains the transaction that most recently
     /// modified this object.
     pub previous_txn_lgr_seq: u32,
@@ -78,33 +77,33 @@ pub struct SignerList<'a> {
     pub signer_quorum: u32,
 }
 
-impl<'a> Model for SignerList<'a> {}
+impl Model for SignerList {}
 
-impl<'a> LedgerObject<SignerListFlag> for SignerList<'a> {
+impl LedgerObject<SignerListFlag> for SignerList {
     fn get_ledger_entry_type(&self) -> LedgerEntryType {
         self.common_fields.get_ledger_entry_type()
     }
 }
 
-impl<'a> SignerList<'a> {
+impl SignerList {
     pub fn new(
         flags: FlagCollection<SignerListFlag>,
-        index: Option<Cow<'a, str>>,
-        ledger_index: Option<Cow<'a, str>>,
-        owner_node: Cow<'a, str>,
-        previous_txn_id: Cow<'a, str>,
+        index: Option<String>,
+        ledger_index: Option<String>,
+        owner_node: String,
+        previous_txn_id: String,
         previous_txn_lgr_seq: u32,
         signer_entries: Vec<SignerEntry>,
         signer_list_id: u32,
         signer_quorum: u32,
     ) -> Self {
         Self {
-            common_fields: CommonFields {
+            common_fields: CommonFields::new(
                 flags,
-                ledger_entry_type: LedgerEntryType::SignerList,
-                index,
-                ledger_index,
-            },
+                LedgerEntryType::SignerList,
+                index.map(|x| x.to_string()),
+                ledger_index.map(|x| x.to_string()),
+            ),
             owner_node,
             previous_txn_id,
             previous_txn_lgr_seq,
@@ -125,12 +124,10 @@ mod tests {
     fn test_serde() {
         let signer_list = SignerList::new(
             vec![].into(),
-            Some(Cow::from(
-                "A9C28A28B85CD533217F5C0A0C7767666B093FA58A0F2D80026FCC4CD932DDC7",
-            )),
+            Some("A9C28A28B85CD533217F5C0A0C7767666B093FA58A0F2D80026FCC4CD932DDC7".to_string()),
             None,
-            Cow::from("0000000000000000"),
-            Cow::from("5904C0DC72C58A83AEFED2FFC5386356AA83FCA6A88C89D00646E51E687CDBE4"),
+            "0000000000000000".to_string(),
+            "5904C0DC72C58A83AEFED2FFC5386356AA83FCA6A88C89D00646E51E687CDBE4".to_string(),
             16061435,
             vec![
                 SignerEntry::new("rsA2LpzuawewSBQXkiju3YQTMzW13pAAdW".to_string(), 2, None),

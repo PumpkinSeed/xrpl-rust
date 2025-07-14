@@ -1,5 +1,3 @@
-use alloc::borrow::Cow;
-
 use serde::{Deserialize, Serialize};
 
 use super::path_find::PathStep;
@@ -11,35 +9,35 @@ use super::path_find::PathStep;
 /// `<https://xrpl.org/ripple_path_find.html#ripple_path_find>`
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct RipplePathFind<'a> {
+pub struct RipplePathFind {
     /// Array of objects with possible paths to take. If empty, then there are
     /// no paths connecting the source and destination accounts.
-    pub alternatives: Cow<'a, [PathAlternative<'a>]>,
+    pub alternatives: Vec<PathAlternative>,
     /// Unique address of the account that would receive a payment transaction.
-    pub destination_account: Cow<'a, str>,
+    pub destination_account: String,
     /// Array of currencies that the destination accepts, as 3-letter codes
     /// like "USD" or as 40-character hex like
     /// "015841551A748AD2C1F76FF6ECB0CCCD00000000".
-    pub destination_currencies: Cow<'a, [Cow<'a, str>]>,
+    pub destination_currencies: Vec<String>,
 }
 
 /// Represents a path from one possible source currency (held by the initiating
 /// account) to the destination account and currency.
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct PathAlternative<'a> {
+pub struct PathAlternative {
     /// Array of arrays of objects defining payment paths.
-    pub paths_computed: Cow<'a, [Cow<'a, [PathStep<'a>]>]>,
+    pub paths_computed: Vec<Vec<PathStep>>,
     /// @deprecated Array of arrays of objects defining canonical payment
     /// paths. Should be disregarded if present.
-    pub paths_canonical: Option<Cow<'a, [Cow<'a, [PathStep<'a>]>]>>,
+    pub paths_canonical: Option<Vec<Vec<PathStep>>>,
     /// @deprecated Array of arrays of objects defining expanded payment
     /// paths. Should be disregarded if present.
-    pub paths_expanded: Option<Cow<'a, [Cow<'a, [PathStep<'a>]>]>>,
+    pub paths_expanded: Option<Vec<Vec<PathStep>>>,
     /// Currency Amount that the source would have to send along this path
     /// for the destination to receive the desired amount. Can be a string for
     /// XRP amounts or an object for issued currencies.
-    pub source_amount: Cow<'a, str>,
+    pub source_amount: String,
 }
 
 #[cfg(test)]

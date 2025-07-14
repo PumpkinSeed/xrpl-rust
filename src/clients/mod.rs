@@ -7,9 +7,9 @@ use alloc::string::String;
 pub use crate::asynch::clients::SingleExecutorMutex;
 
 pub trait XRPLSyncClient: XRPLClient {
-    fn request<'a: 'b, 'b>(&self, request: XRPLRequest<'a>) -> XRPLClientResult<String>;
+    fn request<'a: 'b, 'b>(&self, request: XRPLRequest) -> XRPLClientResult<String>;
 
-    fn get_common_fields(&self) -> XRPLClientResult<CommonFields<'_>>;
+    fn get_common_fields(&self) -> XRPLClientResult<CommonFields>;
 }
 
 #[cfg(all(feature = "json-rpc", feature = "std"))]
@@ -38,9 +38,9 @@ pub mod json_rpc {
     }
 
     impl XRPLClient for JsonRpcClient {
-        async fn request_impl<'a: 'b, 'b>(
+        async fn request_impl(
             &self,
-            request: XRPLRequest<'a>,
+            request: XRPLRequest,
         ) -> XRPLClientResult<String> {
             self.0.request_impl(request).await
         }
@@ -49,20 +49,20 @@ pub mod json_rpc {
             self.0.get_host()
         }
 
-        fn get_random_id<'a>(&self) -> alloc::borrow::Cow<'a, str> {
+        fn get_random_id(&self) -> String {
             self.0.get_random_id()
         }
     }
 
     impl XRPLSyncClient for JsonRpcClient {
-        fn request<'a: 'b, 'b>(&self, request: XRPLRequest<'a>) -> XRPLClientResult<String> {
+        fn request<'a: 'b, 'b>(&self, request: XRPLRequest) -> XRPLClientResult<String> {
             match Runtime::new() {
                 Ok(rt) => rt.block_on(self.0.request_impl(request)),
                 Err(e) => Err(e.into()),
             }
         }
 
-        fn get_common_fields(&self) -> XRPLClientResult<CommonFields<'_>> {
+        fn get_common_fields(&self) -> XRPLClientResult<CommonFields> {
             match Runtime::new() {
                 Ok(rt) => rt.block_on(self.0.get_common_fields()),
                 Err(e) => Err(e.into()),
@@ -75,7 +75,7 @@ pub mod json_rpc {
         async fn request_funding(
             &self,
             url: Option<Url>,
-            request: FundFaucet<'_>,
+            request: FundFaucet,
         ) -> XRPLClientResult<()> {
             self.0.request_funding(url, request).await
         }
@@ -150,7 +150,7 @@ pub mod json_rpc {
 }
 
 pub trait XRPLSyncWebsocketIO {
-    fn xrpl_send(&mut self, message: XRPLRequest<'_>) -> XRPLClientResult<()>;
+    fn xrpl_send(&mut self, message: XRPLRequest) -> XRPLClientResult<()>;
 
     fn xrpl_receive(&mut self) -> XRPLClientResult<Option<String>>;
 }
@@ -200,9 +200,9 @@ pub mod websocket {
             self.inner.get_host()
         }
 
-        async fn request_impl<'a: 'b, 'b>(
+        async fn request_impl(
             &self,
-            request: XRPLRequest<'a>,
+            request: XRPLRequest,
         ) -> XRPLClientResult<String> {
             match Runtime::new() {
                 Ok(rt) => rt.block_on(self.inner.request_impl(request)),
@@ -215,11 +215,11 @@ pub mod websocket {
     where
         M: RawMutex,
     {
-        fn request<'a: 'b, 'b>(&self, request: XRPLRequest<'a>) -> XRPLClientResult<String> {
+        fn request<'a: 'b, 'b>(&self, request: XRPLRequest) -> XRPLClientResult<String> {
             self.rt.block_on(self.inner.request_impl(request))
         }
 
-        fn get_common_fields(&self) -> XRPLClientResult<CommonFields<'_>> {
+        fn get_common_fields(&self) -> XRPLClientResult<CommonFields> {
             self.rt.block_on(self.inner.get_common_fields())
         }
     }
@@ -228,7 +228,7 @@ pub mod websocket {
     where
         M: RawMutex,
     {
-        fn xrpl_send(&mut self, message: XRPLRequest<'_>) -> XRPLClientResult<()> {
+        fn xrpl_send(&mut self, message: XRPLRequest) -> XRPLClientResult<()> {
             let _: XRPLClientResult<()> = self.rt.block_on(self.inner.xrpl_send(message));
             Ok(())
         }

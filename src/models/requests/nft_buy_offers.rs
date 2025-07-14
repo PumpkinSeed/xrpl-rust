@@ -1,4 +1,3 @@
-use alloc::borrow::Cow;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 
@@ -12,44 +11,44 @@ use super::{CommonFields, LedgerIndex, LookupByLedgerRequest, Marker, Request};
 /// `<https://xrpl.org/nft_buy_offers.html>`
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
-pub struct NftBuyOffers<'a> {
+pub struct NftBuyOffers {
     /// The common fields shared by all requests.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a>,
+    pub common_fields: CommonFields,
     /// The unique identifier of a NFToken object.
-    pub nft_id: Cow<'a, str>,
+    pub nft_id: String,
     /// The unique identifier of a ledger.
     #[serde(flatten)]
-    pub ledger_lookup: Option<LookupByLedgerRequest<'a>>,
+    pub ledger_lookup: Option<LookupByLedgerRequest>,
     /// Limit the number of NFT buy offers to retrieve.
     /// This value cannot be lower than 50 or more than 500.
     /// The default is 250.
     pub limit: Option<u16>,
     /// Value from a previous paginated response.
     /// Resume retrieving data where that response left off.
-    pub marker: Option<Marker<'a>>,
+    pub marker: Option<Marker>,
 }
 
-impl<'a> Model for NftBuyOffers<'a> {}
+impl Model for NftBuyOffers {}
 
-impl<'a> Request<'a> for NftBuyOffers<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'a> {
+impl Request for NftBuyOffers {
+    fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
 
-    fn get_common_fields_mut(&mut self) -> &mut CommonFields<'a> {
+    fn get_common_fields_mut(&mut self) -> &mut CommonFields {
         &mut self.common_fields
     }
 }
 
-impl<'a> NftBuyOffers<'a> {
+impl NftBuyOffers {
     pub fn new(
-        id: Option<Cow<'a, str>>,
-        nft_id: Cow<'a, str>,
-        ledger_hash: Option<Cow<'a, str>>,
-        ledger_index: Option<LedgerIndex<'a>>,
+        id: Option<String>,
+        nft_id: String,
+        ledger_hash: Option<String>,
+        ledger_index: Option<LedgerIndex>,
         limit: Option<u16>,
-        marker: Option<Marker<'a>>,
+        marker: Option<Marker>,
     ) -> Self {
         Self {
             common_fields: CommonFields {

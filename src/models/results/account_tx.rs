@@ -1,5 +1,5 @@
 use alloc::string::ToString;
-use alloc::{borrow::Cow, vec::Vec};
+use alloc::vec::Vec;
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -11,21 +11,21 @@ use super::{exceptions::XRPLResultException, metadata::TransactionMetadata, XRPL
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(untagged)]
-pub enum AccountTxVersionMap<'a> {
-    Default(AccountTx<'a>),
-    V1(AccountTxV1<'a>),
+pub enum AccountTxVersionMap {
+    Default(AccountTx),
+    V1(AccountTxV1),
 }
 
-impl Default for AccountTxVersionMap<'_> {
+impl Default for AccountTxVersionMap {
     fn default() -> Self {
         Self::Default(AccountTx::default())
     }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct AccountTxBase<'a, T> {
+pub struct AccountTxBase<T> {
     /// Unique Address identifying the related account
-    pub account: Cow<'a, str>,
+    pub account: String,
     /// The ledger index of the earliest ledger actually searched for
     /// transactions.
     pub ledger_index_min: Option<u32>,
@@ -44,7 +44,7 @@ pub struct AccountTxBase<'a, T> {
     pub validated: Option<bool>,
     /// Server-defined value indicating the response is paginated. Pass this
     /// to the next call to resume where this call left off.
-    pub marker: Option<Marker<'a>>,
+    pub marker: Option<Marker>,
 }
 
 /// Response from an account_tx request, containing information about
@@ -53,62 +53,62 @@ pub struct AccountTxBase<'a, T> {
 /// See Account TX:
 /// `<https://xrpl.org/account_tx.html>`
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct AccountTx<'a> {
+pub struct AccountTx {
     #[serde(flatten)]
-    pub base: AccountTxBase<'a, AccountTxTransaction<'a>>,
+    pub base: AccountTxBase<AccountTxTransaction>,
     /// (JSON mode) The transaction results metadata in JSON.
-    pub meta: Option<TransactionMetadata<'a>>,
+    pub meta: Option<TransactionMetadata>,
     /// (Binary mode) The transaction results metadata as a hex string.
-    pub meta_blob: Option<Cow<'a, str>>,
+    pub meta_blob: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct AccountTxV1<'a> {
+pub struct AccountTxV1 {
     #[serde(flatten)]
-    pub base: AccountTxBase<'a, AccountTxTransactionV1<'a>>,
+    pub base: AccountTxBase<AccountTxTransactionV1>,
     /// If binary is true, then this is a hex string of the transaction
     /// results metadata. Otherwise, the transaction results metadata is
     /// included in JSON format.
-    pub meta: Option<TransactionMetadata<'a>>,
+    pub meta: Option<TransactionMetadata>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct TransactionBase<'a> {
+pub struct TransactionBase {
     /// The ledger index of the ledger version that included this transaction.
     pub ledger_index: u32,
     /// Whether or not the transaction is included in a validated ledger. Any
     /// transaction not yet in a validated ledger is subject to change.
     pub validated: bool,
     /// (Binary mode) A unique hex string defining the transaction.
-    pub tx_blob: Option<Cow<'a, str>>,
+    pub tx_blob: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct AccountTxTransaction<'a> {
+pub struct AccountTxTransaction {
     #[serde(flatten)]
-    pub base: TransactionBase<'a>,
+    pub base: TransactionBase,
     /// The ledger close time represented in ISO 8601 time format.
-    pub close_time_iso: Cow<'a, str>,
+    pub close_time_iso: String,
     /// The unique hash identifier of the transaction.
-    pub hash: Cow<'a, str>,
+    pub hash: String,
     /// A hex string of the ledger version that included this transaction.
-    pub ledger_hash: Cow<'a, str>,
+    pub ledger_hash: String,
     /// (JSON mode) JSON object defining the transaction.
     pub tx_json: Option<Value>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct AccountTxTransactionV1<'a> {
+pub struct AccountTxTransactionV1 {
     #[serde(flatten)]
-    pub base: TransactionBase<'a>,
+    pub base: TransactionBase,
     /// (Binary mode) A hex string of the transaction in binary format.
-    pub tx: Cow<'a, str>,
+    pub tx: String,
 }
 
-impl<'a> TryFrom<XRPLResult<'a>> for AccountTxVersionMap<'a> {
+impl<'a> TryFrom<XRPLResult> for AccountTxVersionMap {
     type Error = XRPLModelException;
 
-    fn try_from(result: XRPLResult<'a>) -> XRPLModelResult<Self> {
+    fn try_from(result: XRPLResult) -> XRPLModelResult<Self> {
         match result {
             XRPLResult::AccountTx(account_tx) => Ok(account_tx),
             res => Err(XRPLResultException::UnexpectedResultType(

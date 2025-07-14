@@ -1,6 +1,5 @@
 pub mod exceptions;
 
-use alloc::borrow::Cow;
 use exceptions::XRPLFaucetException;
 use url::Url;
 
@@ -22,8 +21,8 @@ pub async fn generate_faucet_wallet<'a, C>(
     client: &C,
     wallet: Option<Wallet>,
     faucet_host: Option<Url>,
-    usage_context: Option<Cow<'a, str>>,
-    user_agent: Option<Cow<'a, str>>,
+    usage_context: Option<String>,
+    user_agent: Option<String>,
 ) -> XRPLHelperResult<Wallet>
 where
     C: XRPLFaucet + XRPLClient,
@@ -76,7 +75,7 @@ where
     Ok(client.get_faucet_url(url)?)
 }
 
-async fn check_balance<'a: 'b, 'b, C>(client: &'a C, address: Cow<'a, str>) -> XRPAmount<'b>
+async fn check_balance<'a: 'b, 'b, C>(client: &'a C, address: String) -> XRPAmount
 where
     C: XRPLClient,
 {
@@ -88,9 +87,9 @@ where
 async fn fund_wallet<'a: 'b, 'b, C>(
     client: &C,
     faucet_url: Url,
-    address: Cow<'a, str>,
-    usage_context: Option<Cow<'a, str>>,
-    user_agent: Option<Cow<'a, str>>,
+    address: String,
+    usage_context: Option<String>,
+    user_agent: Option<String>,
 ) -> XRPLHelperResult<()>
 where
     C: XRPLFaucet + XRPLClient,

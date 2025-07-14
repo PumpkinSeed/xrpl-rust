@@ -1,4 +1,3 @@
-use alloc::borrow::Cow;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 
@@ -10,41 +9,41 @@ use super::{CommonFields, LedgerIndex, LookupByLedgerRequest, Marker, Request, R
 /// issued by an account
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
-pub struct NFTsByIssuer<'a> {
+pub struct NFTsByIssuer {
     /// The common fields shared by all requests.
     #[serde(flatten)]
-    pub common_fields: CommonFields<'a>,
+    pub common_fields: CommonFields,
     /// The unique identifier of a ledger.
     #[serde(flatten)]
-    pub ledger_lookup: Option<LookupByLedgerRequest<'a>>,
+    pub ledger_lookup: Option<LookupByLedgerRequest>,
     /// The unique identifier for an account that issues NFTokens
     /// The request returns NFTokens issued by this account.
-    pub issuer: Cow<'a, str>,
+    pub issuer: String,
     pub limit: Option<u32>,
-    pub marker: Option<Marker<'a>>,
+    pub marker: Option<Marker>,
     pub nft_taxon: Option<u64>,
 }
 
-impl Model for NFTsByIssuer<'_> {}
+impl Model for NFTsByIssuer {}
 
-impl<'a> Request<'a> for NFTsByIssuer<'a> {
-    fn get_common_fields(&self) -> &CommonFields<'a> {
+impl Request for NFTsByIssuer {
+    fn get_common_fields(&self) -> &CommonFields {
         &self.common_fields
     }
 
-    fn get_common_fields_mut(&mut self) -> &mut CommonFields<'a> {
+    fn get_common_fields_mut(&mut self) -> &mut CommonFields {
         &mut self.common_fields
     }
 }
 
-impl<'a> NFTsByIssuer<'a> {
+impl NFTsByIssuer {
     pub fn new(
-        id: Option<Cow<'a, str>>,
-        issuer: Cow<'a, str>,
-        ledger_hash: Option<Cow<'a, str>>,
-        ledger_index: Option<LedgerIndex<'a>>,
+        id: Option<String>,
+        issuer: String,
+        ledger_hash: Option<String>,
+        ledger_index: Option<LedgerIndex>,
         limit: Option<u32>,
-        marker: Option<Marker<'a>>,
+        marker: Option<Marker>,
         nft_taxon: Option<u64>,
     ) -> Self {
         Self {

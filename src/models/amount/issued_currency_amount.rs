@@ -1,18 +1,18 @@
 use crate::models::{Model, XRPLModelException, XRPLModelResult};
-use alloc::borrow::Cow;
+
 use bigdecimal::BigDecimal;
 use core::convert::TryInto;
 use core::str::FromStr;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, PartialEq, Eq, Clone, Serialize, Deserialize, Default)]
-pub struct IssuedCurrencyAmount<'a> {
-    pub currency: Cow<'a, str>,
-    pub issuer: Cow<'a, str>,
-    pub value: Cow<'a, str>,
+pub struct IssuedCurrencyAmount {
+    pub currency: String,
+    pub issuer: String,
+    pub value: String,
 }
 
-impl<'a> Model for IssuedCurrencyAmount<'a> {
+impl Model for IssuedCurrencyAmount {
     fn get_errors(&self) -> XRPLModelResult<()> {
         self.value.parse::<f64>()?;
 
@@ -20,8 +20,8 @@ impl<'a> Model for IssuedCurrencyAmount<'a> {
     }
 }
 
-impl<'a> IssuedCurrencyAmount<'a> {
-    pub fn new(currency: Cow<'a, str>, issuer: Cow<'a, str>, value: Cow<'a, str>) -> Self {
+impl IssuedCurrencyAmount {
+    pub fn new(currency: String, issuer: String, value: String) -> Self {
         Self {
             currency,
             issuer,
@@ -30,7 +30,7 @@ impl<'a> IssuedCurrencyAmount<'a> {
     }
 }
 
-impl<'a> TryInto<BigDecimal> for IssuedCurrencyAmount<'a> {
+impl TryInto<BigDecimal> for IssuedCurrencyAmount {
     type Error = XRPLModelException;
 
     fn try_into(self) -> XRPLModelResult<BigDecimal, Self::Error> {
@@ -38,13 +38,13 @@ impl<'a> TryInto<BigDecimal> for IssuedCurrencyAmount<'a> {
     }
 }
 
-impl<'a> PartialOrd for IssuedCurrencyAmount<'a> {
+impl PartialOrd for IssuedCurrencyAmount {
     fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
         Some(self.cmp(other))
     }
 }
 
-impl<'a> Ord for IssuedCurrencyAmount<'a> {
+impl Ord for IssuedCurrencyAmount {
     fn cmp(&self, other: &Self) -> core::cmp::Ordering {
         self.value.cmp(&other.value)
     }

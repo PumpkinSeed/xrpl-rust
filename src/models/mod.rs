@@ -32,28 +32,28 @@ pub use exceptions::*;
 pub use flag_collection::*;
 pub use model::*;
 
-use alloc::borrow::Cow;
+
 use derive_new::new;
 use serde::{Deserialize, Serialize};
 
 /// A PathStep represents an individual step along a Path.
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Default, Clone, new)]
 #[serde(rename_all = "PascalCase")]
-pub struct PathStep<'a> {
-    account: Option<Cow<'a, str>>,
-    currency: Option<Cow<'a, str>>,
-    issuer: Option<Cow<'a, str>>,
+pub struct PathStep {
+    account: Option<String>,
+    currency: Option<String>,
+    issuer: Option<String>,
     r#type: Option<u8>,
-    type_hex: Option<Cow<'a, str>>,
+    type_hex: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, derive_new::new)]
 #[serde(rename_all = "PascalCase")]
-pub struct XChainBridge<'a> {
-    pub issuing_chain_door: Cow<'a, str>,
-    pub issuing_chain_issue: Currency<'a>,
-    pub locking_chain_door: Cow<'a, str>,
-    pub locking_chain_issue: Currency<'a>,
+pub struct XChainBridge {
+    pub issuing_chain_door: String,
+    pub issuing_chain_issue: Currency,
+    pub locking_chain_door: String,
+    pub locking_chain_issue: Currency,
 }
 
 /// For use with serde defaults.
