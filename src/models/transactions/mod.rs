@@ -186,7 +186,7 @@ where
     /// payment, or a sender on whose behalf this transaction is
     /// made. Conventionally, a refund should specify the initial
     /// payment's SourceTag as the refund payment's DestinationTag.
-    pub signers: Option<Vec<Signer>>,
+    pub signers: Option<Vec<SignerWrapper>>,
     /// Hex representation of the public key that corresponds to the
     /// private key used to sign this transaction. If an empty string,
     /// indicates a multi-signature is present in the Signers field instead.
@@ -219,7 +219,7 @@ where
         memos: Option<Vec<Memo>>,
         network_id: Option<u32>,
         sequence: Option<u32>,
-        signers: Option<Vec<Signer>>,
+        signers: Option<Vec<SignerWrapper>>,
         signing_pub_key: Option<String>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
@@ -252,7 +252,7 @@ where
         if let Some(signers) = &self.signers {
             signers
                 .iter()
-                .all(|signer| signer.txn_signature.len() > 0 && signer.signing_pub_key.len() > 0)
+                .all(|signer| signer.signer.txn_signature.len() > 0 && signer.signer.signing_pub_key.len() > 0)
         } else {
             self.txn_signature.is_some() && self.signing_pub_key.is_some()
         }
@@ -314,19 +314,26 @@ serde_with_tag! {
     }
 }
 
-serde_with_tag! {
 /// One Signer in a multi-signature. A multi-signed transaction
 /// can have an array of up to 8 Signers, each contributing a
 /// signature, in the Signers field.
 ///
 /// See Signers Field:
 /// `<https://xrpl.org/transaction-common-fields.html#signers-field>`
-#[derive(Debug, PartialEq, Eq, Default, Clone, new)]
-pub struct Signer {
-    pub account: String,
-    pub txn_signature: String,
-    pub signing_pub_key: String,
+#[derive(Debug, PartialEq, Eq, Default, Clone, Serialize, Deserialize, new)]
+pub struct SignerWrapper {
+    #[serde(rename = "Signer")]
+    pub signer: SignerContent,
 }
+
+#[derive(Debug, PartialEq, Eq, Default, Clone, Serialize, Deserialize, new)]
+pub struct SignerContent {
+    #[serde(rename = "Account")]
+    pub account: String,
+    #[serde(rename = "TxnSignature")]
+    pub txn_signature: String,
+    #[serde(rename = "SigningPubKey")]
+    pub signing_pub_key: String,
 }
 
 /// Standard functions for transactions.

@@ -6,7 +6,7 @@ use strum_macros::{AsRefStr, Display, EnumIter};
 
 use crate::models::{
     amount::Amount,
-    transactions::{Memo, Signer, Transaction, TransactionType},
+    transactions::{Memo, SignerWrapper, Transaction, TransactionType},
     Model, PathStep, ValidateCurrencies, XRPLModelResult,
 };
 
@@ -196,7 +196,7 @@ impl Payment {
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
         sequence: Option<u32>,
-        signers: Option<Vec<Signer>>,
+        signers: Option<Vec<SignerWrapper>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
         amount: Amount,

@@ -7,7 +7,7 @@ use serde_with::skip_serializing_none;
 use crate::models::amount::XRPAmount;
 use crate::models::{
     amount::Amount,
-    transactions::{Memo, Signer, Transaction, TransactionType},
+    transactions::{Memo, SignerWrapper, Transaction, TransactionType},
     Model, ValidateCurrencies,
 };
 use crate::models::{FlagCollection, NoFlags, XRPLModelException, XRPLModelResult};
@@ -113,7 +113,7 @@ impl NFTokenAcceptOffer {
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
         sequence: Option<u32>,
-        signers: Option<Vec<Signer>>,
+        signers: Option<Vec<SignerWrapper>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
         nftoken_sell_offer: Option<String>,

@@ -8,7 +8,7 @@ use crate::models::{
 
 use super::{
     exceptions::{XRPLAMMCreateException, XRPLTransactionException},
-    CommonFields, Memo, Signer, Transaction, TransactionType,
+    CommonFields, Memo, SignerWrapper, Transaction, TransactionType,
 };
 
 pub const AMM_CREATE_MAX_FEE: u16 = 1000;
@@ -78,7 +78,7 @@ impl AMMCreate {
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
         sequence: Option<u32>,
-        signers: Option<Vec<Signer>>,
+        signers: Option<Vec<SignerWrapper>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
         amount: Amount,

@@ -7,7 +7,7 @@ use crate::models::{
     XRPLModelResult,
 };
 
-use super::{CommonFields, Memo, Signer, Transaction, TransactionType};
+use super::{CommonFields, Memo, SignerWrapper, Transaction, TransactionType};
 
 pub const AMM_VOTE_MAX_TRADING_FEE: u16 = 1000;
 
@@ -74,7 +74,7 @@ impl<'a> AMMVote {
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
         sequence: Option<u32>,
-        signers: Option<Vec<Signer>>,
+        signers: Option<Vec<SignerWrapper>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
         asset: Currency,

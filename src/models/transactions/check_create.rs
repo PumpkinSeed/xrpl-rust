@@ -12,7 +12,7 @@ use crate::models::{
 };
 use crate::models::{FlagCollection, NoFlags, ValidateCurrencies};
 
-use super::{Memo, Signer};
+use super::{Memo, SignerWrapper};
 
 /// Create a Check object in the ledger, which is a deferred
 /// payment that can be cashed by its intended destination.
@@ -79,7 +79,7 @@ impl CheckCreate {
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
         sequence: Option<u32>,
-        signers: Option<Vec<Signer>>,
+        signers: Option<Vec<SignerWrapper>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
         destination: String,

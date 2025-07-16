@@ -7,7 +7,7 @@ use crate::models::{
     ValidateCurrencies, XRPAmount,
 };
 
-use super::{AuthAccount, CommonFields, Memo, Signer, Transaction};
+use super::{AuthAccount, CommonFields, Memo, SignerWrapper, Transaction};
 
 /// Bid on an Automated Market Maker's (AMM's) auction slot.
 ///
@@ -71,7 +71,7 @@ impl AMMBid {
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
         sequence: Option<u32>,
-        signers: Option<Vec<Signer>>,
+        signers: Option<Vec<SignerWrapper>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
         asset: Currency,

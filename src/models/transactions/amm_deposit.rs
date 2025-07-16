@@ -9,7 +9,7 @@ use crate::models::{
     ValidateCurrencies, XRPAmount, XRPLModelException, XRPLModelResult,
 };
 
-use super::{CommonFields, Memo, Signer, Transaction};
+use super::{CommonFields, Memo, SignerWrapper, Transaction};
 
 /// Transactions of the AMMDeposit type support additional values in the Flags field.
 /// This enum represents those options.
@@ -107,7 +107,7 @@ impl AMMDeposit {
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
         sequence: Option<u32>,
-        signers: Option<Vec<Signer>>,
+        signers: Option<Vec<SignerWrapper>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
         asset: Currency,

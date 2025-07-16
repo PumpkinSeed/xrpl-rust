@@ -12,7 +12,7 @@ use crate::models::NoFlags;
 use crate::models::XRPLModelResult;
 use crate::models::{
     amount::XRPAmount,
-    transactions::{Memo, Signer, Transaction, TransactionType},
+    transactions::{Memo, SignerWrapper, Transaction, TransactionType},
     Model, ValidateCurrencies,
 };
 use crate::serde_with_tag;
@@ -180,7 +180,7 @@ impl SignerListSet {
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
         sequence: Option<u32>,
-        signers: Option<Vec<Signer>>,
+        signers: Option<Vec<SignerWrapper>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
         signer_quorum: u32,
