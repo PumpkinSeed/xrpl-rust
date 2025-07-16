@@ -10,7 +10,7 @@ use crate::models::{
 };
 use crate::models::{FlagCollection, NoFlags, ValidateCurrencies};
 
-use super::{Memo, Signer};
+use super::{Memo, SignerWrapper};
 
 /// Cancels an unredeemed Check, removing it from the ledger without
 /// sending any money. The source or the destination of the check can
@@ -68,7 +68,7 @@ impl CheckCancel {
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
         sequence: Option<u32>,
-        signers: Option<Vec<Signer>>,
+        signers: Option<Vec<SignerWrapper>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
         check_id: String,

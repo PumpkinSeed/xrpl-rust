@@ -73,7 +73,7 @@ where
     }
 }
 
-async fn wait_for_final_transaction_result<C>(
+pub async fn wait_for_final_transaction_result<C>(
     tx_hash: String,
     client: &C,
     last_ledger_sequence: u32,

@@ -54,7 +54,7 @@ impl XChainAddClaimAttestation {
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<super::Memo>>,
         sequence: Option<u32>,
-        signers: Option<Vec<super::Signer>>,
+        signers: Option<Vec<super::SignerWrapper>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
         amount: Amount,

@@ -14,7 +14,7 @@ use crate::{
         MIN_TRANSFER_RATE, SPECIAL_CASE_TRANFER_RATE,
     },
     models::{
-        transactions::{Memo, Signer, Transaction, TransactionType},
+        transactions::{Memo, SignerWrapper, Transaction, TransactionType},
         Model,
     },
 };
@@ -283,7 +283,7 @@ impl AccountSet {
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
         sequence: Option<u32>,
-        signers: Option<Vec<Signer>>,
+        signers: Option<Vec<SignerWrapper>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
         clear_flag: Option<AccountSetFlag>,

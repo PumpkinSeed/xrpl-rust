@@ -27,7 +27,7 @@ where
         decoded_tx_signers.push(tx_signer.clone());
     }
     decoded_tx_signers
-        .sort_by_key(|signer| decode_classic_address(signer.account.as_ref()).unwrap());
+        .sort_by_key(|signer| decode_classic_address(signer.signer.account.as_ref()).unwrap());
     transaction.get_mut_common_fields().signers = Some(decoded_tx_signers);
     transaction.get_mut_common_fields().signing_pub_key = Some("".into());
 
@@ -72,7 +72,7 @@ mod test {
         let tx_1_expected_signature = "E3BEF86AEFC61E5ED66C95D0C5CE699721A8DAF86B6ED0D1CBAC86C2C03D96A098767B4F163FADBD937A99AC40BD6CED16B2CA98B198C2343D4BA31ECE57530C";
         assert_eq!(
             tx_1.get_common_fields().signers.as_ref().unwrap()[0]
-                .txn_signature
+                .signer.txn_signature
                 .as_str(),
             tx_1_expected_signature
         );
@@ -81,7 +81,7 @@ mod test {
         let tx_2_expected_signature = "DB64FC69F34A4881F6087226681E7BDDB212027B3FAFB617E598DCA5BBC8FA1A15A6E37A760B534BA554FBCD8D4A9FDEC8DFED206E3EBC393B875F59C765D304";
         assert_eq!(
             tx_2.get_common_fields().signers.as_ref().unwrap()[0]
-                .txn_signature
+                .signer.txn_signature
                 .as_str(),
             tx_2_expected_signature
         );

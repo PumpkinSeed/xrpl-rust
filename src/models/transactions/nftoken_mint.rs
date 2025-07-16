@@ -7,7 +7,7 @@ use strum_macros::{AsRefStr, Display, EnumIter};
 use crate::{
     constants::{MAX_TRANSFER_FEE, MAX_URI_LENGTH},
     models::{
-        transactions::{Memo, Signer, Transaction, TransactionType},
+        transactions::{Memo, SignerWrapper, Transaction, TransactionType},
         Model, ValidateCurrencies, XRPLModelException, XRPLModelResult,
     },
 };
@@ -173,7 +173,7 @@ impl NFTokenMint {
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
         sequence: Option<u32>,
-        signers: Option<Vec<Signer>>,
+        signers: Option<Vec<SignerWrapper>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
         nftoken_taxon: u32,

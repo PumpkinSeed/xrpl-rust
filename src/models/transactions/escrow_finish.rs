@@ -4,7 +4,7 @@ use serde_with::skip_serializing_none;
 
 use crate::models::{
     amount::XRPAmount,
-    transactions::{Memo, Signer, Transaction, TransactionType},
+    transactions::{Memo, SignerWrapper, Transaction, TransactionType},
     Model, ValidateCurrencies, XRPLModelException, XRPLModelResult,
 };
 use crate::models::{FlagCollection, NoFlags};
@@ -89,7 +89,7 @@ impl EscrowFinish {
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
         sequence: Option<u32>,
-        signers: Option<Vec<Signer>>,
+        signers: Option<Vec<SignerWrapper>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
         owner: String,

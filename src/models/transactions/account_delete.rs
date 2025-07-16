@@ -10,7 +10,7 @@ use crate::models::{
 };
 use crate::models::{FlagCollection, NoFlags};
 
-use super::{Memo, Signer};
+use super::{Memo, SignerWrapper};
 
 /// An AccountDelete transaction deletes an account and any objects it
 /// owns in the XRP Ledger, if possible, sending the account's remaining
@@ -73,7 +73,7 @@ impl AccountDelete {
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
         sequence: Option<u32>,
-        signers: Option<Vec<Signer>>,
+        signers: Option<Vec<SignerWrapper>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
         destination: String,

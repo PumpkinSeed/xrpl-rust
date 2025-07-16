@@ -114,7 +114,7 @@ where
                         Poll::Ready(Some(Err(XRPLWebSocketException::Disconnected.into())))
                     }
                     _ => Poll::Ready(Some(Err(
-                        XRPLWebSocketException::UnexpectedMessageType.into()
+                        XRPLWebSocketException::UnexpectedMessageType(message.to_string()).into()
                     ))),
                 },
                 Err(error) => Poll::Ready(Some(Err(error.into()))),
@@ -253,8 +253,8 @@ where
                 Some(Ok(tungstenite::Message::Close(_))) => {
                     return Err(XRPLWebSocketException::Disconnected.into());
                 }
-                Some(Ok(_)) => {
-                    return Err(XRPLWebSocketException::UnexpectedMessageType.into());
+                Some(Ok(v)) => {
+                    return Err(XRPLWebSocketException::UnexpectedMessageType(v.to_string()).into());
                 }
                 Some(Err(error)) => return Err(error.into()),
                 None => continue,

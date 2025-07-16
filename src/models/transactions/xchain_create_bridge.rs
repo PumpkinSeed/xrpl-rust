@@ -7,7 +7,7 @@ use crate::models::{
     NoFlags, ValidateCurrencies, XChainBridge, XRPAmount, XRPLModelResult, XRP,
 };
 
-use super::{CommonFields, Memo, Signer, Transaction, TransactionType};
+use super::{CommonFields, Memo, SignerWrapper, Transaction, TransactionType};
 
 #[skip_serializing_none]
 #[derive(Debug, Serialize, Deserialize, xrpl_rust_macros::ValidateCurrencies)]
@@ -53,7 +53,7 @@ impl XChainCreateBridge {
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
         sequence: Option<u32>,
-        signers: Option<Vec<Signer>>,
+        signers: Option<Vec<SignerWrapper>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
         signature_reward: Amount,

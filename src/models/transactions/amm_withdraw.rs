@@ -8,7 +8,7 @@ use crate::models::{
     Amount, Currency, FlagCollection, IssuedCurrencyAmount, Model, ValidateCurrencies, XRPAmount,
 };
 
-use super::{CommonFields, Memo, Signer, Transaction, TransactionType};
+use super::{CommonFields, Memo, SignerWrapper, Transaction, TransactionType};
 
 /// Transactions of the AMMWithdraw type support additional values in the Flags field.
 /// This enum represents those options.
@@ -97,7 +97,7 @@ impl AMMWithdraw {
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
         sequence: Option<u32>,
-        signers: Option<Vec<Signer>>,
+        signers: Option<Vec<SignerWrapper>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
         asset: Currency,

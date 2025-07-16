@@ -11,7 +11,7 @@ use crate::models::{
 };
 use crate::models::{FlagCollection, NoFlags, ValidateCurrencies};
 
-use super::{Memo, Signer};
+use super::{Memo, SignerWrapper};
 
 /// Cancels an Escrow and returns escrowed XRP to the sender.
 ///
@@ -67,7 +67,7 @@ impl EscrowCancel {
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
         sequence: Option<u32>,
-        signers: Option<Vec<Signer>>,
+        signers: Option<Vec<SignerWrapper>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
         owner: String,

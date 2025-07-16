@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 
 use crate::models::amount::XRPAmount;
-use crate::models::transactions::{CommonFields, Memo, Signer};
+use crate::models::transactions::{CommonFields, Memo, SignerWrapper};
 use crate::models::{
     transactions::{Transaction, TransactionType},
     Model,
@@ -62,7 +62,7 @@ impl SetFee {
         last_ledger_sequence: Option<u32>,
         memos: Option<Vec<Memo>>,
         sequence: Option<u32>,
-        signers: Option<Vec<Signer>>,
+        signers: Option<Vec<SignerWrapper>>,
         source_tag: Option<u32>,
         ticket_sequence: Option<u32>,
         base_fee: XRPAmount,

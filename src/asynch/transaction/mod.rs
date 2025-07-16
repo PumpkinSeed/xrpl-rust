@@ -20,7 +20,8 @@ use crate::{
         requests::{server_state::ServerState, submit::Submit},
         results::{server_state::ServerState as ServerStateResult, submit::Submit as SubmitResult},
         transactions::{
-            exceptions::XRPLTransactionFieldException, Signer, Transaction, TransactionType,
+            exceptions::XRPLTransactionFieldException, SignerContent, SignerWrapper, Transaction,
+            TransactionType,
         },
         Model, XRPAmount, XRPLModelException,
     },
@@ -62,12 +63,12 @@ where
             encode_for_multisigning(transaction, wallet.classic_address.clone().into())?;
         let serialized_bytes = hex::decode(serialized_for_signing)?;
         let signature = keypairs_sign(&serialized_bytes, &wallet.private_key)?;
-        let signer = Signer::new(
+        let signer = SignerContent::new(
             wallet.classic_address.clone().into(),
             signature.into(),
             wallet.public_key.clone().into(),
         );
-        transaction.get_mut_common_fields().signers = Some(vec![signer]);
+        transaction.get_mut_common_fields().signers = Some(vec![SignerWrapper { signer }]);
 
         Ok(())
     } else {
