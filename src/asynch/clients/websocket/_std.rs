@@ -110,11 +110,15 @@ where
                         };
                         Poll::Ready(Some(Ok(response_string)))
                     }
+                    tungstenite::Message::Ping(_) => {
+                        // Ignore ping messages
+                        Poll::Pending
+                    }
                     tungstenite::Message::Close(_) => {
                         Poll::Ready(Some(Err(XRPLWebSocketException::Disconnected.into())))
                     }
                     _ => Poll::Ready(Some(Err(
-                        XRPLWebSocketException::UnexpectedMessageType(message.to_string()).into()
+                        XRPLWebSocketException::UnexpectedMessageType(format!{"poll_netx: {:?}", message}).into()
                     ))),
                 },
                 Err(error) => Poll::Ready(Some(Err(error.into()))),
@@ -250,11 +254,15 @@ where
                         Err(error) => return Err(error.into()),
                     }
                 }
+                Some(Ok(tungstenite::Message::Ping(_))) => {
+                    // Ignore ping messages
+                    continue;
+                }
                 Some(Ok(tungstenite::Message::Close(_))) => {
                     return Err(XRPLWebSocketException::Disconnected.into());
                 }
                 Some(Ok(v)) => {
-                    return Err(XRPLWebSocketException::UnexpectedMessageType(v.to_string()).into());
+                    return Err(XRPLWebSocketException::UnexpectedMessageType(format!{"request_impl: {:?}", v}).into());
                 }
                 Some(Err(error)) => return Err(error.into()),
                 None => continue,
